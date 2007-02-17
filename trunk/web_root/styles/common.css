@@ -1,0 +1,17 @@
+#errore {
+	background-color: red;
+	color: white;
+	font-weight: bold;
+	margin: 5px;
+	border: dashed 1px white;
+	width: 500px;
+}
+
+#ok {
+	background-color: green;
+	color: white;
+	font-weight: bold;
+	margin: 5px;
+	border: dashed 1px white;
+	width: 500px;
+}
