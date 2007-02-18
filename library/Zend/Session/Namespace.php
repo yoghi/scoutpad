@@ -16,7 +16,7 @@
  * @package    Zend_Session
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Namespace.php 3272 2007-02-07 20:17:03Z gavin $
+ * @version    $Id: Namespace.php 3384 2007-02-13 21:07:21Z gavin $
  * @since      Preview Release 0.2
  */
 
@@ -99,43 +99,46 @@ class Zend_Session_Namespace extends Zend_Session_Abstract implements IteratorAg
             return; // no further processing needed
         }
 
-        if (isset($_SESSION['__ZF'][$namespace])) {
-
-            // Expire Namespace by Namespace Hop (ENNH)
-            if (isset($_SESSION['__ZF'][$namespace]['ENNH'])) {
-                $_SESSION['__ZF'][$namespace]['ENNH']--;
-
-                if ($_SESSION['__ZF'][$namespace]['ENNH'] === 0) {
-                    if (isset($_SESSION[$namespace])) {
-                        self::$_expiringData[$namespace] = $_SESSION[$namespace];
-                        unset($_SESSION[$namespace]);
-                    }
-                    unset($_SESSION['__ZF'][$namespace]['ENNH']);
-                }
-            }
-
-            // Expire Namespace Variables by Namespace Hop (ENVNH)
-            if (isset($_SESSION['__ZF'][$namespace]['ENVNH'])) {
-                foreach ($_SESSION['__ZF'][$namespace]['ENVNH'] as $variable => $hops) {
-                    $_SESSION['__ZF'][$namespace]['ENVNH'][$variable]--;
-
-                    if ($_SESSION['__ZF'][$namespace]['ENVNH'][$variable] === 0) {
-                        if (isset($_SESSION[$namespace][$variable])) {
-                            self::$_expiringData[$namespace][$variable] = $_SESSION[$namespace][$variable];
-                            unset($_SESSION[$namespace][$variable]);
+        // do not allow write access to namespaces, after stop() or writeClose()
+        if (parent::$_writable === true) {
+            if (isset($_SESSION['__ZF'][$namespace])) {
+    
+                // Expire Namespace by Namespace Hop (ENNH)
+                if (isset($_SESSION['__ZF'][$namespace]['ENNH'])) {
+                    $_SESSION['__ZF'][$namespace]['ENNH']--;
+    
+                    if ($_SESSION['__ZF'][$namespace]['ENNH'] === 0) {
+                        if (isset($_SESSION[$namespace])) {
+                            self::$_expiringData[$namespace] = $_SESSION[$namespace];
+                            unset($_SESSION[$namespace]);
                         }
-                        unset($_SESSION['__ZF'][$namespace]['ENVNH'][$variable]);
+                        unset($_SESSION['__ZF'][$namespace]['ENNH']);
+                    }
+                }
+    
+                // Expire Namespace Variables by Namespace Hop (ENVNH)
+                if (isset($_SESSION['__ZF'][$namespace]['ENVNH'])) {
+                    foreach ($_SESSION['__ZF'][$namespace]['ENVNH'] as $variable => $hops) {
+                        $_SESSION['__ZF'][$namespace]['ENVNH'][$variable]--;
+    
+                        if ($_SESSION['__ZF'][$namespace]['ENVNH'][$variable] === 0) {
+                            if (isset($_SESSION[$namespace][$variable])) {
+                                self::$_expiringData[$namespace][$variable] = $_SESSION[$namespace][$variable];
+                                unset($_SESSION[$namespace][$variable]);
+                            }
+                            unset($_SESSION['__ZF'][$namespace]['ENVNH'][$variable]);
+                        }
                     }
                 }
             }
-        }
-
-        if (empty($_SESSION['__ZF'][$namespace])) {
-            unset($_SESSION['__ZF'][$namespace]);
-        }
-
-        if (empty($_SESSION['__ZF'])) {
-            unset($_SESSION['__ZF']);
+    
+            if (empty($_SESSION['__ZF'][$namespace])) {
+                unset($_SESSION['__ZF'][$namespace]);
+            }
+    
+            if (empty($_SESSION['__ZF'])) {
+                unset($_SESSION['__ZF']);
+            }
         }
     }
 

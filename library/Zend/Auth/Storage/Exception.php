@@ -17,14 +17,14 @@
  * @package    Zend_Auth
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Exception.php 2794 2007-01-16 01:29:51Z bkarwin $
+ * @version    $Id: Exception.php 3412 2007-02-14 22:22:35Z darby $
  */
 
 
 /**
- * Zend_Auth_Adapter_Exception
+ * Zend_Auth_Exception
  */
-require_once 'Zend/Auth/Adapter/Exception.php';
+require_once 'Zend/Auth/Exception.php';
 
 
 /**
@@ -33,5 +33,5 @@ require_once 'Zend/Auth/Adapter/Exception.php';
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Sigma_Auth_Database_Exception extends Zend_Auth_Adapter_Exception
+class Zend_Auth_Storage_Exception extends Zend_Auth_Exception
 {}

@@ -114,8 +114,8 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 	protected function _run()
 	{
 		$auth_module = Zend::registry('auth_module');
-		if ( $auth_module->isLoggedIn() ) {
-			$identify = $auth_module->getToken()->getIdentity();
+		if ( $auth_module->hasIdentity() ) {
+			$identify = $auth_module->getIdentity();
 			$this->assign('user_name',$identify['nome']);
 			$this->assign('user_surname',$identify['cognome']);
 			$this->assign('user_role',$identify['role']);
