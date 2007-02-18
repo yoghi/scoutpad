@@ -14,33 +14,32 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 		private $_acl = null;
 				
 		public function __construct(){
+			
 			$this->_auth = Zend::registry('auth_module');
-			//$this->_acl = Zend::registry('acl_module');
+			
+			Zend::loadClass('Zend_Acl');
+			Zend::loadClass('Zend_Acl_Role');
+			Zend::loadClass('Zend_Acl_Resource');
+			
 		}
 	       
 		public function preDispatch($request)
 		{
-			if ($this->_auth->isLoggedIn() ) {
-				$token = $this->_auth->getToken()->getIdentity();
+			if ( $this->_auth->hasIdentity() ) {
+				$token = $this->_auth->getIdentity();
 				$role = isset($token['role']) ? $token['role'] : 'guest';
-				//->getUser()->role;
 			} else {
 				$role = 'guest';
 			}
-
-			$controller = ($request->getControllerName() == '') ? 'index' : $request->getControllerName();
-
-			$action = ($request->getActionName() == '') ? 'index' : $request->getActionName();
-     
+			
 			/*
         	 * Nota bene che se si setta un 'module' si ottiene che la classe AdminController diventi Default_AdminController
         	 * bisogna stare attenti!!!
         	 */
         	$module = $request->getModuleName();
-        	
-        	Zend::loadClass('Zend_Acl');
-			Zend::loadClass('Zend_Acl_Role');
-			Zend::loadClass('Zend_Acl_Resource');
+			
+			$controller = ($request->getControllerName() == '') ? 'index' : $request->getControllerName();
+			$action = ($request->getActionName() == '') ? 'index' : $request->getActionName();
 
 			try {
 				Zend::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
@@ -55,7 +54,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				
 				$default_module = $t_module->getModuleByName('default')->toArray();
 
-				if ( empty($default_module[0]['acl']) ) {
+				if ( is_null($default_module[0]['acl']) ) {
 					
 					$acl = new Zend_Acl();
 					$roleGuest = new Zend_Acl_Role('guest');
@@ -107,7 +106,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 						$acl->allow($roleGuest, 'index', 'index');
 						$acl->allow($roleGuest, 'login', null); //array('in','out','confirm',...)
 						
-						$acl->allow($roleMember,'index','index');
+						$acl->allow($roleMember,'index',null);
 						
 						// Staff inherits view privilege from guest, but also needs additional privileges
 						$acl->allow('staff', array('announcement','documenti'), array('add','edit','submit','index'));
@@ -145,12 +144,12 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
         	$resource = $controller;
 
         	if (!$this->_acl->has($resource)) {
-        		$resource = null;
+        		throw new Zend_Controller_Exception('Resource: '.$resource.' not present');
         	}
         	
         	Zend_Log::log("'$role' richiede la risorsa '$resource' per compiere '$action' nel modulo : '$module'" , Zend_Log::LEVEL_DEBUG);
 
-			if ( !$this->_auth->isLoggedIn() && $resource != 'login' && ( $module != null || $resource != 'index' ) ) {
+			if ( !$this->_auth->hasIdentity() && $resource != 'login' && ( $module != null || $resource != 'index' ) ) {
 				Zend_Log::log('Utente non autenticato!!', Zend_Log::LEVEL_DEBUG);
        			$module = $this->_noauth['module'];
        			$controller = $this->_noauth['controller'];

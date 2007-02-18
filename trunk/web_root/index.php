@@ -69,11 +69,11 @@ try {
 	// setup database
 	Zend::register('config', $config);
 	$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->asArray() );
+	Zend::register('database', $db);
 	Zend_Db_Table::setDefaultAdapter($db);
 
 	// Autentication
-	$adp = new Sigma_Auth_Database_Adapter($db);
-	Zend::register('auth_module', new Zend_Auth($adp) );
+	Zend::register('auth_module', Zend_Auth::getInstance());
 	
 	// Session
 	//require_once 'Zend/Session.php';
@@ -123,6 +123,6 @@ try {
 	
 }
 catch (Exception $e){
-	$e->getMessage();
+	echo '<h1>Errore:</h1> '.$e->getMessage();
 }
 ?>

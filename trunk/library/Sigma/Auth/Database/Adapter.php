@@ -1,66 +1,58 @@
 <?php
 
 /**
- * Zend Framework
+ * Sigma Framework
  *
  * LICENSE
  *
  * This source file is subject to the new BSD license that is bundled
  * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
  *
- * @category   Zend
- * @package    Zend_Auth
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Adapter.php 2794 2007-01-16 01:29:51Z bkarwin $
+ * @category   Sigma
+ * @package    Sigma_Auth_Database
+ * @copyright  Copyright (c) 2006 
+ * @author	   Stefano Tamagnini
+ * @license    New BSD License
  */
-
+ 
 
 /**
  * Zend_Auth_Adapter
  */
-require_once 'Zend/Auth/Adapter.php';
+require_once 'Zend/Auth/Adapter/Interface.php';
 
-
-/**
- * Zend_Auth_Database_Token
- */
-require_once 'Sigma/Auth/Database/Token.php';
 
 
 /**
- * @category   Zend
- * @package    Zend_Auth
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
- * @license    http://framework.zend.com/license/new-bsd     New BSD License
+ * Zend_Auth_Result
  */
-class Sigma_Auth_Database_Adapter extends Zend_Auth_Adapter
-{
-    /**
+require_once 'Zend/Auth/Result.php';
+
+/**
+ * @category   Sigma
+ * @package    Sigma_Auth_Database
+ * @copyright  Copyright (c) 2006
+ * @author     Stefano Tamagnini
+ * @license    New BSD License
+ */
+class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
+	
+	/**
      * Database where take autentication info
      *
      * @var string
      */
-    protected $_db;
-
-    /**
-     * Creates a new digest authentication object against the Abrastract Database provided
-     *
-     * @param  string $filename
-     * @throws Zend_Auth_Digest_Exception
-     * @return void
-     */
-    public function __construct(Zend_Db_Adapter_Abstract $database)
-    {
-        $this->_db = $database;
-    }
-
-    /**
+	protected $_db;
+	
+	
+	/**
+	 * Options for manage autentication
+	 * 
+	 * @var array
+	 */
+	protected $_options;
+	
+	/**
      * Authenticates against the given parameters
      *
      * $options requires the following key-value pairs:
@@ -72,13 +64,16 @@ class Sigma_Auth_Database_Adapter extends Zend_Auth_Adapter
      *      'username' => digest authentication user
      *      'password' => user password 
      *
+     * @param Zend_Db_Adapter_Abstract $db database to use for autentication
      * @param  array $options
      * @throws Zend_Auth_Digest_Exception
      * @return Zend_Auth_Digest_Token
      */
-    public static function staticAuthenticate(array $options)
-    {
-        $optionsRequired = array('field_username','field_password','table','username', 'password');
+	public function __construct(Zend_Db_Adapter_Abstract $database,array $options){
+		
+		$this->_db = $database;
+		
+		$optionsRequired = array('field_username','field_password','table','username', 'password');
         
         foreach ($optionsRequired as $optionRequired) {
             if (!isset($options[$optionRequired]) || !is_string($options[$optionRequired])) {
@@ -87,55 +82,52 @@ class Sigma_Auth_Database_Adapter extends Zend_Auth_Adapter
             }
         }
         
-        $tokenValid    = false;
+        $this->_options = $options;
+		
+	}
+	
+	/**
+     * Performs an authentication attempt with dabase store
+     *
+     * @throws Zend_Auth_Adapter_Exception If authentication cannot be performed
+     * @return Zend_Auth_Result
+     */
+	public function authenticate(){
+		
+		$tokenValid    = false;
         $tokenIdentity = array();
+        $tokenMessage = array();
         
         $token = Zend::registry('config')->auth->token;
         
-        $pwd_r2 = sha1($token.$options['password']);
+        $pwd_r2 = sha1($token.$this->_options['password']);
         
-        try {
-        	$sql = 'select * from '.$options['table'].' where '.$options['field_username'].'=\''.$options['username'].'\' and '.$options['field_password'].'=\''.$pwd_r2.'\'';
+		try {
+        	$sql = 'select * from '.$this->_options['table'].' where '.$this->_options['field_username'].'=\''.$this->_options['username'].'\' and '.$this->_options['field_password'].'=\''.$pwd_r2.'\'';
 
         	Zend_Log::log('Autenticazione sql: '.$sql, Zend_Log::LEVEL_DEBUG);
         	
-        	$data = $options['database']->fetchAll($sql);
+        	$data = $this->_db->fetchAll($sql);
         	
         } catch (Zend_Auth_Database_Exception $e){
-        	$tokenMessage = 'Exception: '.$e->getMessage();
-        	return new Sigma_Auth_Database_Token($tokenValid, $tokenIdentity, $tokenMessage);
+        	$tokenMessage[] = 'Exception Sigma Auth: '.$e->getMessage();
+        	return new Zend_Auth_Result($tokenValid, $tokenIdentity, $tokenMessage);
         }
-        
-        $tokenMessage = "Not enable for access";
         
         if ( !empty($data) ){
         	//ok
         	$tokenValid    = true;
         	$tokenIdentity = &$data[0];
+        } else {
+        	$tokenMessage[] = "Not enable for access";	
         }
         
         Zend_Log::log('Autenticazione completata con successo per '.$tokenIdentity['nome'], Zend_Log::LEVEL_INFO);
 
-        return new Sigma_Auth_Database_Token($tokenValid, $tokenIdentity, $tokenMessage);
-    }
-
-    /**
-     * Authenticates the realm, username and password given
-     *
-     * $options requires the following key-value pairs:
-     *
-     * 		'table'    => table where check autentication
-     *      'username' => digest authentication user
-     *      'password' => password for the user
-     *
-     * @param  array $options
-     * @uses   Zend_Auth_Digest_Adapter::staticAuthenticate()
-     * @return Zend_Auth_Digest_Token
-     */
-    public function authenticate(array $options)
-    {
-    	$options['database'] = $this->_db;
-        return self::staticAuthenticate($options);
-    }
-
+        return new Zend_Auth_Result($tokenValid, $tokenIdentity, $tokenMessage);
+	}
+	
 }
+
+
+?>

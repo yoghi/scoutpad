@@ -42,13 +42,21 @@ class IndexController extends Zend_Controller_Action
 		
 		echo 'Guest View Admin: ';
 		echo $acl->isAllowed('guest', 'admin', 'index') ? "allowed" : "denied"; echo '<br/>';
+		
+		$auth_module = Zend::registry('auth_module');
+		$identita = $auth_module->getIdentity();
+		echo "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";
 
+	}
+	
+	public function annunciAction(){
+		echo '<h2>Annunci ...</h2>';
 	}
 
 	public function noRouteAction()
 	{
-		//$this->_redirect('/');
-		$this->indexAction();
+		$this->_redirect('/index/');
+		//$this->indexAction();
 	}
 }
 

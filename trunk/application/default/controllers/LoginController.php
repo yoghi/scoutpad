@@ -28,7 +28,7 @@ class LoginController extends Zend_Controller_Action
 
 		$auth_module = Zend::registry('auth_module');
 
-		if ( $auth_module->isLoggedIn() ){
+		if ( $auth_module->hasIdentity() ){
 			$this->_redirect('/');
 		}
 
@@ -41,7 +41,7 @@ class LoginController extends Zend_Controller_Action
 
 	public function outAction(){
 		$auth_module = Zend::registry('auth_module');
-		$auth_module->logout();
+		$auth_module->clearIdentity();
 		$this->_redirect('/login/');
 	}
 
@@ -61,14 +61,18 @@ class LoginController extends Zend_Controller_Action
 			if ($mail != '' && $password != '') {
 
 				$auth_module = Zend::registry('auth_module');
+				$database = Zend::registry('database');
+				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array('field_password' => 'password','field_username' => 'mail','table' => 'staff' ,'username' => $mail, 'password' => $password));
 
 				try {
 
 					Zend_Log::log('Provo ad autenticare : '.$mail, Zend_Log::LEVEL_DEBUG);
 		
-					$t =  $auth_module->authenticate(array('field_password' => 'password','field_username' => 'mail','table' => 'staff' ,'username' => $mail, 'password' => $password));
+					$result = $auth_module->authenticate($auth_module_adapter);
 		
-					if ( $t->isValid()  ){
+					if ( $result->isValid()  ){
+						// $result->getIdentity() === $auth->getIdentity()
+						// $result->getIdentity() === $username
 						$this->_redirect('/');
 					}
 

@@ -17,8 +17,14 @@
  * @package    Zend_Auth
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Interface.php 2794 2007-01-16 01:29:51Z bkarwin $
+ * @version    $Id: Interface.php 3412 2007-02-14 22:22:35Z darby $
  */
+
+
+/**
+ * @see Zend_Auth_Result
+ */
+require_once 'Zend/Auth/Result.php';
 
 
 /**
@@ -27,29 +33,13 @@
  * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Auth_Token_Interface
+interface Zend_Auth_Adapter_Interface
 {
     /**
-     * Returns whether the authentication token is currently valid (i.e., whether it
-     * represents a successful authentication attempt)
+     * Performs an authentication attempt
      *
-     * @return boolean
+     * @throws Zend_Auth_Adapter_Exception If authentication cannot be performed
+     * @return Zend_Auth_Result
      */
-    public function isValid();
-
-    /**
-     * Returns the identity represented by the authentication token
-     *
-     * @return mixed
-     */
-    public function getIdentity();
-
-    /**
-     * Returns a message about why the authentication token is not valid
-     * or null if the authentication token is valid
-     *
-     * @return string|null
-     */
-    public function getMessage();
-
+    public function authenticate();
 }
