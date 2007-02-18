@@ -132,16 +132,15 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 					
 					$t_module->update($data,$where);
 					
+				} else {					
+					$acl = unserialize(base64_decode($default_module[0]['acl']));
 				}
-				
-				$acl = $default_module[0]['acl'];
 				
 			}
 			
 			Zend::register('acl_module', $acl );
-       		
+			
        		$this->_acl = $acl;
-        	
         	
         	$resource = $controller;
 
