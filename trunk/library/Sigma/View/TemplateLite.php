@@ -23,6 +23,9 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		if (array_key_exists('template_dir', $data)) {
 			$this->_tpl->template_dir = $data['template_dir'];
         }
+        
+        $path = Zend::registry('config')->view->path;
+        $this->setScriptPath(Zend::registry('config')->view->path);
 
 	}
 	

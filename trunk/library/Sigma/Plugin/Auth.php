@@ -48,99 +48,48 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				var_dump($e);
 			}
 			
-			if ( $module === null ){
-				
-				$t_module = new Modules();
-				
-				$default_module = $t_module->getModuleByName('default')->toArray();
-
-				if ( is_null($default_module[0]['acl']) ) {
-					
-					$acl = new Zend_Acl();
-					$roleGuest = new Zend_Acl_Role('guest');
-					$acl->addRole($roleGuest);
-					
-					//member
-					$roleMember = new Zend_Acl_Role('member'); 
-					$acl->addRole($roleMember, $roleGuest);
-					
-					// la staff eredita le proprietà del guest
-					$roleStaff = new Zend_Acl_Role('staff'); 
-					$acl->addRole($roleStaff, $roleGuest);
-					
-					// il responsabile
-					$roleResponsabile = new Zend_Acl_Role('responsabile');
-					$acl->addRole($roleResponsabile,$roleStaff);
-					
-					// Editor inherits from staff
-					$acl->addRole(new Zend_Acl_Role('capocampo'), 'responsabile');
-					
-					// Administrator does not inherit access controls
-					$acl->addRole(new Zend_Acl_Role('administrator'));
-					
-					// TUTTI
-					$acl->add(new Zend_Acl_Resource('login'));		// public login
-					$acl->add(new Zend_Acl_Resource('index'));		// public home
-					
-					// MEMBRI DELLA STAFF
-					$acl->add(new Zend_Acl_Resource('announcement'));		// announcement
-					$acl->add(new Zend_Acl_Resource('documenti'));			// documenti
-					$acl->add(new Zend_Acl_Resource('rubrica'));			// rubrica
-					
-					$acl->add(new Zend_Acl_Resource('campetti'));			// campetti
-					
-					$acl->add(new Zend_Acl_Resource('admin'));				// admin
-					$acl->add(new Zend_Acl_Resource('permessi'));			// permessi
-					
-					//NB: se non settato è denied di default.
-					
-					// Questa viene sempre eseguita per qualunque Role/Utente
-					//$acl->allow(null, null, null, new CleanIPAssertion());
-					
-					// Administrator inherits nothing, but is allowed all privileges
-					$acl->allow('administrator');
-					
-					if ( $module === null ) {
-						
-						// Guest may only view content in generale
-						$acl->allow($roleGuest, 'index', 'index');
-						$acl->allow($roleGuest, 'login', null); //array('in','out','confirm',...)
-						
-						$acl->allow($roleMember,'index',null);
-						
-						// Staff inherits view privilege from guest, but also needs additional privileges
-						$acl->allow('staff', array('announcement','documenti'), array('add','edit','submit','index'));
-						
-		//				// Responsabile 
-		//				$acl->allow('responsabile', 'campetti', array('iscrivi','deiscrivi'));
-		//				
-		//				// CapoCampo inherits view, edit, submit, and revise privileges from staff, but also needs additional privileges
-		//				$acl->allow('capocampo',array( 'campetti'), array('add','edit','submit'));	
-		//				$acl->allow('capocampo', array('announcement','rubrica','documenti'), array('publish','delete'));
-						
-					}
-					
-					if ( $module == 'rubrica' ) {
-						$acl->allow($roleStaff,'index',array('index','edit','submit','index'));
-					}
-					
-					$data = array(
-							'acl' => base64_encode(serialize($acl))
-						);
-					$where = 'id = ' . $default_module[0]['id'];
-					
-					$t_module->update($data,$where);
-					
-				} else {					
-					$acl = unserialize(base64_decode($default_module[0]['acl']));
-				}
-				
-			}
+			/*
+			 * Devo caricare i permessi in modo da poter eseguire il controllo sulla richiesta prima ancora di passare il controllo a chi di dovere 
+			 */
 			
+			//Attori (+ struttura)
+			$acl = new Zend_Acl();
+			$roleGuest = new Zend_Acl_Role('guest');
+			$acl->addRole($roleGuest);
+			
+			//member
+			$roleMember = new Zend_Acl_Role('member'); 
+			$acl->addRole($roleMember, $roleGuest);
+			
+			// la staff eredita le proprietà del guest
+			$roleStaff = new Zend_Acl_Role('staff'); 
+			$acl->addRole($roleStaff, $roleGuest);
+			
+			// il responsabile
+			$roleResponsabile = new Zend_Acl_Role('responsabile');
+			$acl->addRole($roleResponsabile,$roleStaff);
+			
+			// CapoCampo inherits from staff
+			$acl->addRole(new Zend_Acl_Role('capocampo'), 'responsabile');
+			
+			// Administrator does not inherit access controls
+			$acl->addRole(new Zend_Acl_Role('administrator'));
+			
+			//CASO A => default [letti da tutti, sono quelli comuni ??]
+			
+			$acl->add(new Zend_Acl_Resource('login'));		// public login
+			$acl->add(new Zend_Acl_Resource('index'));		// public home
+			
+			$acl->allow($roleGuest, 'index', 'index'); //posso eseguire ciò che voglio sulla index
+			$acl->allow($roleGuest, 'login', null); //posso eseguire ciò che voglio sul login
+			
+			//CASO B => modulo installato 
+			
+			//CASO C => modulo inesistente
+			
+			$this->_acl = $acl; //new Zend_Acl();
 			Zend::register('acl_module', $acl );
-			
-       		$this->_acl = $acl;
-        	
+       		
         	$resource = $controller;
 
         	if (!$this->_acl->has($resource)) {
