@@ -1,25 +1,38 @@
 <?php
 
-class PermessiController extends Zend_Controller_Action
+class Admin_PermessiController extends Zend_Controller_Action
 {
 	private $acl = null;
 	
 	function init()
 	{
 		$this->acl = Zend::registry('acl_module');
-		
-		// allowed because of inheritance from guest
-		echo $this->acl->isAllowed('editor', 'announcement', 'create') ? "allowed" : "denied"; echo '<br/>';
-		echo $this->acl->isAllowed('editor', 'documenti', 'create') ? "allowed" : "denied"; echo '<br/>';
-		echo $this->acl->isAllowed('staff', 'announcement', 'create') ? "allowed" : "denied";
-
+		try {
+			Zend::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+		}
+		catch (Zend_Exception $e) {
+			var_dump($e);
+		}
 	}
 	
 	public function indexAction()
 	{
-		$view = Zend::registry('view');
+		
+		$view = new Sigma_View_TemplateLite();
+		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/admin/views/scout');
 		$view->title = "Permessi";
-		$view->buttonText = '';
+		
+		$t_module = new Modules();
+		$moduli = $t_module->getAttivi();
+		
+		$view->moduli = $moduli->toArray();
+
+		foreach( $moduli->toArray() as $modulo ){
+			if ($modulo['nome'] != 'default') var_dump( $this->acl->get($modulo['nome']) );
+		}
+		
+		var_dump($this->acl->getRole('guest'));
+		
 		$view->actionTemplate = 'permessi.tpl';
 		$this->getResponse()->setBody( $view->render('site.tpl') );
 		
@@ -33,8 +46,8 @@ class PermessiController extends Zend_Controller_Action
 
 	public function noRouteAction()
 	{
-		$this->_redirect('/');
-		//$this->indexAction();
+		//$this->_redirect('/');
+		$this->indexAction();
 	}
 }
 

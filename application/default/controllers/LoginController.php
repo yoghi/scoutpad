@@ -22,7 +22,6 @@ class LoginController extends Zend_Controller_Action
 	public function indexAction()
 	{
 		$view = new Sigma_View_TemplateLite();
-		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/default/views/scout');
 
 		$view->title = "Autenticati";
 
@@ -48,7 +47,6 @@ class LoginController extends Zend_Controller_Action
 	public function inAction(){
 
 		$view = new Sigma_View_TemplateLite();
-		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/default/views/scout');
 		$view->title = "Login";
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
@@ -92,7 +90,6 @@ class LoginController extends Zend_Controller_Action
 	public function confirmAction(){
 
 		$view = new Sigma_View_TemplateLite();
-		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/default/views/scout');
 		$view->title = "Conferma";
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')

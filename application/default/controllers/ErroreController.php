@@ -5,7 +5,6 @@ class ErroreController extends Zend_Controller_Action
 	public function indexAction()
 	{
 		$view = new Sigma_View_TemplateLite();
-		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/default/views/scout');
 		$view->title = "Errore";
 		$view->buttonText = '';
 		$view->actionTemplate = 'errore.tpl';
@@ -15,7 +14,6 @@ class ErroreController extends Zend_Controller_Action
 	
 	public function privilegesAction(){
 		$view = new Sigma_View_TemplateLite();
-		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/default/views/scout');
 		$view->title = "Errore";
 		$view->actionTemplate = 'errore.tpl';
 		$view->errore = array('errore non hai i privilegi necessari');
@@ -23,8 +21,7 @@ class ErroreController extends Zend_Controller_Action
 	}
 	
 	public function fourhundredfourAction(){
-		$view = new Sigma_View_TemplateLite();
-		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/default/views/scout');
+		$view = new Sigma_View_TemplateLite();		
 		$view->title = "Errore 404";
 		$view->actionTemplate = 'errore.tpl';
 		$view->errore = array('errore file richiesto non trovato');

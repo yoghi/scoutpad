@@ -136,7 +136,6 @@ abstract class Zend_Controller_Request_Abstract
         if (null === $this->_action) {
             $this->_action = $this->getParam($this->getActionKey());
         }
-
         return $this->_action;
     }
 

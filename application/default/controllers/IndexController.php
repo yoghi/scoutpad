@@ -9,7 +9,6 @@ class IndexController extends Zend_Controller_Action
 	public function indexAction()
 	{
 		$view = new Sigma_View_TemplateLite();
-		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/default/views/scout');
 		$view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
 		$view->actionTemplate = 'index.tpl';
 		$this->getResponse()->setBody( $view->render('site.tpl') );
@@ -44,8 +43,10 @@ class IndexController extends Zend_Controller_Action
 		echo $acl->isAllowed('guest', 'admin', 'index') ? "allowed" : "denied"; echo '<br/>';
 		
 		$auth_module = Zend::registry('auth_module');
-		$identita = $auth_module->getIdentity();
-		echo "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";
+		if ( $auth_module->hasIdentity() ){  
+			$identita = $auth_module->getIdentity();
+			echo "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";
+		}
 
 	}
 	
