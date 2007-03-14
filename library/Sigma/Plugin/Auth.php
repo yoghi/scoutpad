@@ -17,9 +17,9 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			
 			$this->_auth = Zend::registry('auth_module');
 			
-			Zend::loadClass('Zend_Acl');
-			Zend::loadClass('Zend_Acl_Role');
-			Zend::loadClass('Zend_Acl_Resource');
+			Zend_Loader::loadClass('Zend_Acl');
+			Zend_Loader::loadClass('Zend_Acl_Role');
+			Zend_Loader::loadClass('Zend_Acl_Resource');
 			
 		}
 	       
@@ -42,7 +42,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			$action = ($request->getActionName() == '') ? 'index' : $request->getActionName();
 
 			try {
-				Zend::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+				Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 			}
 			catch (Zend_Exception $e) {
 				var_dump($e);

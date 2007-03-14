@@ -11,7 +11,7 @@ class LoginController extends Zend_Controller_Action
 	{
 
 		try {
-			Zend::loadClass('Staff','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass('Staff','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 		}
 		catch (Zend_Exception $e) {
 			var_dump($e);

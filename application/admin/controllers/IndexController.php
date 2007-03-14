@@ -1,7 +1,5 @@
 <?php
 
-//Zend::loadClass('Zend_Controller_Action');
-
 //require_once 'Zend/Controller/Action.php';
 
 class Admin_IndexController extends Zend_Controller_Action

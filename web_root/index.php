@@ -5,20 +5,21 @@ set_include_path(get_include_path() . PATH_SEPARATOR . '/home/workspace/Scout/Sc
 date_default_timezone_set('Europe/Rome');
 
 include 'Zend.php';
+include 'Zend/Loader.php';
 
-Zend::loadClass('Zend_Controller_Front');
-Zend::loadClass('Zend_Controller_RewriteRouter');
-Zend::loadClass('Zend_View');
-Zend::loadClass('Zend_Config_Ini');
-Zend::loadClass('Zend_Db');
-Zend::loadClass('Zend_Db_Table');
-Zend::loadClass('Zend_Filter_Input');
-Zend::loadClass('Zend_Controller_Action');
-Zend::loadClass('Zend_Controller_ModuleRouter');
-Zend::loadClass('Zend_Controller_ModuleDispatcher');
-Zend::loadClass('Zend_Auth');
-Zend::loadClass('Sigma_Auth_Database_Adapter');
-Zend::loadClass('Sigma_View_TemplateLite');
+Zend_Loader::loadClass('Zend_Controller_Front');
+//Zend_Loader::loadClass('Zend_Controller_RewriteRouter');
+Zend_Loader::loadClass('Zend_View');
+Zend_Loader::loadClass('Zend_Config_Ini');
+Zend_Loader::loadClass('Zend_Db');
+Zend_Loader::loadClass('Zend_Db_Table');
+Zend_Loader::loadClass('Zend_Filter_Input');
+Zend_Loader::loadClass('Zend_Controller_Action');
+//Zend_Loader::loadClass('Zend_Controller_ModuleRouter');
+//Zend_Loader::loadClass('Zend_Controller_ModuleDispatcher');
+Zend_Loader::loadClass('Zend_Auth');
+Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
+Zend_Loader::loadClass('Sigma_View_TemplateLite');
 
 if (!defined('TEMPLATE_LITE_DIR')) {
 	define('TEMPLATE_LITE_DIR', '/home/workspace/Scout/ScoutPad/library/Sigma/Template_Lite' . DIRECTORY_SEPARATOR);
@@ -101,7 +102,7 @@ try {
 	//run
 	$request = new Zend_Controller_Request_Http();
 	
-	Zend::loadClass('Sigma_Plugin_Auth');
+	Zend_Loader::loadClass('Sigma_Plugin_Auth');
 	$frontController->registerPlugin(new Sigma_Plugin_Auth());
 	$frontController->throwExceptions(true); //attivo l'uso delle ecezzioni al difuori di Zend!!!
     //$controller->setParam('sitemap', $sitemap);

@@ -8,7 +8,7 @@ class Admin_PermessiController extends Zend_Controller_Action
 	{
 		$this->acl = Zend::registry('acl_module');
 		try {
-			Zend::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 		}
 		catch (Zend_Exception $e) {
 			var_dump($e);
