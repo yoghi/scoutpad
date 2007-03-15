@@ -8,7 +8,6 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 	{
 		parent::__construct($data);
 
-		//$config = Zend::registry('config');
 		$this->_tpl = new Template_Lite;
 		
 		$this->_tpl->template_dir = null;
@@ -23,10 +22,8 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		if (array_key_exists('template_dir', $data)) {
 			$this->_tpl->template_dir = $data['template_dir'];
         }
-        
-        $path = Zend::registry('config')->view->path;
-        $this->setScriptPath(Zend::registry('config')->view->path);
 
+        $this->setScriptPath(Zend_Registry::get('config')->view->path);
 	}
 	
 	public function render($name){
@@ -116,7 +113,7 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 	 */
 	protected function _run()
 	{
-		$auth_module = Zend::registry('auth_module');
+		$auth_module = Zend_Registry::get('auth_module');
 		if ( $auth_module->hasIdentity() ) {
 			$identify = $auth_module->getIdentity();
 			$this->assign('user_name',$identify['nome']);

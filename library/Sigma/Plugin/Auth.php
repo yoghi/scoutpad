@@ -15,7 +15,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				
 		public function __construct(){
 			
-			$this->_auth = Zend::registry('auth_module');
+			$this->_auth = Zend_Registry::get('auth_module');
 			
 			Zend_Loader::loadClass('Zend_Acl');
 			Zend_Loader::loadClass('Zend_Acl_Role');
@@ -41,12 +41,12 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			$controller = ($request->getControllerName() == '') ? 'index' : $request->getControllerName();
 			$action = ($request->getActionName() == '') ? 'index' : $request->getActionName();
 
-			try {
+/*			try {
 				Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 			}
 			catch (Zend_Exception $e) {
 				var_dump($e);
-			}
+			}*/
 			
 			/*
 			 * Devo caricare i permessi in modo da poter eseguire il controllo sulla richiesta prima ancora di passare il controllo a chi di dovere 
@@ -88,12 +88,12 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			//CASO C => modulo inesistente
 			
 			$this->_acl = $acl; //new Zend_Acl();
-			Zend::register('acl_module', $acl );
+			Zend_Registry::set('acl_module', $acl );
        		
         	$resource = $controller;
 
         	if (!$this->_acl->has($resource)) {
-        		throw new Zend_Controller_Exception('Resource: '.$resource.' not present');
+        		throw new Zend_Controller_Exception('[ACL] Resource: '.$resource.' not present');
         	}
         	
         	Zend_Log::log("'$role' richiede la risorsa '$resource' per compiere '$action' nel modulo : '$module'" , Zend_Log::LEVEL_DEBUG);

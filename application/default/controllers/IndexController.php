@@ -13,7 +13,7 @@ class IndexController extends Zend_Controller_Action
 		$view->actionTemplate = 'index.tpl';
 		$this->getResponse()->setBody( $view->render('site.tpl') );
 		
-		$acl = Zend::registry('acl_module');
+		$acl = Zend_Registry::get('acl_module');
 		echo 'Capocampo Creare Announcement: ';
 		echo $acl->isAllowed('capocampo', 'announcement', 'add') ? "allowed" : "denied"; echo '<br/>';
 		echo 'Capocampo Creare Documenti: ';
@@ -42,7 +42,7 @@ class IndexController extends Zend_Controller_Action
 		echo 'Guest View Admin: ';
 		echo $acl->isAllowed('guest', 'admin', 'index') ? "allowed" : "denied"; echo '<br/>';
 		
-		$auth_module = Zend::registry('auth_module');
+		$auth_module = Zend_Registry::get('auth_module');
 		if ( $auth_module->hasIdentity() ){  
 			$identita = $auth_module->getIdentity();
 			echo "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";

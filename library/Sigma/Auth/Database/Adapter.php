@@ -98,7 +98,7 @@ class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
         $tokenIdentity = array();
         $tokenMessage = array();
         
-        $token = Zend::registry('config')->auth->token;
+        $token = Zend_Registry::get('config')->auth->token;
         
         $pwd_r2 = sha1($token.$this->_options['password']);
         
