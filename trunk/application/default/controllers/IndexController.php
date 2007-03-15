@@ -13,34 +13,34 @@ class IndexController extends Zend_Controller_Action
 		$view->actionTemplate = 'index.tpl';
 		$this->getResponse()->setBody( $view->render('site.tpl') );
 		
-		$acl = Zend_Registry::get('acl_module');
-		echo 'Capocampo Creare Announcement: ';
-		echo $acl->isAllowed('capocampo', 'announcement', 'add') ? "allowed" : "denied"; echo '<br/>';
-		echo 'Capocampo Creare Documenti: ';
-		echo $acl->isAllowed('capocampo', 'documenti', 'add') ? "allowed" : "denied"; echo '<br/>';
-		
-		echo '<br/>';
-		
-		echo 'Staff Creare Announcement: ';
-		echo $acl->isAllowed('staff', 'announcement', 'add') ? "allowed" : "denied"; echo '<br/>';
-		echo 'Staff Creare Documenti: ';
-		echo $acl->isAllowed('staff', 'documenti', 'add') ? "allowed" : "denied"; echo '<br/>';
-		echo 'Staff Vedere Rubrica: ';
-		echo $acl->isAllowed('staff', 'rubrica', 'index') ? "allowed" : "denied"; echo '<br/>';
-		
-		echo '<br/>';
-		
-		echo 'Member Creare Documenti: ';
-		echo $acl->isAllowed('member', 'documenti', 'add') ? "allowed" : "denied"; echo '<br/>';
-		echo 'Member Vedere Rubrica: ';
-		echo $acl->isAllowed('member', 'rubrica', 'index') ? "allowed" : "denied"; echo '<br/>';
-		echo 'Member Vedere Index: ';
-		echo $acl->isAllowed('member', 'index', 'index') ? "allowed" : "denied"; echo '<br/>';
-		
-		echo '<br/>';
-		
-		echo 'Guest View Admin: ';
-		echo $acl->isAllowed('guest', 'admin', 'index') ? "allowed" : "denied"; echo '<br/>';
+//		$acl = Zend_Registry::get('acl_module');
+//		echo 'Capocampo Creare Announcement: ';
+//		echo $acl->isAllowed('capocampo', 'announcement', 'add') ? "allowed" : "denied"; echo '<br/>';
+//		echo 'Capocampo Creare Documenti: ';
+//		echo $acl->isAllowed('capocampo', 'documenti', 'add') ? "allowed" : "denied"; echo '<br/>';
+//		
+//		echo '<br/>';
+//		
+//		echo 'Staff Creare Announcement: ';
+//		echo $acl->isAllowed('staff', 'announcement', 'add') ? "allowed" : "denied"; echo '<br/>';
+//		echo 'Staff Creare Documenti: ';
+//		echo $acl->isAllowed('staff', 'documenti', 'add') ? "allowed" : "denied"; echo '<br/>';
+//		echo 'Staff Vedere Rubrica: ';
+//		echo $acl->isAllowed('staff', 'rubrica', 'index') ? "allowed" : "denied"; echo '<br/>';
+//		
+//		echo '<br/>';
+//		
+//		echo 'Member Creare Documenti: ';
+//		echo $acl->isAllowed('member', 'documenti', 'add') ? "allowed" : "denied"; echo '<br/>';
+//		echo 'Member Vedere Rubrica: ';
+//		echo $acl->isAllowed('member', 'rubrica', 'index') ? "allowed" : "denied"; echo '<br/>';
+//		echo 'Member Vedere Index: ';
+//		echo $acl->isAllowed('member', 'index', 'index') ? "allowed" : "denied"; echo '<br/>';
+//		
+//		echo '<br/>';
+//		
+//		echo 'Guest View Admin: ';
+//		echo $acl->isAllowed('guest', 'admin', 'index') ? "allowed" : "denied"; echo '<br/>';
 		
 		$auth_module = Zend_Registry::get('auth_module');
 		if ( $auth_module->hasIdentity() ){  

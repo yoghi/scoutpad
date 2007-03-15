@@ -64,8 +64,6 @@ try {
 	/**
 	 * @todo: create generic chain for filtering input
 	 */  
-	//Zend::register('post', new Zend_Filter_Input($_POST));
-	//Zend::register('get', new Zend_Filter_Input($_GET));
 	Zend_Registry::set('filter',new Zend_Filter());
 	
 	// load configuration
@@ -100,9 +98,19 @@ try {
 	
 	Zend_Loader::loadClass('Sigma_Plugin_Auth');
 	$frontController->registerPlugin(new Sigma_Plugin_Auth());
-	$frontController->throwExceptions(true); //attivo l'uso delle ecezzioni al difuori di Zend!!!
+	//$frontController->throwExceptions(true); //attivo l'uso delle ecezzioni al difuori di Zend!!!
     //$controller->setParam('sitemap', $sitemap);
+    $frontController->returnResponse(true);
 	$response = $frontController->dispatch($request);
+	
+	if ($response->isException()) {
+	    $exceptions = $response->getException();
+	    // handle exceptions ...
+	    echo '<h1>Errore:</h1> '.$e->getMessage();
+	} else {
+	    $response->sendHeaders();
+	    $response->outputBody();
+	}
 
 	
 }
