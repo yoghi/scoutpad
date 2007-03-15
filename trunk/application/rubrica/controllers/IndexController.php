@@ -32,12 +32,12 @@ class Rubrica_IndexController extends Zend_Controller_Action
 	
 	function addAction()
 	{
-		$view = Zend::registry('view');
+		$view = Zend_Registry::get('view');
 		$view->title = "Aggiungi un nuovo membro";
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$post = Zend::registry('post');
+			$post = Zend_Registry::get('post');
 
 			$nome = trim($post->noTags('nome'));
 			$cognome = trim($post->noTags('cognome'));
@@ -87,12 +87,12 @@ class Rubrica_IndexController extends Zend_Controller_Action
 
 	function editAction()
 	{
-		$view = Zend::registry('view');
+		$view = Zend_Registry::get('view');
 		$view->title = "Modifica membro";
 		$staff = new Staff();
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
-			$post = Zend::registry('post');
+			$post = Zend_Registry::get('post');
 			$id = $post->testInt('id');
 			$nome = trim($post->noTags('nome'));
 			$cognome = trim($post->noTags('cognome'));
@@ -144,12 +144,12 @@ class Rubrica_IndexController extends Zend_Controller_Action
 
 	function deleteAction()
 	{
-		$view = Zend::registry('view');
+		$view = Zend_Registry::get('view');
 		$view->title = "Rimuovi membro";
 		$staff = new Staff();
 		
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
-			$post = Zend::registry('post');
+			$post = Zend_Registry::get('post');
 			$id = $post->getInt('id');
 			if (strtolower($post->testAlpha('del')) == 'yes' && $id > 0) {
 				$where = 'id = ' . $id;

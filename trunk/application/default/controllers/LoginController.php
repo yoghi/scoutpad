@@ -25,7 +25,7 @@ class LoginController extends Zend_Controller_Action
 
 		$view->title = "Autenticati";
 
-		$auth_module = Zend::registry('auth_module');
+		$auth_module = Zend_Registry::get('auth_module');
 
 		if ( $auth_module->hasIdentity() ){
 			$this->_redirect('/');
@@ -39,7 +39,7 @@ class LoginController extends Zend_Controller_Action
 	}
 
 	public function outAction(){
-		$auth_module = Zend::registry('auth_module');
+		$auth_module = Zend_Registry::get('auth_module');
 		$auth_module->clearIdentity();
 		$this->_redirect('/login/');
 	}
@@ -51,15 +51,17 @@ class LoginController extends Zend_Controller_Action
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$post = Zend::registry('post');
+			$filter = Zend_Registry::get('filter');
+			
+			$post = $filter->filter($_POST);
 
-			$mail = trim($post->noTags('mail'));
-			$password = trim($post->noTags('password'));
+			$mail = trim($post['mail']);
+			$password = trim($post['password']);
 
 			if ($mail != '' && $password != '') {
 
-				$auth_module = Zend::registry('auth_module');
-				$database = Zend::registry('database');
+				$auth_module = Zend_Registry::get('auth_module');
+				$database = Zend_Registry::get('database');
 				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array('field_password' => 'password','field_username' => 'mail','table' => 'staff' ,'username' => $mail, 'password' => $password));
 
 				try {
@@ -69,8 +71,6 @@ class LoginController extends Zend_Controller_Action
 					$result = $auth_module->authenticate($auth_module_adapter);
 		
 					if ( $result->isValid()  ){
-						// $result->getIdentity() === $auth->getIdentity()
-						// $result->getIdentity() === $username
 						$this->_redirect('/');
 					}
 
@@ -94,19 +94,21 @@ class LoginController extends Zend_Controller_Action
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$post = Zend::registry('post');
+			$filter = Zend_Registry::get('filter');
+			
+			$post = $filter->filter($_POST);
 
-			$mail = trim($post->noTags('mail'));
-			$cellulare = trim($post->noTags('cellulare'));
-			$password = trim($post->noTags('password'));
+			$mail = trim($post['mail']);
+			$cellulare = trim($post['cellulare']);
+			$password = trim($post['password']);
 
 			if ($mail != '' && $cellulare != '' && $password != '') {
 
-				$auth_module = Zend::registry('auth_module');
+				$auth_module = Zend_Registry::get('auth_module');
 
 				try {
 
-					$token = Zend::registry('config')->auth->token;
+					$token = Zend_Registry::get('config')->auth->token;
 					$password_new = sha1($token.$password);
 
 					$s = new Staff();
@@ -146,21 +148,22 @@ class LoginController extends Zend_Controller_Action
 
 	public function lostAction(){
 
-		$view = Zend::registry('view');
-
+		$view = new Sigma_View_TemplateLite();
 		$view->title = "Lost Password";
 
-		$auth_module = Zend::registry('auth_module');
+		$auth_module = Zend_Registry::get('auth_module');
 
-		if ( $auth_module->isLoggedIn() ){
+		if ( $auth_module->hasIdentity() ){
 			$this->_redirect('/');
 		}
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$post = Zend::registry('post');
+			$filter = Zend_Registry::get('filter');
+			
+			$post = $filter->filter($_POST);
 
-			$mail = trim($post->noTags('mail'));
+			$mail = trim($post['mail']);
 
 			if ($mail != '') {
 

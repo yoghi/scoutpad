@@ -6,7 +6,7 @@ class Admin_PermessiController extends Zend_Controller_Action
 	
 	function init()
 	{
-		$this->acl = Zend::registry('acl_module');
+		$this->acl = Zend_Registry::get('acl_module');
 		try {
 			Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 		}

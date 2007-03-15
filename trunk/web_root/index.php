@@ -7,17 +7,17 @@ date_default_timezone_set('Europe/Rome');
 include 'Zend.php';
 include 'Zend/Loader.php';
 
+Zend_Loader::loadClass('Zend_Registry');
 Zend_Loader::loadClass('Zend_Controller_Front');
-//Zend_Loader::loadClass('Zend_Controller_RewriteRouter');
 Zend_Loader::loadClass('Zend_View');
 Zend_Loader::loadClass('Zend_Config_Ini');
 Zend_Loader::loadClass('Zend_Db');
 Zend_Loader::loadClass('Zend_Db_Table');
-Zend_Loader::loadClass('Zend_Filter_Input');
 Zend_Loader::loadClass('Zend_Controller_Action');
-//Zend_Loader::loadClass('Zend_Controller_ModuleRouter');
-//Zend_Loader::loadClass('Zend_Controller_ModuleDispatcher');
+Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
+Zend_Loader::loadClass('Zend_Controller_Dispatcher_Standard');
 Zend_Loader::loadClass('Zend_Auth');
+Zend_Loader::loadClass('Zend_Filter');
 Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
 Zend_Loader::loadClass('Sigma_View_TemplateLite');
 
@@ -61,43 +61,39 @@ try {
 	Zend_Log::log('---------------------------------------------------------------------------', Zend_Log::LEVEL_INFO);
 
 	// register the input filters
-	Zend::register('post', new Zend_Filter_Input($_POST));
-	Zend::register('get', new Zend_Filter_Input($_GET));
-
+	/**
+	 * @todo: create generic chain for filtering input
+	 */  
+	//Zend::register('post', new Zend_Filter_Input($_POST));
+	//Zend::register('get', new Zend_Filter_Input($_GET));
+	Zend_Registry::set('filter',new Zend_Filter());
+	
 	// load configuration
 	$config = new Zend_Config_Ini('/home/workspace/Scout/ScoutPad/application/config.ini', 'general');
 
 	// setup database
-	Zend::register('config', $config);
+	Zend_Registry::set('config', $config);
 	$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->asArray() );
-	Zend::register('database', $db);
+	Zend_Registry::set('database', $db);
 	Zend_Db_Table::setDefaultAdapter($db);
 
 	// Autentication
-	Zend::register('auth_module', Zend_Auth::getInstance());
+	Zend_Registry::set('auth_module', Zend_Auth::getInstance());
 	
 	// Session
 	//require_once 'Zend/Session.php';
 	//Zend_Session_Core::setOptions(array('remember_me_seconds' => $config->session->live, 'name' => $config->session->name));
 	//Zend::register('session_module', new Zend_Session($config->session->name));
 	
-
-	//Setup controller
-//	$router = new Zend_Controller_RewriteRouter();
-//	$frontController->setRouter($router);
-//	$frontController->setControllerDirectory('/home/workspace/Scout/ScoutPad/application/controllers');
-	//$baseUrl = substr($_SERVER['PHP_SELF'], 0, strpos($_SERVER['PHP_SELF'], '/index.php'));
-	//$router->setRewriteBase($baseUrl);
-	
 	// setting controller
 	$frontController = Zend_Controller_Front::getInstance();
 	$frontController->setControllerDirectory(array( 
-      'default' => array('/home/workspace/Scout/ScoutPad/application/default/controllers'),
+      'default' => '/home/workspace/Scout/ScoutPad/application/default/controllers',
       'rubrica' => '/home/workspace/Scout/ScoutPad/application/rubrica/controllers',
       'admin' => '/home/workspace/Scout/ScoutPad/application/admin/controllers'
 	)); 
-	$frontController->setRouter(new Zend_Controller_ModuleRouter()); 
-	$frontController->setDispatcher(new Zend_Controller_ModuleDispatcher());
+	$frontController->setRouter(new Zend_Controller_Router_Rewrite());
+	$frontController->setDispatcher(new Zend_Controller_Dispatcher_Standard());
 	
 	//run
 	$request = new Zend_Controller_Request_Http();
@@ -108,19 +104,6 @@ try {
     //$controller->setParam('sitemap', $sitemap);
 	$response = $frontController->dispatch($request);
 
-	//
-	//if($response->isException())
-	//{
-	//    echo $response->getException();
-	//    exit; // Stop here - ;)
-	//}
-	//
-	///*
-	// * Echo the response (with headers) to client
-	// * Zend_Controller_Response_Http implements
-	// * __toString().
-	// */
-	//echo $response;
 	
 }
 catch (Exception $e){
