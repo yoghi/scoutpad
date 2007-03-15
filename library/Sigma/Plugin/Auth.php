@@ -31,7 +31,9 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			} else {
 				$role = 'guest';
 			}
-			
+
+			// :module/:controller/:action/*
+			// :controller/:action/*
 			/*
         	 * Nota bene che se si setta un 'module' si ottiene che la classe AdminController diventi Default_AdminController
         	 * bisogna stare attenti!!!
@@ -40,13 +42,6 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			
 			$controller = ($request->getControllerName() == '') ? 'index' : $request->getControllerName();
 			$action = ($request->getActionName() == '') ? 'index' : $request->getActionName();
-
-/*			try {
-				Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-			}
-			catch (Zend_Exception $e) {
-				var_dump($e);
-			}*/
 			
 			/*
 			 * Devo caricare i permessi in modo da poter eseguire il controllo sulla richiesta prima ancora di passare il controllo a chi di dovere 
@@ -78,10 +73,12 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			//CASO A => default [letti da tutti, sono quelli comuni ??]
 			
 			$acl->add(new Zend_Acl_Resource('login'));		// public login
+			$acl->add(new Zend_Acl_Resource('errore'));		// public login
 			$acl->add(new Zend_Acl_Resource('index'));		// public home
 			
 			$acl->allow($roleGuest, 'index', 'index'); //posso eseguire ciò che voglio sulla index
 			$acl->allow($roleGuest, 'login', null); //posso eseguire ciò che voglio sul login
+			$acl->allow($roleGuest, 'errore', null); //posso eseguire ciò che voglio sull'errore
 			
 			//CASO B => modulo installato 
 			
@@ -98,19 +95,22 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
         	
         	Zend_Log::log("'$role' richiede la risorsa '$resource' per compiere '$action' nel modulo : '$module'" , Zend_Log::LEVEL_DEBUG);
 
-			if ( !$this->_auth->hasIdentity() && $resource != 'login' && ( $module != null || $resource != 'index' ) ) {
-				Zend_Log::log('Utente non autenticato!!', Zend_Log::LEVEL_DEBUG);
-       			$module = $this->_noauth['module'];
-       			$controller = $this->_noauth['controller'];
-       			$action = $this->_noauth['action'];
-        	} else {
-	        	if (!$this->_acl->isAllowed($role, $resource, $action)) {
-	        		Zend_Log::log('Permesso alla risorsa negato!!', Zend_Log::LEVEL_DEBUG);
-	       			$module = $this->_noacl['module'];
-	       			$controller = $this->_noacl['controller'];
-	       			$action = $this->_noacl['action'];
-	        	} 
-        	}
+			//if ( !$this->_auth->hasIdentity() && $resource != 'login' && ( $module != null || $resource != 'index' ) ) {
+			if ( $module != 'default' ) {
+				if ( !$this->_auth->hasIdentity() ) { 
+					Zend_Log::log('Utente non autenticato!!', Zend_Log::LEVEL_DEBUG);
+	       			$module = $this->_noauth['module'];
+	       			$controller = $this->_noauth['controller'];
+	       			$action = $this->_noauth['action'];
+	        	} else {
+		        	if (!$this->_acl->isAllowed($role, $resource, $action)) {
+		        		Zend_Log::log('Permesso alla risorsa negato!!', Zend_Log::LEVEL_DEBUG);
+		       			$module = $this->_noacl['module'];
+		       			$controller = $this->_noacl['controller'];
+		       			$action = $this->_noacl['action'];
+		        	} 
+	        	}
+			}
 			
         	Zend_Log::log("Eseguo: $module _ $controller -> $action", Zend_Log::LEVEL_DEBUG);
         	
