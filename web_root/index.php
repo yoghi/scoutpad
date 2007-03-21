@@ -106,7 +106,10 @@ try {
 	if ($response->isException()) {
 	    $exceptions = $response->getException();
 	    // handle exceptions ...
-	    echo '<h1>Errore:</h1> '.$e->getMessage();
+	    echo '<h1>Errore:</h1> ';
+	    foreach($e as $exceptions){
+	    	echo $exceptions->getMessage();
+	    }
 	} else {
 	    $response->sendHeaders();
 	    $response->outputBody();
