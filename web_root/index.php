@@ -3,6 +3,7 @@
 set_include_path(get_include_path() . PATH_SEPARATOR . '/home/workspace/Scout/ScoutPad/library');
 
 date_default_timezone_set('Europe/Rome');
+ini_set('session.save_path','/tmp');
 
 include 'Zend.php';
 include 'Zend/Loader.php';
@@ -20,6 +21,8 @@ Zend_Loader::loadClass('Zend_Auth');
 Zend_Loader::loadClass('Zend_Filter');
 Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
 Zend_Loader::loadClass('Sigma_View_TemplateLite');
+Zend_Loader::loadClass('Zend_Log');
+
 
 if (!defined('TEMPLATE_LITE_DIR')) {
 	define('TEMPLATE_LITE_DIR', '/home/workspace/Scout/ScoutPad/library/Sigma/Template_Lite' . DIRECTORY_SEPARATOR);
@@ -47,18 +50,41 @@ set_error_handler("sigma_error_handler");
 
 try {
 
-	// DEBUG
-	require_once 'Zend/Log.php';                // Zend_Log base class
-	require_once 'Zend/Log/Adapter/File.php';   // File log adapter
-	// Register the file logger
-	Zend_Log::registerLogger(new Zend_Log_Adapter_File('/tmp/debug.txt'));
-	// Register the console logger
-	//require_once 'Zend/Log/Adapter/Console.php'; // Console log adapter
+	// load configuration
+	try {
+		$config = new Zend_Config_Ini('/home/workspace/Scout/ScoutPad/application/config.ini', 'general');
+		Zend_Registry::set('config', $config);
+	} catch (Zend_Config_Exception $e) {
+		echo '<h1>Misconfiguration</h1>';
+		echo '<b>config.ini not found or not readable</b>';
+		exit;
+	}
+	
+	if ( !is_null($config->db->adapter) ) {
+		//database 
+		try {
+			$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->asArray() );
+			Zend_Registry::set('database', $db);
+			Zend_Db_Table::setDefaultAdapter($db);
+		} catch (Zend_Db_Exception $e){
+			echo '<h1>Misconfiguration</h1>';
+			echo '<b>Database selected in config.ini not avaible</b>';
+			exit;
+		}
+		//Loggo su tabella
+		Zend_Loader::loadClass('Zend_Log_Adapter_Db');
+		Zend_Log::registerLogger(new Zend_Log_Adapter_Db($db,'logging'));
+		
+	} else {
+		
+		//Loggo su file
+		Zend_Loader::loadClass('Zend_Log_Adapter_File');
+		Zend_Log::registerLogger(new Zend_Log_Adapter_File('/tmp/debug.txt'));
+		
+	}
 	//Zend_Log::registerLogger(new Zend_Log_Adapter_Console(), 'Console');
 	//esempio
 	//Zend_Log::log('A serious error has occurred.', Zend_Log::LEVEL_SEVERE);
-	
-	Zend_Log::log('---------------------------------------------------------------------------', Zend_Log::LEVEL_INFO);
 
 	// register the input filters
 	/**
@@ -66,15 +92,6 @@ try {
 	 */  
 	Zend_Registry::set('filter',new Zend_Filter());
 	
-	// load configuration
-	$config = new Zend_Config_Ini('/home/workspace/Scout/ScoutPad/application/config.ini', 'general');
-
-	// setup database
-	Zend_Registry::set('config', $config);
-	$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->asArray() );
-	Zend_Registry::set('database', $db);
-	Zend_Db_Table::setDefaultAdapter($db);
-
 	// Autentication
 	Zend_Registry::set('auth_module', Zend_Auth::getInstance());
 	
@@ -104,12 +121,17 @@ try {
 	$response = $frontController->dispatch($request);
 	
 	if ($response->isException()) {
-	    $exceptions = $response->getException();
+	    $e = $response->getException();
 	    // handle exceptions ...
-	    echo '<h1>Errore:</h1> ';
+	    echo '<h1>Errore:</h1><ul>';
 	    foreach($e as $exceptions){
-	    	echo $exceptions->getMessage();
+	    	echo '<li>';
+	    	echo "<b>" . get_class($exceptions) . '</b><br/>';
+	    	echo $exceptions->getMessage().'<br/>';
+	    	echo $exceptions->getFile().', '.$exceptions->getLine().'<br/>';
+	    	echo '</li>';
 	    }
+	    echo '</ul>';
 	} else {
 	    $response->sendHeaders();
 	    $response->outputBody();

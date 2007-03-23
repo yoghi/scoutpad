@@ -50,6 +50,10 @@ class IndexController extends Zend_Controller_Action
 
 	}
 	
+	public function infoAction(){
+		phpinfo();
+	}
+	
 	public function annunciAction(){
 		echo '<h2>Annunci ...</h2>';
 	}
