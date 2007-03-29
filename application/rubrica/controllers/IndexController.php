@@ -32,20 +32,23 @@ class Rubrica_IndexController extends Zend_Controller_Action
 	
 	function addAction()
 	{
-		$view = Zend_Registry::get('view');
+		$view = new Sigma_View_TemplateLite();
+		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/rubrica/views/scout');
 		$view->title = "Aggiungi un nuovo membro";
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$post = Zend_Registry::get('post');
-
-			$nome = trim($post->noTags('nome'));
-			$cognome = trim($post->noTags('cognome'));
-			$mail = trim($post->noTags('mail'));
-			$cellulare = trim($post->noTags('cellulare'));
-			$fisso = trim($post->noTags('fisso'));
-			$gruppo = trim($post->noTags('gruppo'));
-			$status = trim($post->noTags('status'));
+			$filter = Zend_Registry::get('filter');
+			
+			$post = $filter->filter($_POST);
+			
+			$nome = trim($post['nome']);
+			$cognome = trim($post['cognome']);
+			$mail = trim($post['mail']);
+			$cellulare = trim($post['cellulare']);
+			$fisso = trim($post['fisso']);
+			$gruppo = trim($post['gruppo']);
+			$status = trim($post['status']);
 			
 			if ($cognome != '' && $nome != '') {
 					$data = array(
@@ -87,20 +90,28 @@ class Rubrica_IndexController extends Zend_Controller_Action
 
 	function editAction()
 	{
-		$view = Zend_Registry::get('view');
+		$view = new Sigma_View_TemplateLite();
+		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/rubrica/views/scout');
 		$view->title = "Modifica membro";
 		$staff = new Staff();
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
+			
 			$post = Zend_Registry::get('post');
-			$id = $post->testInt('id');
-			$nome = trim($post->noTags('nome'));
-			$cognome = trim($post->noTags('cognome'));
-			$mail = trim($post->noTags('mail'));
-			$cellulare = trim($post->noTags('cellulare'));
-			$fisso = trim($post->noTags('fisso'));
-			$gruppo = trim($post->noTags('gruppo'));
-			$status = trim($post->noTags('status'));
+			
+			$filter = Zend_Registry::get('filter');
+			
+			$post = $filter->filter($_POST);
+			
+			$id = is_int($post['id']) ? $post['id'] : -1;
+			$nome = trim($post['nome']);
+			$cognome = trim($post['cognome']);
+			$mail = trim($post['mail']);
+			$cellulare = trim($post['cellulare']);
+			$fisso = trim($post['fisso']);
+			$gruppo = trim($post['gruppo']);
+			$status = trim($post['status']);
+			
 			
 			if ($id !== false) {
 				if ($cognome!= '' && $nome != '') {
@@ -149,9 +160,14 @@ class Rubrica_IndexController extends Zend_Controller_Action
 		$staff = new Staff();
 		
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
+			
 			$post = Zend_Registry::get('post');
-			$id = $post->getInt('id');
-			if (strtolower($post->testAlpha('del')) == 'yes' && $id > 0) {
+			
+			$filter = Zend_Registry::get('filter');
+			
+			$id = is_int($post['id']) ? $post['id'] : -1;
+			
+			if (strtolower($post['del']) == 'yes' && $id > 0) {
 				$where = 'id = ' . $id;
 				$staff->delete($where);
 			}

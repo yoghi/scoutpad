@@ -1,4 +1,4 @@
-<form action="/rubrica/{$action}" method="post">
+<form action="/rubrica/index/{$action}" method="post">
 	<p>
 		<label for="nome">Nome</label>
 		<input type="text" class="input-large" name="nome" value="{$staff.nome}"/>

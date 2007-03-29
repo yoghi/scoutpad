@@ -14,6 +14,7 @@ Zend_Loader::loadClass('Zend_View');
 Zend_Loader::loadClass('Zend_Config_Ini');
 Zend_Loader::loadClass('Zend_Db');
 Zend_Loader::loadClass('Zend_Db_Table');
+Zend_Loader::loadClass('Zend_Db_Table_Rowset');
 Zend_Loader::loadClass('Zend_Controller_Action');
 Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
 Zend_Loader::loadClass('Zend_Controller_Dispatcher_Standard');
@@ -73,7 +74,7 @@ try {
 		}
 		//Loggo su tabella
 		Zend_Loader::loadClass('Zend_Log_Adapter_Db');
-		Zend_Log::registerLogger(new Zend_Log_Adapter_Db($db,'logging'));
+		Zend_Log::registerLogger(new Zend_Log_Adapter_Db($db,'Log'));
 		
 	} else {
 		

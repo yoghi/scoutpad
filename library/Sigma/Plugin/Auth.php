@@ -2,11 +2,11 @@
 
 class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 
-		private $_noauth = array('module' => null,
+		private $_noauth = array('module' => 'default',
 								'controller' => 'login',
 								'action' => 'index');
 
-		private $_noacl = array('module' => null,
+		private $_noacl = array('module' => 'default',
 								'controller' => 'errore',
 								'action' => 'privileges');
 

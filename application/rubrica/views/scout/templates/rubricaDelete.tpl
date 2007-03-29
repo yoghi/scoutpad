@@ -1,6 +1,6 @@
 <h1>{$title}</h1>
 {if isset($staff.id) }
-<form action="/rubrica/delete" method="post">
+<form action="/rubrica/index/delete" method="post">
 <p>Sicuro di voler eliminare {$staff.nome} {$staff.cognome}?</p>
 	<div>
 		<input type="hidden" name="id" value="{$staff.id}"/> 
