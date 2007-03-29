@@ -48,6 +48,16 @@ class IndexController extends Zend_Controller_Action
 			echo "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";
 		}
 
+		Zend_Loader::loadClass('Log','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+		
+		$logs = new Log();
+		
+		$result = $logs->fetchAll();
+		
+		foreach( $result->toArray() as $a ){
+			echo $a['message'].'<br/>';
+		}
+		
 	}
 	
 	public function infoAction(){
