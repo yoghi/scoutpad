@@ -1,4 +1,4 @@
-<div align="center">
+<div style="width: 700px;">
 	<div class="infoMacro">
 		<b>complete!</b>
 		{if count($confirm_text) gt 1}
@@ -11,4 +11,7 @@
 			<p>{$confim_text[0]}</p>
 		{(if}
 	</div>
+	
+	<h2><a style="text-decoration:none;" href="/">&ldquo; Clicca qui per ritornare nella homepage &rdquo; </a></h2>
+	
 </div>

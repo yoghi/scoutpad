@@ -5,7 +5,7 @@ set_include_path(get_include_path() . PATH_SEPARATOR . '/home/workspace/Scout/Sc
 date_default_timezone_set('Europe/Rome');
 ini_set('session.save_path','/tmp');
 
-include 'Zend.php';
+//include 'Zend.php';
 include 'Zend/Loader.php';
 
 Zend_Loader::loadClass('Zend_Registry');
@@ -23,6 +23,9 @@ Zend_Loader::loadClass('Zend_Filter');
 Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
 Zend_Loader::loadClass('Sigma_View_TemplateLite');
 Zend_Loader::loadClass('Zend_Log');
+Zend_Loader::loadClass('Zend_Log_Writer_Stream');
+Zend_Loader::loadClass('Zend_Log_Formatter_Xml');
+
 
 
 if (!defined('TEMPLATE_LITE_DIR')) {
@@ -43,13 +46,21 @@ function sigma_error_handler($errno, $errmsg, $filename, $linenum, $vars) {
 	
 	$err .= "\n";
 	
-	Zend_Log::log($err, Zend_Log::LEVEL_DEBUG);
+	Zend_Registry::get('log')->log($err, Zend_Log::DEBUG);
 	
 }
 
 set_error_handler("sigma_error_handler");
 
 try {
+	
+	$log = new Zend_Log();
+	Zend_Registry::set('log',$log);
+	//formatter default `timestamp`, `message`, `priority`, `priorityName`
+	$formatter = new Zend_Log_Formatter_Xml();
+	$stream = new Zend_Log_Writer_Stream('/tmp/debug.txt');
+	$stream->setFormatter($formatter);
+	$log->addWriter($stream); //sicuramente su file
 
 	// load configuration
 	try {
@@ -73,14 +84,8 @@ try {
 			exit;
 		}
 		//Loggo su tabella
-		Zend_Loader::loadClass('Zend_Log_Adapter_Db');
-		Zend_Log::registerLogger(new Zend_Log_Adapter_Db($db,'Log'));
-		
-	} else {
-		
-		//Loggo su file
-		Zend_Loader::loadClass('Zend_Log_Adapter_File');
-		Zend_Log::registerLogger(new Zend_Log_Adapter_File('/tmp/debug.txt'));
+		Zend_Loader::loadClass('Zend_Log_Writer_Db');
+		$log->addWriter(new Zend_Log_Writer_Db($db,'Log')); //ora anche su db
 		
 	}
 	//Zend_Log::registerLogger(new Zend_Log_Adapter_Console(), 'Console');
@@ -142,5 +147,8 @@ try {
 }
 catch (Exception $e){
 	echo '<h1>Errore:</h1> '.$e->getMessage();
+	echo '<pre>';
+	print_r($e->getTrace());
+	echo '</pre>';
 }
 ?>
