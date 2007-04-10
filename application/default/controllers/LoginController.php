@@ -16,14 +16,17 @@ class LoginController extends Zend_Controller_Action
 		catch (Zend_Exception $e) {
 			var_dump($e);
 		}
+		
+		$this->view = new Sigma_View_TemplateLite();
+		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/login.css" />';
 
 	}
 
 	public function indexAction()
 	{
-		$view = new Sigma_View_TemplateLite();
+		
 
-		$view->title = "Autenticati";
+		$this->view->title = "Autenticati";
 
 		$auth_module = Zend_Registry::get('auth_module');
 
@@ -31,10 +34,10 @@ class LoginController extends Zend_Controller_Action
 			$this->_redirect('/');
 		}
 
-		$view->buttonText = 'Identifica';
-		$view->actionTemplate = 'forms/_loginForm.tpl';
+		$this->view->buttonText = 'Identifica';
+		$this->view->actionTemplate = 'forms/_loginForm.tpl';
 
-		$this->getResponse()->setBody( $view->render('site.tpl') );
+		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 
 	}
 
@@ -46,8 +49,7 @@ class LoginController extends Zend_Controller_Action
 
 	public function inAction(){
 
-		$view = new Sigma_View_TemplateLite();
-		$view->title = "Login";
+		$this->view->title = "Login";
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
@@ -62,7 +64,7 @@ class LoginController extends Zend_Controller_Action
 
 				$auth_module = Zend_Registry::get('auth_module');
 				$database = Zend_Registry::get('database');
-				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array('field_password' => 'password','field_username' => 'mail','table' => 'staff' ,'username' => $mail, 'password' => $password));
+				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array('field_password' => 'password','field_username' => 'mail','table' => 'Staff' ,'username' => $mail, 'password' => $password));
 
 				try {
 
@@ -89,8 +91,7 @@ class LoginController extends Zend_Controller_Action
 
 	public function confirmAction(){
 
-		$view = new Sigma_View_TemplateLite();
-		$view->title = "Conferma";
+		$this->view->title = "Conferma";
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
@@ -140,16 +141,15 @@ class LoginController extends Zend_Controller_Action
 			}
 		}
 
-		$view->buttonText = 'Conferma';
-		$view->actionTemplate = 'forms/_confirmForm.tpl';
-		$this->getResponse()->setBody( $view->render('site.tpl') );
+		$this->view->buttonText = 'Conferma';
+		$this->view->actionTemplate = 'forms/_confirmForm.tpl';
+		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 
 	}
 
 	public function lostAction(){
 
-		$view = new Sigma_View_TemplateLite();
-		$view->title = "Lost Password";
+		$this->view->title = "Lost Password";
 
 		$auth_module = Zend_Registry::get('auth_module');
 
@@ -184,10 +184,10 @@ class LoginController extends Zend_Controller_Action
 						$this->_redirect('/errore/');
 					}
 					
-					$view->confim_text = array('Mail inviata correttamente!');
-					$view->actionTemplate = 'ok.tpl';
+					$this->view->confim_text = array('Mail inviata correttamente!');
+					$this->view->actionTemplate = 'ok.tpl';
 			
-					$this->getResponse()->setBody( $view->render('site.tpl') );
+					$this->getResponse()->setBody( $this->view->render('site.tpl') );
 					
 				} catch (Exception $e) {
 					echo $e->getMessage();
@@ -196,8 +196,8 @@ class LoginController extends Zend_Controller_Action
 
 		}
 
-		$view->buttonText = 'Rispedisci';
-		$view->actionTemplate = 'forms/_lostForm.tpl';
+		$this->view->buttonText = 'Rispedisci';
+		$this->view->actionTemplate = 'forms/_lostForm.tpl';
 
 		$this->getResponse()->setBody( $view->render('site.tpl') );
 

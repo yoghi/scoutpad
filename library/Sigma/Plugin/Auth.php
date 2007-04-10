@@ -75,10 +75,12 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			$acl->add(new Zend_Acl_Resource('login'));		// public login
 			$acl->add(new Zend_Acl_Resource('errore'));		// public login
 			$acl->add(new Zend_Acl_Resource('index'));		// public home
+			$acl->add(new Zend_Acl_Resource('image'));		// public home
 			
-			$acl->allow($roleGuest, 'index', 'index'); //posso eseguire ciò che voglio sulla index
+			$acl->allow($roleGuest, 'index', array('index','torriana')); //posso eseguire ciò che voglio sulla index
 			$acl->allow($roleGuest, 'login', null); //posso eseguire ciò che voglio sul login
 			$acl->allow($roleGuest, 'errore', null); //posso eseguire ciò che voglio sull'errore
+			$acl->allow($roleGuest, 'image', array('index','reflect'));
 			
 			//CASO B => modulo installato 
 			
@@ -89,22 +91,28 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
        		
         	$resource = $controller;
 
-        	if (!$this->_acl->has($resource)) {
-        		throw new Zend_Controller_Exception('[ACL] Resource: '.$resource.' not present');
+			if (!$this->_acl->has($resource)) {
+				$module = 'default';
+				$controller = 'index';
+        		$action = $resource;
+        		$resource = 'index';
+        		//throw new Zend_Controller_Exception('[ACL] Resource: '.$resource.' not present');
         	}
         	
-        	Zend_Log::log("'$role' richiede la risorsa '$resource' per compiere '$action' nel modulo : '$module'" , Zend_Log::LEVEL_DEBUG);
+        	$log = Zend_Registry::get('log');
+        	
+        	$log->log("'$role' richiede la risorsa '$resource' per compiere '$action' nel modulo : '$module'" , Zend_Log::DEBUG);
 
 			//if ( !$this->_auth->hasIdentity() && $resource != 'login' && ( $module != null || $resource != 'index' ) ) {
 			if ( $module != 'default' ) {
 				if ( !$this->_auth->hasIdentity() ) { 
-					Zend_Log::log('Utente non autenticato!!', Zend_Log::LEVEL_DEBUG);
+					$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
 	       			$module = $this->_noauth['module'];
 	       			$controller = $this->_noauth['controller'];
 	       			$action = $this->_noauth['action'];
 	        	} else {
 		        	if (!$this->_acl->isAllowed($role, $resource, $action)) {
-		        		Zend_Log::log('Permesso alla risorsa negato!!', Zend_Log::LEVEL_DEBUG);
+		        		$log->log('Permesso alla risorsa negato!!', Zend_Log::DEBUG);
 		       			$module = $this->_noacl['module'];
 		       			$controller = $this->_noacl['controller'];
 		       			$action = $this->_noacl['action'];
@@ -112,7 +120,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 	        	}
 			}
 			
-        	Zend_Log::log("Eseguo: $module _ $controller -> $action", Zend_Log::LEVEL_DEBUG);
+        	$log->log("Eseguo: $module _ $controller -> $action", Zend_Log::DEBUG);
         	
         	$request->setModuleName($module);
         	$request->setControllerName($controller);

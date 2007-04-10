@@ -6,12 +6,41 @@
 
 class IndexController extends Zend_Controller_Action
 {
+	
+	function init()
+	{
+		$this->view = new Sigma_View_TemplateLite();
+		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/double.css" />';
+	}
+	
+	
 	public function indexAction()
 	{
-		$view = new Sigma_View_TemplateLite();
-		$view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
-		$view->actionTemplate = 'index.tpl';
-		$this->getResponse()->setBody( $view->render('site.tpl') );
+		
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		//$this->view->actionTemplate = 'home.tpl';
+		
+		$auth_module = Zend_Registry::get('auth_module');
+		if ( $auth_module->hasIdentity() ){  
+			$identita = $auth_module->getIdentity();
+			$this->view->info_user = "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";
+		}
+		
+		
+		$this->view->actionTemplate = 'index.tpl';	
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+
+//		Zend_Loader::loadClass('Log','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+//		
+//		$logs = new Log();
+//		
+//		$result = $logs->fetchAll();
+		
+//		foreach( $result->toArray() as $a ){
+//			echo $a['message'].'<br/>';
+//		}
+		
+		
 		
 //		$acl = Zend_Registry::get('acl_module');
 //		echo 'Capocampo Creare Announcement: ';
@@ -42,22 +71,19 @@ class IndexController extends Zend_Controller_Action
 //		echo 'Guest View Admin: ';
 //		echo $acl->isAllowed('guest', 'admin', 'index') ? "allowed" : "denied"; echo '<br/>';
 		
-		$auth_module = Zend_Registry::get('auth_module');
-		if ( $auth_module->hasIdentity() ){  
-			$identita = $auth_module->getIdentity();
-			echo "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";
-		}
+	}
+	
+	public function torrianaAction(){
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		$this->view->actionTemplate = 'torriana.tpl';
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+	}
 
-		Zend_Loader::loadClass('Log','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-		
-		$logs = new Log();
-		
-		$result = $logs->fetchAll();
-		
-		foreach( $result->toArray() as $a ){
-			echo $a['message'].'<br/>';
-		}
-		
+	public function templateAction(){
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		$this->view->actionTemplate = 'template.tpl';
+		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/single.css" />';
+		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}
 	
 	public function infoAction(){
@@ -66,12 +92,6 @@ class IndexController extends Zend_Controller_Action
 	
 	public function annunciAction(){
 		echo '<h2>Annunci ...</h2>';
-	}
-
-	public function noRouteAction()
-	{
-		$this->_redirect('/index/');
-		//$this->indexAction();
 	}
 }
 

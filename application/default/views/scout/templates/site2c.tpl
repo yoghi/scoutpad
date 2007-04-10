@@ -11,11 +11,19 @@
 		{/if}
 	</head>
 	<body>
-		<div align="center" id="wrapper">
+		<div id="wrapper">
 			{include file="head.tpl"}
 			<!-- il template del content -->
+			{include file="sidebar.tpl"}
 			{include file=$actionTemplate}
 			{include file="footer.tpl"}
 		</div>
+			
+		{if isset($info_user)}
+		
+			<em>{$info_user}</em>
+		
+		{/if}
+		
 	</body>
 </html>
