@@ -15,7 +15,7 @@
 			{include file="head.tpl"}
 			<!-- il template del content -->
 			{include file="sidebar.tpl"}
-			{include file=$actionTemplate}
+			{include file=contents/$actionTemplate}
 			{include file="footer.tpl"}
 		</div>
 			
