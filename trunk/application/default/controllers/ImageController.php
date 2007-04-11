@@ -13,6 +13,8 @@ class ImageController extends Zend_Controller_Action
 	
 	private $image_name = '';
 	
+	private $image_dir = '';
+	
 	private $cache = false;
 	
 	private $height = null;
@@ -33,49 +35,128 @@ class ImageController extends Zend_Controller_Action
 	
 	public function indexAction(){
 		
-		if ( array_key_exists('url',$this->params) ){
+		if ( $this->_url() ){
 			
-			// verifico se è una sottodirectory 
-			
-			$source_image = $this->params['url'];
-
-			$dir = 'images/';
-			
-			$r = explode('.',$source_image);
-
-			if ( $r > 2 ){
-				//c'è una o piu direttori
-				for ( $i=0; $i < count($r)-2; $i++ ) {
-					$dir .= $r[$i].DIRECTORY_SEPARATOR;
-				}
-			}
-			
-			$this->image_name = $r[$i].'.'.$r[$i+1];
-			
-			$filename = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $dir. $this->image_name;
+			$filename = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $this->image_dir. $this->image_name;
 			
 			$size = getimagesize($filename);
 			
-			$fp = fopen($filename, "rb");
+			if ($size === false)
+			{
+				$this->_redirect('/errore/invalid/');
+				//echo 'Not a valid image supplied, or this script does not have permissions to access it.';
+			}
 			
-			if ($size && $fp) {
+			$width = $size[0];
+			$height = $size[1];
+			$type = $size[2];
+			$mime = $size['mime'];
+			
+			// quanto vale l'altezza dell'immagine
+			$this->height = $height;
+			
+			//	Detect the source image format - only GIF, JPEG and PNG are supported. If you need more, extend this yourself.
+			switch ($type)
+			{
+				case 1:
+					//	GIF
+					$source = imagecreatefromgif($filename);
+					break;
+			
+				case 2:
+					//	JPG
+					$source = imagecreatefromjpeg($filename);
+					break;
+			
+				case 3:
+					//	PNG
+					$source = imagecreatefrompng($filename);
+					break;
+			
+				default:
+					$this->_redirect('/errore/notsupported/');
+			}
+			
+			// guardo se devo modificare il colore all'immagine
+			if ( $this->_tint() ) {
 				
-				$this->_response->setHeader('Content-type',$size['mime'],'true');
-			    fpassthru($fp);
-			    
-			    fclose($fp);
+				$alpha_final = 45;
+				
+				//	We'll store the final reflection in $output. $buffer is for internal use.
+				$this->image = imagecreatetruecolor($width, $this->height);
+		
+				//  Save any alpha data that might have existed in the source image and disable blending
+				imagesavealpha($source, true);
+		
+				imagesavealpha($this->image, true);
+				imagealphablending($this->image, false);
+		
+				//	Copy the bottom-most part of the source image into the output
+				imagecopy($this->image, $source, 0, 0, 0, $height - $this->height, $width, $this->height);
+		
+				//effetto fading
+				imagelayereffect($this->image, IMG_EFFECT_OVERLAY);
+				for ($y = 0; $y <= $this->height; $y++)
+			    {
+			        imagefilledrectangle($this->image, 0, $y, $width, $y, imagecolorallocatealpha($this->image, $this->rgb['r'], $this->rgb['g'], $this->rgb['b'], $alpha_final));
+			    }
+				
+			    $type = 3;
 			    
 			} else {
-			  $this->_redirect('/errore/fourhundredfour/');
-			  //echo 'image not exist! :'.$dir.$image_name;
+				$this->image = $source;
 			}
+			
+			/*
+			----------------------------------------------------------------
+			Output our final PNG
+			----------------------------------------------------------------
+			*/
+	
+			if (!$this->_response->canSendHeaders())
+			{
+				echo 'Headers already sent, I cannot display an image now. Have you got an extra line-feed in this file somewhere?';
+				return;
+			}
+			else
+			{
+			    
+				switch ($type)
+				{
+					case 1:
+						//	GIF
+						$this->_response->setHeader('Content-type','image/gif','true');
+						imagegif($this->image);
+						break;
+				
+					case 2:
+						//	JPG
+						$this->_response->setHeader('Content-type','image/jpg','true');
+						imagejpeg($this->image);
+						break;
+				
+					case 3:
+						//	PNG
+						$this->_response->setHeader('Content-type','image/png','true');
+						imagepng($this->image);
+						break;
+				
+					default:
+						$this->_redirect('/errore/notsupported/');
+				}
+				
+				imagedestroy($this->image);				
+				return;
+			}			
+			
 		} else {
 			$this->_redirect('/errore/fourhundredfour/');
 		}
 		
 	}
 	
-	/*		
+	/**
+	 * Rifletto un'immagine		
 		img		        required	The source image to reflect
 		height	        optional	Height of the reflection (% or pixel value)
         fade_start      optional    Start the alpha fade from whch value? (% value)
@@ -208,9 +289,6 @@ class ImageController extends Zend_Controller_Action
 				exit();
 		}
 		
-		// guardo se devo modificare il colore all'immagine
-		$this->_tint();
-		
 		// rifletto l'immagine
 		
 		//	We'll store the final reflection in $output. $buffer is for internal use.
@@ -267,6 +345,18 @@ class ImageController extends Zend_Controller_Action
 			return;
 		}
 	}
+
+	/**
+	 * Upload an image
+	 */
+	public function uploadAction(){
+		$this->view = new Sigma_View_TemplateLite();
+		$this->view->title = "Upload Image - Campetti Specialit&agrave;";
+		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/double.css" />';
+		$this->view->actionTemplate = 'forms/_uploadImage.tpl';
+		$this->view->buttonText = 'Upload';
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+	}
 	
 	/**
 	 * calcolo quanto alta deve essere l'immagine da prendere in considerazione per la riflessione
@@ -310,7 +400,7 @@ class ImageController extends Zend_Controller_Action
 		}
 	}
 	
-	/*
+	/**
 	 * Calcolo l'intensità del fade
 	 */
 	protected function _fadeX(){
@@ -367,6 +457,9 @@ class ImageController extends Zend_Controller_Action
 	 * 
 	 */
 	protected function _fade($width){
+		
+		// guardo se devo modificare il colore all'immagine
+		$this->_tint();
 		
 		$this->_fadeX();
 		
@@ -433,9 +526,44 @@ class ImageController extends Zend_Controller_Action
 					$this->rgb['g'] = 127;
 					$this->rgb['b'] = 127;
 			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 	
+	/**
+	 * Estrapolo l'url del file richiesto
+	 */
+	protected function _url(){
+		
+		if ( array_key_exists('url',$this->params) ){
+			
+			// verifico se è una sottodirectory 
+			
+			$source_image = $this->params['url'];
+
+			$dir = 'images/';
+			
+			$r = explode('.',$source_image);
+
+			if ( $r > 2 ){
+				//c'è una o piu direttori
+				for ( $i=0; $i < count($r)-2; $i++ ) {
+					$dir .= $r[$i].DIRECTORY_SEPARATOR;
+				}
+			}
+			
+			$this->image_name = $r[$i].'.'.$r[$i+1];
+			
+			$this->image_dir = $dir;
+			
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
 }
 
 ?>

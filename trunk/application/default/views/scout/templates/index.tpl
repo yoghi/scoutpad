@@ -6,7 +6,7 @@
 
 	<div class="logo">
 		<div class="first">
-			<p><img src="/image/index/url/logo.gif" /></p>
+			<p><img src="/image/index/url/logo.gif/tint/000099" /></p>
 			<p><img src="/image/reflect/url/logo.gif/tint/000099"/></p>
 		</div>
 	</div>
