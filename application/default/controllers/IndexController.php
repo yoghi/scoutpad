@@ -27,7 +27,7 @@ class IndexController extends Zend_Controller_Action
 		}
 		
 		
-		$this->view->actionTemplate = 'index.tpl';	
+		$this->view->actionTemplate = 'contents/index.tpl';	
 		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 
 //		Zend_Loader::loadClass('Log','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
@@ -75,13 +75,13 @@ class IndexController extends Zend_Controller_Action
 	
 	public function torrianaAction(){
 		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
-		$this->view->actionTemplate = 'torriana.tpl';
+		$this->view->actionTemplate = 'contents/torriana.tpl';
 		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 	}
 
 	public function templateAction(){
 		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
-		$this->view->actionTemplate = 'template.tpl';
+		$this->view->actionTemplate = 'contents/template.tpl';
 		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/single.css" />';
 		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}

@@ -18,7 +18,8 @@ class LoginController extends Zend_Controller_Action
 		}
 		
 		$this->view = new Sigma_View_TemplateLite();
-		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/login.css" />';
+		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/double.css" />';
+		//'<link rel="stylesheet" type="text/css" media="screen" href="/styles/login.css" />'.
 
 	}
 
@@ -37,7 +38,7 @@ class LoginController extends Zend_Controller_Action
 		$this->view->buttonText = 'Identifica';
 		$this->view->actionTemplate = 'forms/_loginForm.tpl';
 
-		$this->getResponse()->setBody( $this->view->render('site.tpl') );
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 
 	}
 

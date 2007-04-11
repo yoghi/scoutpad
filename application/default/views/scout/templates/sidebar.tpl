@@ -36,8 +36,10 @@
 	<br/>
 	
 	<div class="nomenu">
-		<ul>			
+		<ul>
+			<!-- 			
 			<li class="external"><a href="http://www.agesci.org/ospiti/centenario"><img src="http://www.agesci.org/img/sitiweb/centenario_small.gif"/></a></li>
+			 -->
 		</ul>
 	</div>
 	
