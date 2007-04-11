@@ -1,3 +1,4 @@
+/*
 body, td {
 	font: 13px "Lucida Grande", "Lucida Sans Unicode", Tahoma, Verdana;
 }
@@ -12,6 +13,8 @@ a.delete:hover {
 	background: #c00;
 	color: #fff;
 }
+
+*/
 
 #planetnews ul {
 	list-style: none;
@@ -33,6 +36,7 @@ a.delete:hover {
 	overflow: hidden;
 }
 
+/*
 a.edit, a.delete, a.edit:hover, a.delete:hover {
 	border-bottom: none;
 	display: block;
@@ -50,11 +54,10 @@ a:visited {
 }
 
 a:hover {
-/*	border-bottom: 1px solid #3a75ae;*/
 	color: #069;
 }
 
-
+*/
 
 fieldset {
 	border: none;
@@ -130,7 +133,7 @@ input:focus, textarea:focus, label:focus {
 label {
 	cursor: pointer;
 }
-
+/*
 li, dd {
 	margin-bottom: 6px;
 }
@@ -138,7 +141,7 @@ li, dd {
 p, li, dl, dd, dt {
 	line-height: 130%;
 }
-
+*/
 textarea, input, select {
 	background: #f4f4f4;
 	border: 1px solid #b2b2b2;
@@ -508,14 +511,6 @@ input.disabled, textarea.disabled {
 	width: 100%;
 }
 
-#login {
-	background: #fff;
-	border: 1px solid #a2a2a2;
-	margin: 5em auto;
-	padding: 1.5em;
-	width: 25em;
-}
-
 #login #login_error {
 	background: #c00;
 	border: 1px solid #a40000;
@@ -527,7 +522,7 @@ input.disabled, textarea.disabled {
 }
 
 #login h1 {
-	background: url(images/campospe.png) no-repeat top left;
+	background: url("/images/index/url/agesci.gif") no-repeat top left;
 	margin-top: 0;
 }
 
