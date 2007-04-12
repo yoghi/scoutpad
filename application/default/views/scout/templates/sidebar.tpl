@@ -6,8 +6,8 @@
 		<ul id="links">			
 			<li><a href="/staff/" title="Chi organizza?" >Lo Staff</a></li>
 			<li><a href="/torriana/" title="Luogo : Torriana">Dove si svolge</a></li>
-			<li><a href="/faq/#iscrizione/" title="Domande su come venire ai campetti?">X Iscriversi</a></li>
-			<li><a href="/faq/" title="Qualcuno forse ha gi&agrave; fatto una domanda che vorresti porci ">Domande Frequenti</a></li>
+			<li><a href="/file/url/scheda_iscrizione.zip" title="">Scheda Iscrizione</a></li>
+			<li><a href="/faq/" title="Qualcuno forse ha gi&agrave; fatto la domanda a cui cerchi risposta...">Domande Frequenti</a></li>
 			<li><a href="/contact/" title="Vuoi parlarci?">Per Contattarci</a></li>
 		</ul>
 	</div>
@@ -15,7 +15,7 @@
 	<em>Stato Iscrizioni</em>
 	
 	<div class="menu">
-		<ul style="color:#007d03;">			
+		<ul style="color:black;">			
 			<li>Astronomi 0/8</li>
 			<li>Campeggiatori 0/15</li>
 			<li>Cucinieri 0/15</li>
@@ -58,14 +58,14 @@
 		</ul>
 	</div>
 	
-	<br/>
-	
+	<!--
 	<div class="nomenu">
 		<ul>
-			<!-- 			
+			 			
 			<li class="external"><a href="http://www.agesci.org/ospiti/centenario"><img src="http://www.agesci.org/img/sitiweb/centenario_small.gif"/></a></li>
-			 -->
+			 
 		</ul>
 	</div>
+	-->
 	
 </div>

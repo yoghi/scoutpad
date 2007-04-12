@@ -8,15 +8,14 @@
 
 		La "Casa Scout Torriana" si trovanel Comune di Torriana (RIMINI) a 350 metri di altitudine, 
 		distante 1 km dal centro del paese e a 15 km da Rimini.
-		
-		<br/>
-		
 		La Casa di propriet&agrave; Parrocchiale &egrave; stata concessa in comodato al gruppo Scout SAVIGNANO 1
 		che ha provveduto a lavori di restauro e ne cura la gestione.
 	
 		
 		<ul class="nomenu">
+			<li><img src="http://www.casascouttorriana.it/slide_show/imm_slide/panorama_orizzontale_r1_c1.jpg" width="253" height="165" tilte="panoramica" ></li>
 			<li><img src="http://www.casascouttorriana.it/slide_show/imm_slide/panorama_orizzontale_r1_c2.jpg" width="284" height="165" tilte="panoramica" ></li>
+			<li><img src="http://www.casascouttorriana.it/slide_show/imm_slide/panorama_orizzontale_r1_c3.jpg" width="263" height="165" tilte="panoramica" ></li>
 		</ul>
 	
 	</div>
