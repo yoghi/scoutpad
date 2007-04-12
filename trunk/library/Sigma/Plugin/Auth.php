@@ -125,7 +125,6 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
         	$request->setModuleName($module);
         	$request->setControllerName($controller);
         	$request->setActionName($action);
-
 	}
 	                             
 }

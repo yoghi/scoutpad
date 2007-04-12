@@ -4,7 +4,7 @@
 
 //require_once 'Zend/Controller/Action.php';
 
-class LoginController extends Zend_Controller_Action
+class LoginController extends Sigma_Controller_Action
 {
 
 	function init()
@@ -16,10 +16,6 @@ class LoginController extends Zend_Controller_Action
 		catch (Zend_Exception $e) {
 			var_dump($e);
 		}
-		
-		$this->view = new Sigma_View_TemplateLite();
-		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/double.css" />';
-		//'<link rel="stylesheet" type="text/css" media="screen" href="/styles/login.css" />'.
 
 	}
 
@@ -54,12 +50,9 @@ class LoginController extends Zend_Controller_Action
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$filter = Zend_Registry::get('filter');
-			
-			$post = $filter->filter($_POST);
 
-			$mail = trim($post['mail']);
-			$password = trim($post['password']);
+			$mail = trim($_POST['mail']);
+			$password = trim($_POST['password']);
 
 			if ($mail != '' && $password != '') {
 
@@ -69,7 +62,7 @@ class LoginController extends Zend_Controller_Action
 
 				try {
 
-					Zend_Log::log('Provo ad autenticare : '.$mail, Zend_Log::LEVEL_DEBUG);
+					Zend_Registry::get('log')->log('Provo ad autenticare : '.$mail, Zend_Log::DEBUG);
 		
 					$result = $auth_module->authenticate($auth_module_adapter);
 		
@@ -96,13 +89,10 @@ class LoginController extends Zend_Controller_Action
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$filter = Zend_Registry::get('filter');
-			
-			$post = $filter->filter($_POST);
 
-			$mail = trim($post['mail']);
-			$cellulare = trim($post['cellulare']);
-			$password = trim($post['password']);
+			$mail = trim($_POST['mail']);
+			$cellulare = trim($_POST['cellulare']);
+			$password = trim($_POST['password']);
 
 			if ($mail != '' && $cellulare != '' && $password != '') {
 
@@ -160,11 +150,8 @@ class LoginController extends Zend_Controller_Action
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		{
-			$filter = Zend_Registry::get('filter');
-			
-			$post = $filter->filter($_POST);
 
-			$mail = trim($post['mail']);
+			$mail = trim($_POST['mail']);
 
 			if ($mail != '') {
 
@@ -186,9 +173,9 @@ class LoginController extends Zend_Controller_Action
 					}
 					
 					$this->view->confim_text = array('Mail inviata correttamente!');
-					$this->view->actionTemplate = 'ok.tpl';
+					$this->view->actionTemplate = 'contents/ok.tpl';
 			
-					$this->getResponse()->setBody( $this->view->render('site.tpl') );
+					$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 					
 				} catch (Exception $e) {
 					echo $e->getMessage();
@@ -200,7 +187,7 @@ class LoginController extends Zend_Controller_Action
 		$this->view->buttonText = 'Rispedisci';
 		$this->view->actionTemplate = 'forms/_lostForm.tpl';
 
-		$this->getResponse()->setBody( $view->render('site.tpl') );
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 
 	}
 

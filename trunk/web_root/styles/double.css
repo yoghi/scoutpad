@@ -53,11 +53,14 @@ textarea, input, select {
 
 
 .menu {
-	color: #000099;
 	font-weight: bold;
 	font-size: 1.50em ;
 	padding-top: 5px;
 	padding-left: 5px;
+}
+
+.menu em{
+	color: #000099;
 }
 
 .menu ul {
@@ -69,7 +72,7 @@ textarea, input, select {
 	white-space: nowrap
 }
 
-.menu li:hover {
+.menu #links li:hover {
 	list-style-type: circle;
 }
 

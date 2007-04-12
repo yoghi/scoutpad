@@ -6,7 +6,7 @@
  * @todo: tinteggiare anche immagini non riflesse
  */
 
-class ImageController extends Zend_Controller_Action
+class ImageController extends Sigma_Controller_Action
 {
 	
 	protected $params = null;

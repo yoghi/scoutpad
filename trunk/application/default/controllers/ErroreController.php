@@ -1,11 +1,7 @@
 <?php
 
-class ErroreController extends Zend_Controller_Action
+class ErroreController extends Sigma_Controller_Action
 {
-	public function init(){
-		$this->view = new Sigma_View_TemplateLite();
-		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/single.css" />';
-	}
 	
 	public function indexAction()
 	{

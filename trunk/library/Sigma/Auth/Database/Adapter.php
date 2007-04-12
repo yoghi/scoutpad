@@ -105,7 +105,7 @@ class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
 		try {
         	$sql = 'select * from '.$this->_options['table'].' where '.$this->_options['field_username'].'=\''.$this->_options['username'].'\' and '.$this->_options['field_password'].'=\''.$pwd_r2.'\'';
 
-        	Zend_Log::log('Autenticazione sql: '.$sql, Zend_Log::LEVEL_DEBUG);
+        	Zend_Registry::get('log')->log('Autenticazione sql: '.$sql, Zend_Log::DEBUG);
         	
         	$data = $this->_db->fetchAll($sql);
         	
@@ -122,7 +122,7 @@ class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
         	$tokenMessage[] = "Not enable for access";	
         }
         
-        Zend_Log::log('Autenticazione completata con successo per '.$tokenIdentity['nome'], Zend_Log::LEVEL_INFO);
+        Zend_Registry::get('log')->log('Autenticazione completata con successo per '.$tokenIdentity['nome'], Zend_Log::INFO);
 
         return new Zend_Auth_Result($tokenValid, $tokenIdentity, $tokenMessage);
 	}
