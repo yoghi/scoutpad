@@ -46,6 +46,9 @@ class ImageController extends Zend_Controller_Action
 		
 	}
 	
+	/**
+	 * Visualizza l'immagine richiesta 
+	 */
 	public function indexAction(){
 		
 		if ( $this->_url() ){
@@ -368,88 +371,109 @@ class ImageController extends Zend_Controller_Action
 			
 			$image_name = $r[$i].'.'.$r[$i+1];
 			
-			$source_image = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $dir. $image_name;
+			if ($this->cache)
+			{
+				$files = new Files();
+				
+				/*
+				 * Immagine con modifiche gia applicate
+				 */
+				$where = $files->getAdapter()->quoteInto('uri = ?', $this->getRequest()->getRequestUri());
+				$row = $files->fetchAll($where);
+				
+				if ( $row !== null && count($row) > 0  ){
 
-			if (file_exists($source_image))
-			{
-				if ($this->cache)
-				{
-					$files = new Files();
+					$r = $row->current();
+					$type = $r->mimeType;
 					
-					/*
-					 * Immagine con modifiche gia applicate
-					 */
-					$where = $files->getAdapter()->quoteInto('uri = ?', $this->getRequest()->getRequestUri());
-					$row = $files->fetchAll($where);
+					$this->_response->setHeader('Content-type','image/png','true');
 					
-					if ( $row !== null && count($row) > 0  ){
+					$this->image = imagecreatefromstring(base64_decode($r->object));
+					
+					imagesavealpha($this->image, true);
+					imagealphablending($this->image, false);
+					
+					imagepng($this->image);
+					
+					return;
+				
+				} 
+				
+				/*
+				 * Immagine naturale
+				 */
+				$where = $files->getAdapter()->quoteInto('uri = ?', '/image/index/url/'.$this->params['url']);
+				$row = $files->fetchAll($where);
+				
+				if ( $row !== null && count($row) > 0  ){
+					
+					$r = $row->current();
+					$type = $r->mimeType;
+					$source = imagecreatefromstring(base64_decode($r->object));
+					
+					$width = imagesx($source);
+					$height = imagesy($source);
+					
+					// quanto vale l'altezza dell'immagine
+					$this->_calculateHeight($height);
+					
+				} else {
+					
+					$source_image = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $dir. $image_name;
 	
-						$r = $row->current();
-						$type = $r->mimeType;
-						
-						$this->_response->setHeader('Content-type','image/png','true');
-						
-						$this->image = imagecreatefromstring(base64_decode($r->object));
-						
-						imagesavealpha($this->image, true);
-						imagealphablending($this->image, false);
-						
-						imagepng($this->image);
-						
-						return;
-					
+					if (!file_exists($source_image)) {
+						$this->_redirect('/errore/fourhundredfour/');
 					}
+						
+					//	dimensioni immagine
+					$image_details = getimagesize($source_image);
+			
+					if ($image_details === false)
+					{
+						$this->_redirect('/errore/invalid/');
+						//echo 'Not a valid image supplied, or this script does not have permissions to access it.';
+					}
+					
+					$width = $image_details[0];
+					$height = $image_details[1];
+					$type = $image_details[2];
+					//$mime = $image_details['mime'];
+			
+					// quanto vale l'altezza dell'immagine
+					$this->_calculateHeight($height);
+			
+					//	Detect the source image format - only GIF, JPEG and PNG are supported. If you need more, extend this yourself.
+					switch ($type)
+					{
+						case 1:
+							//	GIF
+							$source = imagecreatefromgif($source_image);
+							break;
+					
+						case 2:
+							//	JPG
+							$source = imagecreatefromjpeg($source_image);
+							break;
+					
+						case 3:
+							//	PNG
+							$source = imagecreatefrompng($source_image);
+							break;
+					
+						default:
+							$this->_redirect('/errore/notsupported/');
+							echo 'Unsupported image file format.';
+							exit();
+					}
+					
 				}
+				
 			}
-			else
-			{
-				$this->_redirect('/errore/fourhundredfour/');
-			}
+
 		}
 		else
 		{
 			$this->_redirect('/errore/fourhundredfour/');
-		}
-
-		//	dimensioni immagine
-		$image_details = getimagesize($source_image);
-
-		if ($image_details === false)
-		{
-			$this->_redirect('/errore/invalid/');
-			//echo 'Not a valid image supplied, or this script does not have permissions to access it.';
-		}
-		
-		$width = $image_details[0];
-		$height = $image_details[1];
-		$type = $image_details[2];
-		//$mime = $image_details['mime'];
-
-		// quanto vale l'altezza dell'immagine
-		$this->_calculateHeight($height);
-
-		//	Detect the source image format - only GIF, JPEG and PNG are supported. If you need more, extend this yourself.
-		switch ($type)
-		{
-			case 1:
-				//	GIF
-				$source = imagecreatefromgif($source_image);
-				break;
-		
-			case 2:
-				//	JPG
-				$source = imagecreatefromjpeg($source_image);
-				break;
-		
-			case 3:
-				//	PNG
-				$source = imagecreatefrompng($source_image);
-				break;
-		
-			default:
-				$this->_redirect('/errore/notsupported/');
-				echo 'Unsupported image file format.';
-				exit();
 		}
 		
 		// rifletto l'immagine
