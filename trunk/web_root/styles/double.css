@@ -45,13 +45,6 @@ textarea, input, select {
 	margin-bottom: -5px;
 }
 
-.nomenu li {
-	list-style-type: none;
-	padding-top: 5px;
-	padding-left: 5px;
-}
-
-
 .menu {
 	font-weight: bold;
 	font-size: 1.50em ;
@@ -98,8 +91,10 @@ textarea, input, select {
 }
 
 #contents {
-	margin-right:36%;
+	margin-right: 271px;
 	margin-left: 1%;
+	position: relative;
+	min-width: 500px;
 }
 
 #contents .testo{
@@ -111,7 +106,20 @@ textarea, input, select {
 }
 
 #contents .testo li {
-	list-style-type: circle;	
+	list-style-type: circle;
+}
+
+#contents .nomenu li {
+	list-style-type: none;
+	display: inline;
+	margin: 5px;
+	padding: 5px;
+}
+
+#contents .nomenu img {
+	padding: 3px;
+	margin-bottom: 3px;
+	border: 1px dashed grey;
 }
 
 .form{
@@ -127,7 +135,8 @@ textarea, input, select {
 }
 
 #header {
-	width: 550px;
+	/*width: 550px;*/
+	margin-right: 271px;
 	text-align: center;
 }
 
@@ -144,7 +153,7 @@ textarea, input, select {
 #sidebar {
 	float: right;
 	text-align: left;
-	width:35%;	
+	width:270px;
 }
 
 #sidebar em {
@@ -152,10 +161,10 @@ textarea, input, select {
 }
 
 #wrapper {
-	width: 770px;
+	/*width: 770px;*/
+	/*border: 1px dotted gray;*/
 	background-color:#FFFFFF;
 	margin:5px auto;
-	border: 1px dotted gray;
 	text-align:left;
 }
 

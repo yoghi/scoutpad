@@ -1,4 +1,4 @@
-* html #poststuff {
+* html {
 	height: 100%; /* kill peekaboo bug in IE */
 }
 
@@ -40,6 +40,20 @@ img {
 
 #footer p a{
 	font-weight: bold;
+}
+
+#footer ul{
+	list-style-type: none;
+}
+
+#footer li{
+	display: inline;
+	padding-left: 3px;
+}
+
+.domanda {
+	font-style: italic;
+	font-weight: bolder;
 }
 
 .external a{
@@ -174,6 +188,8 @@ img {
 	list-style-type: none;
 }
 
+/*
 .space {
 	height: 100px;
 }
+*/

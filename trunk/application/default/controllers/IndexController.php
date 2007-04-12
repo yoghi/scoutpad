@@ -9,12 +9,8 @@ class IndexController extends Sigma_Controller_Action
 	
 	public function indexAction()
 	{
-		
+
 		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
-		//$this->view->actionTemplate = 'home.tpl';
-		
-		
-		
 		$this->view->actionTemplate = 'contents/index.tpl';	
 		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 
@@ -27,9 +23,7 @@ class IndexController extends Sigma_Controller_Action
 //		foreach( $result->toArray() as $a ){
 //			echo $a['message'].'<br/>';
 //		}
-		
-		
-		
+
 //		$acl = Zend_Registry::get('acl_module');
 //		echo 'Capocampo Creare Announcement: ';
 //		echo $acl->isAllowed('capocampo', 'announcement', 'add') ? "allowed" : "denied"; echo '<br/>';
@@ -64,6 +58,12 @@ class IndexController extends Sigma_Controller_Action
 	public function torrianaAction(){
 		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
 		$this->view->actionTemplate = 'contents/torriana.tpl';
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+	}
+	
+	public function faqAction(){
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		$this->view->actionTemplate = 'contents/faq.tpl';
 		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 	}
 
