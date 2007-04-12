@@ -134,7 +134,7 @@ class LoginController extends Sigma_Controller_Action
 
 		$this->view->buttonText = 'Conferma';
 		$this->view->actionTemplate = 'forms/_confirmForm.tpl';
-		$this->getResponse()->setBody( $this->view->render('site.tpl') );
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 
 	}
 
