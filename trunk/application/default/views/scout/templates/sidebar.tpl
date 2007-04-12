@@ -12,6 +12,15 @@
 		</ul>
 	</div>
 	
+	<em>Bacheca Personale</em>
+	
+	<div class="menu">
+		<ul>			
+			<li><a href="">Casella di Posta</a></li>
+			<li><a href="">To Do List</a></li>
+		</ul>
+	</div>
+	
 	<em>Iscritti</em>
 	
 	<div class="menu">
