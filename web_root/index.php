@@ -16,6 +16,7 @@ Zend_Loader::loadClass('Zend_Db');
 Zend_Loader::loadClass('Zend_Db_Table');
 Zend_Loader::loadClass('Zend_Db_Table_Rowset');
 Zend_Loader::loadClass('Zend_Controller_Action');
+Zend_Loader::loadClass('Sigma_Controller_Action');
 Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
 Zend_Loader::loadClass('Zend_Controller_Dispatcher_Standard');
 Zend_Loader::loadClass('Zend_Auth');
@@ -88,15 +89,6 @@ try {
 		$log->addWriter(new Zend_Log_Writer_Db($db,'Log')); //ora anche su db
 		
 	}
-	//Zend_Log::registerLogger(new Zend_Log_Adapter_Console(), 'Console');
-	//esempio
-	//Zend_Log::log('A serious error has occurred.', Zend_Log::LEVEL_SEVERE);
-
-	// register the input filters
-	/**
-	 * @todo: create generic chain for filtering input
-	 */  
-	Zend_Registry::set('filter',new Zend_Filter());
 	
 	// Autentication
 	Zend_Registry::set('auth_module', Zend_Auth::getInstance());

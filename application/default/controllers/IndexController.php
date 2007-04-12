@@ -4,15 +4,8 @@
 
 //require_once 'Zend/Controller/Action.php';
 
-class IndexController extends Zend_Controller_Action
-{
-	
-	function init()
-	{
-		$this->view = new Sigma_View_TemplateLite();
-		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/double.css" />';
-	}
-	
+class IndexController extends Sigma_Controller_Action
+{	
 	
 	public function indexAction()
 	{
@@ -20,11 +13,6 @@ class IndexController extends Zend_Controller_Action
 		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
 		//$this->view->actionTemplate = 'home.tpl';
 		
-		$auth_module = Zend_Registry::get('auth_module');
-		if ( $auth_module->hasIdentity() ){  
-			$identita = $auth_module->getIdentity();
-			$this->view->info_user = "<h5> I'm {$identita['nome']} {$identita['cognome']}, livello: {$identita['role']} </h5>";
-		}
 		
 		
 		$this->view->actionTemplate = 'contents/index.tpl';	
