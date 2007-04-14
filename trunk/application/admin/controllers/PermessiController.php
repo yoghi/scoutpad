@@ -1,14 +1,14 @@
 <?php
 
-class Admin_PermessiController extends Zend_Controller_Action
+class Admin_PermessiController extends Sigma_Controller_Action 
 {
 	private $acl = null;
 	
 	function init()
 	{
-		$this->acl = Zend_Registry::get('acl_module');
+		//$this->acl = Zend_Registry::get('acl_module');
 		try {
-			Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass('Acl','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 		}
 		catch (Zend_Exception $e) {
 			var_dump($e);
@@ -17,23 +17,43 @@ class Admin_PermessiController extends Zend_Controller_Action
 	
 	public function indexAction()
 	{
-		
 		$view = new Sigma_View_TemplateLite();
 		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/admin/views/scout');
 		$view->title = "Permessi";
-		
-		$t_module = new Modules();
-		$moduli = $t_module->getAttivi();
-		
-		$view->moduli = $moduli->toArray();
-
-		foreach( $moduli->toArray() as $modulo ){
-			if ($modulo['nome'] != 'default') var_dump( $this->acl->get($modulo['nome']) );
-		}
-		
-		var_dump($this->acl->getRole('guest'));
-		
 		$view->actionTemplate = 'permessi.tpl';
+		
+		
+		/*
+		 * TABELLA ACL (Esempio)
+		   id 	Modulo 	Controller 	Action 	Role
+			1 	default 	index 	NULL 	NULL
+			2 	admin 	permessi 	NULL 	NULL
+		 */
+		
+		
+		$acl = new Acl();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		$this->getResponse()->setBody( $view->render('site.tpl') );
 		
 	}
