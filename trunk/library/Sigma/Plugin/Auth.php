@@ -46,7 +46,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			
         	$log = Zend_Registry::get('log');
         	
-        	$log->log("'$role' richiede di usare il controller '$controller' per compiere '$action' nel modulo : '$module'" , Zend_Log::DEBUG);
+        	$log->log("'$role' richiede di usare il controller '$controller' nel modulo : '$module' per compiere '$action'" , Zend_Log::DEBUG);
 
 			if ( $module != 'default' ) {
 				if ( !$this->_auth->hasIdentity() ) { 
