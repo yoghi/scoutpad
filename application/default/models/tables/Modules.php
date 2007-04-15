@@ -1,10 +1,10 @@
 <?php
-	class Permessi extends Zend_Db_Table
+	class Modules extends Zend_Db_Table
 	{
-
-		public function getModuleByName($nome){
+		
+		function fetchAllName(){
 			
-			$sql="select * from permessi group by modulo order by modulo ASC LIMIT 1";
+			$sql="select nome from Modules where status=1 order by nome ASC";
 			
 			$s = array(
 				'db' => $this->_db,
@@ -14,7 +14,6 @@
 			
 			return new Zend_Db_Table_Rowset($s);
 		}
-
+		
 	}
-
 ?>

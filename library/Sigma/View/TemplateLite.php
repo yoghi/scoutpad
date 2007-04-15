@@ -130,7 +130,7 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		{
 			if ( is_object($value)  ) {
     			$this->_tpl->assign_by_ref($var, $value);
-    			Zend_Log::log('Setto oggetto:  '.$var, Zend_Log::LEVEL_DEBUG);
+    			Zend_Registry::get('log')->log('Setto oggetto:  '.$var, Zend_Log::DEBUG);
     		} else { 
 				$this->_tpl->assign($var, $value);
 			}
@@ -141,7 +141,7 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 			{
 				if ( is_object($value)  ) {
 	    			$this->_tpl->assign_by_ref($key, $value);
-	    			Zend_Log::log('Setto oggetto:  '.$key, Zend_Log::LEVEL_DEBUG);
+	    			Zend_Registry::get('log')->log('Setto oggetto:  '.$key, Zend_Log::DEBUG);
 	    		} else { 
 					$this->_tpl->assign($key, $value);
 				}
