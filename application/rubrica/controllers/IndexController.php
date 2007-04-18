@@ -15,7 +15,6 @@ class Rubrica_IndexController extends Zend_Controller_Action
 
 	function indexAction()
 	{
-		$view = new Sigma_View_TemplateLite();
 		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/rubrica/views/scout');
 		$view->title = "Elenco membri";
 		$staff = new Staff();
@@ -32,7 +31,6 @@ class Rubrica_IndexController extends Zend_Controller_Action
 	
 	function addAction()
 	{
-		$view = new Sigma_View_TemplateLite();
 		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/rubrica/views/scout');
 		$view->title = "Aggiungi un nuovo membro";
 
@@ -90,7 +88,6 @@ class Rubrica_IndexController extends Zend_Controller_Action
 
 	function editAction()
 	{
-		$view = new Sigma_View_TemplateLite();
 		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/rubrica/views/scout');
 		$view->title = "Modifica membro";
 		$staff = new Staff();
