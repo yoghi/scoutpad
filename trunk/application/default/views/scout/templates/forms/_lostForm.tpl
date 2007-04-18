@@ -7,12 +7,15 @@
 		
 	
 	<form class="form" name="loginform" action="/login/in/"	method="post">
-		<p>
-			<label>Mail:<br /><input type="text" name="mail" id="mail" value="" size="20" tabindex="1" /></label>
-		</p>
-		<p class="submit">
-			<input type="submit" name="submit" id="submit" value="{$buttonText} &raquo;" tabindex="4" />
-		</p>	
+		<fieldset>
+			<legend>Lost Password</legend>
+			<div>
+				<label>Mail:<br /><input type="text" name="mail" id="mail" value="" size="20" tabindex="1" /></label>
+			</div>
+			<div class="submit">
+				<input type="submit" name="submit" id="submit" value="{$buttonText} &raquo;" tabindex="4" />
+			</div>	
+		</fieldset>
 	</form>
 	
 	<ul>

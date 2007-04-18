@@ -6,7 +6,6 @@ class Admin_IndexController extends Zend_Controller_Action
 {
 	public function indexAction()
 	{
-		$view = new Sigma_View_TemplateLite();
 		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/admin/views/scout');
 		$view->title = "Amministrazione";
 		$view->actionTemplate = 'admin.tpl';

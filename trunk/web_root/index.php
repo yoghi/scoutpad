@@ -5,27 +5,38 @@ set_include_path(get_include_path() . PATH_SEPARATOR . '/home/workspace/Scout/Sc
 date_default_timezone_set('Europe/Rome');
 ini_set('session.save_path','/tmp');
 
-//include 'Zend.php';
 include 'Zend/Loader.php';
 
+
+/**
+ * Zend Class
+ */
 Zend_Loader::loadClass('Zend_Registry');
-Zend_Loader::loadClass('Zend_Controller_Front');
 Zend_Loader::loadClass('Zend_View');
 Zend_Loader::loadClass('Zend_Config_Ini');
 Zend_Loader::loadClass('Zend_Db');
 Zend_Loader::loadClass('Zend_Db_Table');
 Zend_Loader::loadClass('Zend_Db_Table_Rowset');
+Zend_Loader::loadClass('Zend_Controller_Front');
 Zend_Loader::loadClass('Zend_Controller_Action');
-Zend_Loader::loadClass('Sigma_Controller_Action');
 Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
 Zend_Loader::loadClass('Zend_Controller_Dispatcher_Standard');
 Zend_Loader::loadClass('Zend_Auth');
-Zend_Loader::loadClass('Zend_Filter');
-Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
-Zend_Loader::loadClass('Sigma_View_TemplateLite');
+Zend_Loader::loadClass('Zend_Session');
+Zend_Loader::loadClass('Zend_Session_Abstract');
+Zend_Loader::loadClass('Zend_Session_Namespace');
 Zend_Loader::loadClass('Zend_Log');
 Zend_Loader::loadClass('Zend_Log_Writer_Stream');
 Zend_Loader::loadClass('Zend_Log_Formatter_Xml');
+
+/**
+ * Sigma Class
+ */
+Zend_Loader::loadClass('Sigma_Controller_Action');
+Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
+Zend_Loader::loadClass('Sigma_View_TemplateLite');
+
+Zend_Loader::loadClass('Sigma_Form_Help');
 
 
 
@@ -87,17 +98,11 @@ try {
 		//Loggo su tabella
 		Zend_Loader::loadClass('Zend_Log_Writer_Db');
 		$log->addWriter(new Zend_Log_Writer_Db($db,'Log')); //ora anche su db
-		
 	}
 	
 	// Autentication
 	Zend_Registry::set('auth_module', Zend_Auth::getInstance());
-	
-	// Session
-	//require_once 'Zend/Session.php';
-	//Zend_Session_Core::setOptions(array('remember_me_seconds' => $config->session->live, 'name' => $config->session->name));
-	//Zend::register('session_module', new Zend_Session($config->session->name));
-	
+
 	// setting controller
 	$frontController = Zend_Controller_Front::getInstance();
 	$frontController->setControllerDirectory(array( 
@@ -134,7 +139,14 @@ try {
 	    $response->sendHeaders();
 	    $response->outputBody();
 	}
-
+	
+	echo Sigma_Form_Help::getInstance()->randToken();
+	
+	/*for ( $i = 141; $i < 185; $i++ ){
+		$oct = octdec($i);
+		echo "$i => ".chr($oct)."\n";
+	}
+	*/
 	
 }
 catch (Exception $e){

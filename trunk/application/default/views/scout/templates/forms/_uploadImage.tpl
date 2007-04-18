@@ -14,28 +14,27 @@
 	</div>
 
 	<form class="form" action="/image/{$action}" method="post" enctype="multipart/form-data">
-		<p>
-			<label>Percorso locale del file : </label>
-		</p>
-		<p>
-			<!-- il valore della dimensione massima &egrave; in byte -->
-			<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
-			<input type="file" id="file" name="ufile" size="50" accept="image/gif,image/jpeg,image/png" />
-		</p>
-		<p>
-			<label>Tipo di immagine :</label>
-		</p>
-		<p> 
+		<fieldset>
+			<legend>Upload Image</legend>
+			<div>
+				<label>Percorso locale del file : </label>
+				<!-- il valore della dimensione massima &egrave; in byte -->
+				<input type="hidden" name="MAX_FILE_SIZE" value="2097152" />
+				<input type="file" id="file" name="ufile" size="50" accept="image/gif,image/jpeg,image/png" />
+			</div>
+			<div>
+				<label>Tipo di immagine :</label>
 				<select name="type" id="select">
 					<option value="foto">foto</option>
 					<option value="emoticons">emoticons</option>
 					<option value="icons">icons</option>
 					<option value="unknown">- non appartiene ai precedenti -</option>
 				</select>
-		</p>
-		<p class="submit">
-			<input type="submit" name="submit" value="{$buttonText} &raquo;" />
-		</p>
+			</div>
+			<div class="submit">
+				<input type="submit" name="submit" value="{$buttonText} &raquo;" />
+			</div>
+		</fieldset>
 	</form>
 
 </div>

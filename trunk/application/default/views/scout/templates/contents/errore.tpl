@@ -8,5 +8,6 @@
 		</ul>
 	</div>
 	
-	<h4><a style="text-decoration:none;" href="/">&ldquo; Clicca qui per ritornare nella homepage &rdquo; </a></h4>
+	<h4><a style="text-decoration:none;" href="{$before_page}">&ldquo; Ritornare alla pagina precedente &rdquo; </a></h4>
+	
 </div>

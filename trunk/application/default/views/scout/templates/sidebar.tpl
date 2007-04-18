@@ -34,6 +34,7 @@
 			<li><a href="/mail/">Casella di Posta</a></li>
 			<li><a href="/todo/">To Do List</a></li>
 			<li><a href="/image/add">Upload Image</a></li>
+			<li><a href="/admin/permessi/">Permessi</a></li>
 		</ul>
 	</div>
 	 

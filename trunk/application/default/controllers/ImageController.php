@@ -42,8 +42,6 @@ class ImageController extends Sigma_Controller_Action
 			var_dump($e);
 		}
 		
-		
-		
 	}
 	
 	/**
@@ -558,7 +556,6 @@ class ImageController extends Sigma_Controller_Action
 	 * Upload an image
 	 */
 	public function addAction(){
-		$this->view = new Sigma_View_TemplateLite();
 		$this->view->title = "Upload Image - Campetti Specialit&agrave;";
 		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/double.css" />';
 		$this->view->actionTemplate = 'forms/_uploadImage.tpl';

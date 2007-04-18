@@ -10,12 +10,9 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 								'controller' => 'errore',
 								'action' => 'privileges');
 
-		private $_auth = null;
 		private $_acl = null;
 				
 		public function __construct(){
-			
-			$this->_auth = Zend_Registry::get('auth_module');
 			
 			Zend_Loader::loadClass('Zend_Acl');
 			Zend_Loader::loadClass('Zend_Acl_Role');
@@ -25,9 +22,11 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 	       
 		public function preDispatch($request)
 		{
+
+			$auth_session = new Zend_Session_Namespace('Zend_Auth');
 			
-			if ( $this->_auth->hasIdentity() ) {
-				$token = $this->_auth->getIdentity();
+			if ( !empty($auth_session->storage) ) {
+				$token = $auth_session->storage;
 				$role = isset($token['role']) ? $token['role'] : 'guest';
 			} else {
 				$role = 'guest';
@@ -49,7 +48,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
         	$log->log("'$role' richiede di usare il controller '$controller' nel modulo : '$module' per compiere '$action'" , Zend_Log::DEBUG);
 
 			if ( $module != 'default' ) {
-				if ( !$this->_auth->hasIdentity() ) { 
+				if ( empty($auth_session->storage) ) { 
 					$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
 	       			$module = $this->_noauth['module'];
 	       			$controller = $this->_noauth['controller'];
