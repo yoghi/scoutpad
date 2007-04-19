@@ -1,26 +1,68 @@
 <?php
 
+/**
+ * Scoutpad
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New-BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Sigma
+ * @package    Sigma_Plugin
+ * @copyright  Copyright (c) 2007 Stefano Tamagnini 
+ * @author	   Stefano Tamagnini
+ * @license    New BSD License
+ */
+ 
+
+/**
+ * @category	Sigma
+ * @package 	Sigma_Plugin
+ * @copyright	Copyright (c) 2007 Stefano Tamagnini
+ * @license		New BSD License
+ * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ */
 class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 
+		/**
+		 * Valori da usare nel caso l'utente non sia autorizzato (guest) e non sia autenticato
+		 * @var array
+		 */
 		private $_noauth = array('module' => 'default',
 								'controller' => 'login',
 								'action' => 'index');
 
+		/**
+		 * Valori da usare nel caso l'utente autenticato non sia autorizzato
+		 * @var array
+		 */
 		private $_noacl = array('module' => 'default',
 								'controller' => 'errore',
 								'action' => 'privileges');
 
-		private $_acl = null;
-				
+		/**
+		 * Questa classe è un Plugin da eseguire prima di passare il controllo ad un Controller specifico in modo da poter controllare con le ACL l'accesso alle risorse.
+		 * @throws Zend_Exception
+		 */
 		public function __construct(){
 			
-			Zend_Loader::loadClass('Zend_Acl');
-			Zend_Loader::loadClass('Zend_Acl_Role');
-			Zend_Loader::loadClass('Zend_Acl_Resource');
-			Zend_Loader::loadClass('Sigma_Acl_Manager');
+			try {
+				Zend_Loader::loadClass('Zend_Acl');
+				Zend_Loader::loadClass('Zend_Acl_Role');
+				Zend_Loader::loadClass('Zend_Acl_Resource');
+				Zend_Loader::loadClass('Sigma_Acl_Manager');
+			} catch( Zend_Exception $e ){
+				throw $e;
+			}
 			
 		}
-	       
+
+		/**
+		 * @see 	Zend_Controller_Plugin_Abstract::preDispatch()
+		 * @param	Zend_Controller_Request_Abstract $request
+		 * @return	void
+		 */
 		public function preDispatch(Zend_Controller_Request_Abstract $request)
 		{
 
@@ -120,7 +162,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				}
 			
 			}
-			
+
         	$log->log("Eseguo: $module _ $controller -> $action", Zend_Log::DEBUG);
         	
         	$request->setModuleName($module);

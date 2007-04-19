@@ -1,9 +1,49 @@
 <?php
+
+/**
+ * Scoutpad
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New-BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Sigma
+ * @package    Sigma_View
+ * @copyright  Copyright (c) 2007 Stefano Tamagnini 
+ * @author	   Stefano Tamagnini
+ * @license    New BSD License
+ */
+ 
+
+/**
+ * @category	Sigma
+ * @package 	Sigma_View
+ * @copyright	Copyright (c) 2007 Stefano Tamagnini
+ * @license		New BSD License
+ * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ */
 class Sigma_View_TemplateLite extends Zend_View_Abstract
 {
+	/**
+	 * Template_Lite Object
+	 * 
+	 * @var boolean
+	 */
 	private $_tpl = false;
+	
+	/**
+	 * Current Template Filename
+	 * 
+	 * @var string
+	 */
 	private $_ctemplate = null;
 
+	/**
+	 * Wrapper della classe Template_Lite 
+	 * 
+	 * @param array $data dati per la creazione dell'oggetto Template_Lite
+	 */
 	public function __construct($data = array())
 	{
 		parent::__construct($data);
@@ -26,6 +66,10 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
         $this->setScriptPath(Zend_Registry::get('config')->view->path);
 	}
 	
+	/**
+	 * @see	Zend_View_Abstract::render()
+	 * @param string $name nome del template da renderizzare
+	 */
 	public function render($name){
 		
 		$l = $this->getScriptPaths();
@@ -109,20 +153,16 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 
     
 	/**
-	 * @todo sistemare user_level
+	 * @see Zend_View_Abstract::_run()
 	 */
 	protected function _run()
 	{
-		$auth_module = Zend_Registry::get('auth_module');
-		if ( $auth_module->hasIdentity() ) {
-			$identify = $auth_module->getIdentity();
-			$this->assign('user_name',$identify['nome']);
-			$this->assign('user_surname',$identify['cognome']);
-			$this->assign('user_role',$identify['role']);
-		}
 		$this->_tpl->display($this->_ctemplate);
 	}
 
+	/**
+	 * @see	Zend_View_Abstract::assign()
+	 */
 	public function assign($var, $value = null)
 	{
 		
@@ -152,6 +192,9 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		}
 	}
 
+	/**
+	 * @see	Zend_View_Abstract::escape()
+	 */
 	public function escape($var)
 	{
 		if (is_string($var))
@@ -173,6 +216,9 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		}
 	}
 
+	/**
+	 * @see	Zend_View_Abstract::output()
+	 */
 	public function output($name)
 	{
 		header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
@@ -183,6 +229,9 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		print parent::render($name);
 	}
 
+	/**
+	 * @see	Zend_View_Abstract::isCached()
+	 */
 	public function isCached($template)
 	{
 		if ($this->_tpl->is_cached($template))
@@ -193,6 +242,9 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		return false;
 	}
 
+	/**
+	 * @see	Zend_View_Abstract::setCaching()
+	 */
 	public function setCaching($caching)
 	{
 		$this->_tpl->caching = $caching;

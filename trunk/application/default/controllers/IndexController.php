@@ -1,9 +1,27 @@
 <?php
 
-//Zend::loadClass('Zend_Controller_Action');
+/**
+ * Scoutpad
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New-BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Sigma
+ * @package    Sigma_Controller
+ * @copyright  Copyright (c) 2007 Stefano Tamagnini 
+ * @author	   Stefano Tamagnini
+ * @license    New BSD License
+ */
+ 
 
-//require_once 'Zend/Controller/Action.php';
-
+/**
+ * @category	Sigma
+ * @package 	Sigma_Controller
+ * @copyright	Copyright (c) 2007 Stefano Tamagnini
+ * @license		New BSD License
+ */
 class IndexController extends Sigma_Controller_Action
 {	
 	

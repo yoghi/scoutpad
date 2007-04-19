@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Sigma Framework
+ * Scoutpad
  *
  * LICENSE
  *
- * This source file is subject to the new BSD license that is bundled
+ * This source file is subject to the New-BSD license that is bundled
  * with this package in the file LICENSE.txt.
  *
  * @category   Sigma
  * @package    Sigma_Auth_Database
- * @copyright  Copyright (c) 2006 
+ * @copyright  Copyright (c) 2006 Stefano Tamagnini
  * @author	   Stefano Tamagnini
  * @license    New BSD License
  */
- 
+
 
 /**
  * Zend_Auth_Adapter
@@ -29,11 +29,12 @@ require_once 'Zend/Auth/Adapter/Interface.php';
 require_once 'Zend/Auth/Result.php';
 
 /**
- * @category   Sigma
- * @package    Sigma_Auth_Database
- * @copyright  Copyright (c) 2006
- * @author     Stefano Tamagnini
- * @license    New BSD License
+ * @category	Sigma
+ * @package		Sigma_Auth_Database
+ * @copyright	Copyright (c) 2007
+ * @author		Stefano Tamagnini
+ * @license		New BSD License
+ * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini
  */
 class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
 	

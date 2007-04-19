@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * Scoutpad
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New-BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Sigma
+ * @package    Sigma
+ * @copyright  Copyright (c) 2007 Stefano Tamagnini 
+ * @author	   Stefano Tamagnini
+ * @license    New BSD License
+ */
+ 
 set_include_path(get_include_path() . PATH_SEPARATOR . '/home/workspace/Scout/ScoutPad/library');
 
 date_default_timezone_set('Europe/Rome');
