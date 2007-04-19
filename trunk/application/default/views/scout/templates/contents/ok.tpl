@@ -1,4 +1,5 @@
-<div style="width: 700px;">
+<div id="contents">
+
 	<div class="infoMacro">
 		<b>complete!</b>
 		{if count($confirm_text) gt 1}

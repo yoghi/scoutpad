@@ -38,6 +38,10 @@ class Sigma_Form_Help {
 
 	}
 	
+	/**
+	 * Create a random Token number+lecter [0-9][a-z]
+	 * @return string token
+	 */
 	public function randToken(){
 		
 		$token = '';
@@ -50,6 +54,10 @@ class Sigma_Form_Help {
 		
 	}
 	
+	/**
+	 * Return a random number or lecter [0-9][a-z]
+	 * @return string number or lecter 
+	 */
 	private function rand(){
 		
 		$p = rand(1,2);

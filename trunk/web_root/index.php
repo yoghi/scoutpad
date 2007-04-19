@@ -69,10 +69,14 @@ try {
 	$log = new Zend_Log();
 	Zend_Registry::set('log',$log);
 	//formatter default `timestamp`, `message`, `priority`, `priorityName`
+
 	$formatter = new Zend_Log_Formatter_Xml();
-	$stream = new Zend_Log_Writer_Stream('/tmp/debug.txt');
-	$stream->setFormatter($formatter);
+	$stream = new Zend_Log_Writer_Stream('/tmp/debug.xml');
+	$stream->setFormatter($formatter);	
 	$log->addWriter($stream); //sicuramente su file
+
+	$stream_debug = new Zend_Log_Writer_Stream('/tmp/debug.txt');
+	$log->addWriter($stream_debug);
 
 	// load configuration
 	try {
