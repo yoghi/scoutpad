@@ -1,5 +1,28 @@
 <?php
 
+/**
+ * Scoutpad
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New-BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Sigma
+ * @package    Sigma_Form
+ * @copyright  Copyright (c) 2007 Stefano Tamagnini 
+ * @author	   Stefano Tamagnini
+ * @license    New BSD License
+ */
+ 
+
+/**
+ * @category	Sigma
+ * @package 	Sigma_Form
+ * @copyright	Copyright (c) 2007 Stefano Tamagnini
+ * @license		New BSD License
+ * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ */
 class Sigma_Form_Help {
 	
 	/**
@@ -9,8 +32,18 @@ class Sigma_Form_Help {
      */
     protected static $_instance = null;
     
+    /**
+     * Session Namespace for control Session 'Sigma'
+     * 
+     * @var Zend_Session_Namespace 
+     */
     protected $flow = null;
     
+    /**
+     * Lenght of token used into forms 
+     *
+     * @var int
+     */
     private $lenght = 8;
 	
     /**
@@ -29,6 +62,13 @@ class Sigma_Form_Help {
         return self::$_instance;
     }
 	
+    /**
+     * Classe adibita alla gestione dei Form durante una sessione di lavoro di un utente
+     * Features:
+     * 		*) one-use form
+     * 		*) ip check
+     *
+     */
 	private function __construct(){
 		
 		$this->flow = new Zend_Session_Namespace('Sigma_Flow');

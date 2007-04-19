@@ -19,6 +19,7 @@
 			<li>Astronomi 0/8</li>
 			<li>Campeggiatori 0/15</li>
 			<li>Cucinieri 0/15</li>
+			<li>Fotografi 0/8</li>
 			<li>Maestri Giochi 0/8</li>
 			<li>Topografi 0/8</li>
 		</ul>
