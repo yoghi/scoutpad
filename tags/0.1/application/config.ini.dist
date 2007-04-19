@@ -1,8 +1,0 @@
-[general]
-db.adapter = <PDO_type>
-db.config.host = <hostname>
-db.config.username = <username>
-db.config.password = <password>
-db.config.dbname = <dbname>
-auth.token = <generic token>
-view.path = <path where locate templates>
