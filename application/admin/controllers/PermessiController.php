@@ -74,6 +74,7 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		
 		/*
 		 * Moduli
+		 * Uso i moduli nel db perchè alcuni magari potrebbero essere disattivati
 		 */
 		
 		$module_db = new Modules();
@@ -167,7 +168,7 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
 		
 		
-				/*
+		/*
 		
 			Array
 			(

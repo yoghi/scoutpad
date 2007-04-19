@@ -4,10 +4,10 @@
 	
 	<div class="menu">
 		<ul id="links">			
-			<li><a href="/staff/" title="Chi organizza?" >Lo Staff</a></li>
-			<li><a href="/torriana/" title="Luogo : Torriana">Dove si svolge</a></li>
+			<li><a href="/home/staff/" title="Chi organizza?" >Lo Staff</a></li>
+			<li><a href="/home/torriana/" title="Luogo : Torriana">Dove si svolge</a></li>
 			<li><a href="/file/url/scheda_iscrizione.zip" title="">Scheda Iscrizione</a></li>
-			<li><a href="/faq/" title="Qualcuno forse ha gi&agrave; fatto la domanda a cui cerchi risposta...">Domande Frequenti</a></li>
+			<li><a href="/home/faq/" title="Qualcuno forse ha gi&agrave; fatto la domanda a cui cerchi risposta...">Domande Frequenti</a></li>
 			<li><a href="/contact/" title="Vuoi parlarci?">Per Contattarci</a></li>
 		</ul>
 	</div>

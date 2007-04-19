@@ -82,6 +82,7 @@ textarea, input, select {
 #contents {
 	margin-left: 2%;
 	margin-right: 2%;
+	text-align: center;
 }
 
 #contents .testo{
@@ -108,10 +109,10 @@ textarea, input, select {
 }
 
 #wrapper {
-	width: 770px;
+	/*width: 770px;*/
+	/*border: 1px dotted gray;*/
 	background-color:#FFFFFF;
 	margin:5px auto;
-	border: 1px dotted gray;
 	text-align:left;
 }
 

@@ -13,7 +13,5 @@
 		</div>
 	</div>
 	
-	<h3><a href="/home/">Entra</a></h3>
-	
 </div>
 

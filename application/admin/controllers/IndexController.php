@@ -11,6 +11,10 @@ class Admin_IndexController extends Zend_Controller_Action
 		$view->actionTemplate = 'admin.tpl';
 		$this->getResponse()->setBody( $view->render('site.tpl') );
 	}
+	
+	public function infoAction(){
+		phpinfo();
+	}
 
 	public function noRouteAction()
 	{

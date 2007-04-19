@@ -1,4 +1,4 @@
-<div style="width: 700px; text-align: center;">
+<div id="contents">
 	
 	<div class="checkMacro">
 		<b>{$testo_conferma}</b>
@@ -16,4 +16,5 @@
 	</form>
 	
 	<h4><a style="text-decoration:none;" href="/">&ldquo; Clicca qui per ritornare nella homepage &rdquo; </a></h4>
+	
 </div>

@@ -17,10 +17,11 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			Zend_Loader::loadClass('Zend_Acl');
 			Zend_Loader::loadClass('Zend_Acl_Role');
 			Zend_Loader::loadClass('Zend_Acl_Resource');
+			Zend_Loader::loadClass('Sigma_Acl_Manager');
 			
 		}
 	       
-		public function preDispatch($request)
+		public function preDispatch(Zend_Controller_Request_Abstract $request)
 		{
 
 			$auth_session = new Zend_Session_Namespace('Zend_Auth');
@@ -46,14 +47,78 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
         	$log = Zend_Registry::get('log');
         	
         	$log->log("'$role' richiede di usare il controller '$controller' nel modulo : '$module' per compiere '$action'" , Zend_Log::DEBUG);
+        	
+        	/**
+        	 * 'member' richiede di usare il controller 'torriana' nel modulo : 'default' per compiere 'index'
+        	 * 'member' richiede di usare il controller 'permessi' nel modulo : 'admin' per compiere 'index' 
+        	 * 
+        	 * Questo significa che il sistema si accorge se il primo campo è un modulo, ma non sa se il secondo è correttamente un controller o una action di index!!
+        	 * 
+        	 * => se si vuole accedere a index usare index!!
+        	 */
 
-			if ( $module != 'default' ) {
-				if ( empty($auth_session->storage) ) { 
-					$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
-	       			$module = $this->_noauth['module'];
-	       			$controller = $this->_noauth['controller'];
-	       			$action = $this->_noauth['action'];
-	        	} 
+        	//$acl_cache = new AclCache();        	
+			//$r = $acl_cache->fetchAll($where)->toArray();
+
+			$acl_manager = new Sigma_Acl_Manager($role,$module);
+			
+			if ( !$acl_manager->loadFromCache() ) {
+				// non c'è in cache
+				$module = $this->_noacl['module'];
+       			$controller = $this->_noacl['controller'];
+       			$action = $this->_noacl['action'];
+			} else {
+			
+				$acl = $acl_manager->getAcl();
+				
+				if ( ! $acl->has($controller) ) {
+					
+					if ( !$acl->isAllowed($role,null,null) ) {
+								 
+						if ( empty($auth_session->storage) ) {
+							$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
+			       			$module = $this->_noauth['module'];
+			       			$controller = $this->_noauth['controller'];
+			       			$action = $this->_noauth['action'];
+						} else {
+							$module = $this->_noacl['module'];
+			       			$controller = $this->_noacl['controller'];
+			       			$action = $this->_noacl['action'];
+						}
+						
+					}
+					
+				} else {
+				
+					if ( !$acl->isAllowed($role,$controller,$action) ){
+						
+						// non posso accedere direttamente a quella azione ma forse posso a tutto l'oggetto...
+		
+						if ( !$acl->isAllowed($role,$controller,null) ) {
+							
+							// non posso accedere direttamente a quella risorsa ma forse posso a tutto l'ambiente ...
+		
+							if ( !$acl->isAllowed($role,null,null) ) {
+								 
+								if ( empty($auth_session->storage) ) {
+									$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
+					       			$module = $this->_noauth['module'];
+					       			$controller = $this->_noauth['controller'];
+					       			$action = $this->_noauth['action'];
+								} else {
+									$module = $this->_noacl['module'];
+					       			$controller = $this->_noacl['controller'];
+					       			$action = $this->_noacl['action'];
+								}
+								
+							}
+							
+						}
+						
+					}
+					
+				}
+			
 			}
 			
         	$log->log("Eseguo: $module _ $controller -> $action", Zend_Log::DEBUG);
