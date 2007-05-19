@@ -27,13 +27,22 @@ class ErroreController extends Sigma_Controller_Action
 	
 	public function indexAction()
 	{
-		
 		$this->view->title = "Errore";
 		$this->view->buttonText = '';
 		$this->view->actionTemplate = 'contents/errore.tpl';
 		$this->view->errore = array('Generic problem');
 		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}
+	
+	
+	public function completeAction(){
+		$this->view->title = "Conferma Azione";
+		$this->view->buttonText = '';
+		$this->view->actionTemplate = 'contents/ok.tpl';
+		$this->view->errore = array('Mail spedita correttamente');
+		$this->getResponse()->setBody( $this->view->render('site.tpl') ); 
+	}
+	
 	
 	public function privilegesAction(){
 		$this->view->title = "Errore";
@@ -85,7 +94,6 @@ class ErroreController extends Sigma_Controller_Action
 		$this->view->errore = array('La risorsa inserita esiste gi&agrave;');
 		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}
-	
 	
 	public function notavaibleAction(){
 		$this->view->title = "Errore 404";

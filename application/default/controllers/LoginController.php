@@ -85,7 +85,7 @@ class LoginController extends Sigma_Controller_Action
 					$result = $auth_module->authenticate($auth_module_adapter);
 		
 					if ( $result->isValid()  ){
-						$this->_redirect('/');
+						$this->_redirect('/home/');
 					}
 
 					$this->_redirect('/errore/');
@@ -156,6 +156,9 @@ class LoginController extends Sigma_Controller_Action
 
 	}
 
+	/**
+	 * @todo spedire la mail...
+	 */
 	public function lostAction(){
 
 		$this->view->title = "Lost Password";

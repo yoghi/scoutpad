@@ -21,7 +21,7 @@
  * @package 	Sigma_Controller
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
- * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ * @version		0.0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
  */
 class Sigma_Controller_Action extends Zend_Controller_Action {
 	
@@ -54,15 +54,6 @@ class Sigma_Controller_Action extends Zend_Controller_Action {
 		
 		/*Template Lite*/
 		$this->view = new Sigma_View_TemplateLite();
-		
-		/*
-		$auth_module = Zend_Registry::get('auth_module');
-		if ( $auth_module->hasIdentity() ){  
-			$this->identita = $auth_module->getIdentity();
-			$this->view->info_user = " {$this->identita['nome']} {$this->identita['cognome']}";
-			$this->view->info_level = $this->identita['role'];
-		}
-		*/
 
 		$auth_session = new Zend_Session_Namespace('Zend_Auth');
 		if ( !empty($auth_session->storage) ) {
@@ -78,6 +69,44 @@ class Sigma_Controller_Action extends Zend_Controller_Action {
 		
 	}
 
+	/**
+	 * Notifica all'utente qualcosa (Error/Warn/Info)
+	 * 
+	 * @param mixed $info	array con le informazioni della notifica
+	 * @param string $type	tipo di notifica
+	 * @param string $uri 	URL a cui rimandare dopo la notifica
+	 * @param string $next	URL di destinazione (in caso di conferma)
+	 */
+	public function notify($uri, $type, $info, $next = null){
+		
+		$info_s = array();
+			$info_s['type'] = $type;
+		
+		if ( !is_array($info) ) $info_s['text'] = array($info);
+		else $info_s['text'] = $info;
+		
+		if ( is_null($next) && $type === 'conferma'  ) { //obbligatorio quando devo mettere la conferma
+			Zend_Registry::get('log')->log('parametro next mancante in una richiesta di conferma!!!',Zend_Log::ERR);
+		}
+		
+		$info_s['next'] = $next;
+		
+		try {
+		
+			$token = Sigma_Flow_Token::getInstance()->insert($uri,$info_s);
+		
+		} catch(Exception $e){
+			
+			$this->_redirect('/notify/');
+			
+		}
+		
+		$this->_redirect('/notify/index/id/'.$token);
+		
+	}
+
+	
+	
 }
 
 ?>

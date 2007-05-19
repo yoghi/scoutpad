@@ -72,9 +72,9 @@ class Sigma_Form_Help {
 	private function __construct(){
 		
 		$this->flow = new Zend_Session_Namespace('Sigma_Flow');
-
 		//$this->flo->before_page = $sigma_flow->last_page;	// è la pagina visitata precedentemente
 		//$this->flo->last_page = $_SERVER["REQUEST_URI"];	// è la pagina corrente (ossia l'ultima)
+		//$_SERVER['HTTP_REFERER']  pagina da cui provengo! 
 
 	}
 	

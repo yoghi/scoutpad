@@ -34,7 +34,7 @@ require_once 'Zend/Auth/Result.php';
  * @copyright	Copyright (c) 2007
  * @author		Stefano Tamagnini
  * @license		New BSD License
- * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini
+ * @version		0.0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini
  */
 class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
 	
