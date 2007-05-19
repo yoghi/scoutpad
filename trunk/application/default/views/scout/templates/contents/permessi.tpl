@@ -112,21 +112,21 @@
 			</div>
 			<div>
 				<label>Modulo : </label>	
-				<select style="width:100%" name="modulo">
+				<select style="width:100%" name="form_modulo">
 					{ html_options options=$module_options selected=$current_modulo }
 				</select>
 			</div>
 			<div>
 				<label>Controller : </label>	
-				<input style="width:100%" type="text" name="controller" id="controller" value="{$current_controller}" size="20" tabindex="1" />
+				<input style="width:100%" type="text" name="form_controller" id="form_controller" value="{$current_controller}" size="20" tabindex="1" />
 			</div>
 			<div>
 				<label>Action : </label>	
-				<input style="width:100%" type="text" name="action" id="action" value="{$current_action}" size="20" tabindex="2" />
+				<input style="width:100%" type="text" name="form_action" id="form_action" value="{$current_azione}" size="20" tabindex="2" />
 			</div>
 			<div>
 				<label>Gruppo : </label>
-				<select name="role" style="width:100%">
+				<select name="form_role" style="width:100%">
 					{ html_options options=$role_options selected=$current_role }
 				</select>
 			</div>

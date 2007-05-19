@@ -47,19 +47,12 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		
 		Zend_Loader::loadClass('Zend_Filter_Alpha');
 		$filter = new Zend_Filter_Alpha();
+		
+		//analizzo il GET URL (per la visualizzazione)  
 		$this->_role($filter);
 		$this->_action($filter);
 		$this->_modulo($filter);
 		$this->_controller($filter);
-		
-		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
-			
-			$url = '/admin/permessi/index';
-			if ( isset($_POST['role']) && 'all' != $_POST['role'] )  $url .= '/role/'.$filter->filter($_POST['role']);
-			if ( isset($_POST['modulo']) && 'all' != $_POST['modulo'] ) $url .= '/modulo/'.$filter->filter($_POST['modulo']);	 
-			$this->_redirect($url);
-			
-		}
 		
 	}
 	
@@ -83,9 +76,9 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		}
 		
 		if ( !is_null($this->azione) ) {
-			$this->view->current_action = $this->azione;
+			$this->view->current_azione = $this->azione;
 		} else {
-			$this->view->current_action = '';
+			$this->view->current_azione = '';
 		}
 		
 		if ( !is_null($this->role) ) {
@@ -142,12 +135,12 @@ class Admin_PermessiController extends Sigma_Controller_Action
 				
 				$modulo = $acl_single['Modulo'];
 				$controller = is_null($acl_single['Controller']) ? '*' :  $acl_single['Controller'];
-				$action = is_null($acl_single['Action']) ? '*' :  $acl_single['Action'];
+				$azione = is_null($acl_single['Action']) ? '*' :  $acl_single['Action'];
 				
 				$acl_list['All people'][$acl_single['id']] = array (
 							'Modulo' => $modulo,
 							'Controller' => $controller,
-							'Action' => $action
+							'Action' => $azione
 				); 	
 			}
 
@@ -173,12 +166,12 @@ class Admin_PermessiController extends Sigma_Controller_Action
 				
 				$modulo = $acl_single['Modulo'];
 				$controller = is_null($acl_single['Controller']) ? '*' :  $acl_single['Controller'];
-				$action = is_null($acl_single['Action']) ? '*' :  $acl_single['Action'];
+				$azione = is_null($acl_single['Action']) ? '*' :  $acl_single['Action'];
 				
 				$acl_list[$this->role][$acl_single['id']] = array (
 							'Modulo' => $modulo,
 							'Controller' => $controller,
-							'Action' => $action
+							'Action' => $azione
 				); 	
 			}
 				
@@ -188,128 +181,45 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		$this->view->acl_list = $acl_list;
 		
 		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
-		
-		
-		/*
-		
-			Array
-			(
-			    [admin] => Array
-			        (
-			            [0] => Array
-			                (
-			                    [id] => 3
-			                    [Modulo] => admin
-			                    [Controller] => permessi
-			                    [Action] => change
-			                    [Role] => member
-			                )
-			
-			            [1] => Array
-			                (
-			                    [id] => 2
-			                    [Modulo] => admin
-			                    [Controller] => permessi
-			                    [Action] => index
-			                    [Role] => 
-			                )
-			
-			        )
-			
-			    [default] => Array
-			        (
-			            [0] => Array
-			                (
-			                    [id] => 1
-			                    [Modulo] => default
-			                    [Controller] => index
-			                    [Action] => 
-			                    [Role] => 
-			                )
-			
-			        )
-			}
 
-		//$acl = new Zend_Acl();
-
-		$roleGuest = new Zend_Acl_Role('guest');
-		$acl->addRole($roleGuest);
-		echo '<pre>';
-		
-		foreach($rows->toArray() as $e ){
-			
-			if ( !is_null($e['Modulo'])  ){
-				
-				// Se sono qui allora dovro permettere di accedere solo alle risorse su cui ho esplicitato una politica, altrimenti ACL_DENIED!
-
-				if ( !is_null($e['Controller'])  ){
-					
-					if ( !$acl->has($e['Controller']) ) {
-						//allora la risorsa va aggiunta
-						$acl->add(new Zend_Acl_Resource($e['Controller']));
-					}
-					
-					if ( !is_null($e['Action'])  ){
-						$acl->allow($roleGuest, $e['Controller'], $e['Action']);
-					} else {
-						echo 'posso tutte le azioni sul controller : '.$e['Controller'].'<br/>';
-						$acl->allow($roleGuest, $e['Controller'], null);
-					}
-					
-					
-				} else {
-					// tutto possono tutto
-					$acl->allow($roleGuest, null, null);
-					echo 'posso tutto';
-				}
-			} else {
-				// tutto possono tutto
-				$acl->allow($roleGuest, null, null);
-				echo 'posso tutto';
-			}
-			
-		}
-		
-		echo '</pre>';
-		
-		echo 'Posso fare tutto su Permessi? '; 
-		echo $acl->isAllowed('guest', 'permessi', null) ? "allowed" : "denied"; echo '<br/>';
-		
-		echo 'Posso fare tutto su Index? '; 
-		echo $acl->isAllowed('guest', 'index', null) ? "allowed" : "denied"; echo '<br/>';
-		
-		*/
-		
 		
 	}
 	
 	private function _modulo(Zend_Filter_Alpha $filter){
+		
 		if ( isset($this->params['modulo']) ){
 			$this->modulo = $filter->filter($this->params['modulo']);
 			Zend_Registry::get('log')->log('Modulo: '.$this->role,Zend_Log::DEBUG);
 		} else Zend_Registry::get('log')->log('parametro Modulo mancante',Zend_Log::DEBUG);
+		
 	}
 	
 	private function _action(Zend_Filter_Alpha $filter){
+		
 		if ( isset($this->params['azione']) ){
 			$this->azione = $filter->filter($this->params['azione']);
 			Zend_Registry::get('log')->log('Action: '.$this->azione,Zend_Log::DEBUG);
 		} else Zend_Registry::get('log')->log('parametro Action mancante',Zend_Log::DEBUG);
+		
 	}
 	
 	private function _controller(Zend_Filter_Alpha $filter){
+		
 		if ( isset($this->params['risorsa']) ){
 			$this->risorsa = $filter->filter($this->params['risorsa']);
 			Zend_Registry::get('log')->log('Risorsa: '.$this->risorsa,Zend_Log::DEBUG);
 		} else Zend_Registry::get('log')->log('parametro Risorsa mancante',Zend_Log::DEBUG);
+		
 	}
 	
 	private function _role(Zend_Filter_Alpha $filter){		
+		
 		if ( isset($this->params['role']) ){
 			//$this->role = $filter->filter($this->params['role']);
 			$this->role = $this->params['role'];
 			Zend_Registry::get('log')->log('Role: '.$this->role,Zend_Log::DEBUG);
 		} else Zend_Registry::get('log')->log('parametro Role mancante',Zend_Log::DEBUG);
+		
 	}
 	
 	public function removeAction(){
@@ -319,9 +229,7 @@ class Admin_PermessiController extends Sigma_Controller_Action
 	
 		require_once 'Zend/Session/Namespace.php';
     	$namespace = new Zend_Session_Namespace('Zend_Auth');
-		var_dump($namespace->storage);
-		
-		
+		//var_dump($namespace->storage);
 		
 		$this->view->title = "Conferma rimozione regola ACL";
 		
@@ -334,10 +242,10 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		
 		$modulo = $acl_single[0]['Modulo'];
 		$controller = is_null($acl_single[0]['Controller']) ? '*' :  $acl_single[0]['Controller'];
-		$action = is_null($acl_single[0]['Action']) ? '*' :  $acl_single[0]['Action'];
+		$azione = is_null($acl_single[0]['Action']) ? '*' :  $acl_single[0]['Action'];
 		
 		$this->view->testo_conferma = "Sicuro di voler eliminare questa regola ACL : ";
-		$this->view->errore = $this->params['id'].") $modulo-&gt;$controller-&gt;$action";
+		$this->view->errore = $this->params['id'].") $modulo-&gt;$controller-&gt;$azione";
 		
 		$this->view->confirm_uri = '/admin/permessi/delete/';
 		
@@ -345,15 +253,54 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}
 	
-	public function addAction(){}
+	public function addAction(){
+
+		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {	
+			
+			//controllo se ci sono i 4 parametri 
+
+			if (  isset($_POST['form_modulo']) &&  isset($_POST['form_controller']) &&  isset($_POST['form_action']) &&  isset($_POST['form_role'])   ) {
+				
+					$acl = new Acl();
+					
+					$modulo = $_POST['form_modulo'] != '' ? $_POST['form_modulo'] : null;
+					$controller = $_POST['form_controller'] != '' ? $_POST['form_controller'] : null;
+					$azione = $_POST['form_action'] != '' ? $_POST['form_action'] : null;
+					$role = $_POST['form_role'] != 'all' ? $_POST['form_role'] : null;
+					
+					$date = array(
+						'Modulo' => $modulo,
+						'Controller' => $controller,
+						'Action' => $azione,
+						'Role' => $role
+					);		
+					
+					$ret = $acl->insert($date);
+					
+					if ( $ret === false ) $this->notify('/admin/permessi/','errore','risorsa non disponibile');
+					
+					$acl_manager = new Sigma_Acl_Manager($_POST['form_role'],$modulo);
+					$acl_manager->regenCache();
+					
+					$this->notify('/admin/permessi/','complete','inserimento completato con successo di '.$modulo.' -> '.$controller.' -> '.$azione.' in '.$_POST['form_role']);
+
+			} else {
+				
+				$this->notify('/admin/permessi/','errore','missing params');
+				
+			}
+			
+		}
+		
+	}
 	
 	public function changeAction(){}
 	
 	public function deleteAction(){
-		//ricorda che non è possibile eliminare la entri 1... (login)
+		//ricorda che non è possibile eliminare le entry importanti ... (Es. login, notify, default...)
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
+
 			
-		
 		
 		}
 	}

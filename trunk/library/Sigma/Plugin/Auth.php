@@ -21,7 +21,7 @@
  * @package 	Sigma_Plugin
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
- * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ * @version		0.0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
  */
 class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 
@@ -102,55 +102,59 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
         	//$acl_cache = new AclCache();        	
 			//$r = $acl_cache->fetchAll($where)->toArray();
 
-			$acl_manager = new Sigma_Acl_Manager($role,$module);
+			try {
 			
-			if ( !$acl_manager->loadFromCache() ) {
-				// non c'è in cache
-				$module = $this->_noacl['module'];
-       			$controller = $this->_noacl['controller'];
-       			$action = $this->_noacl['action'];
-			} else {
-			
-				$acl = $acl_manager->getAcl();
-				
-				if ( ! $acl->has($controller) ) {
-					
-					if ( !$acl->isAllowed($role,null,null) ) {
-								 
-						if ( empty($auth_session->storage) ) {
-							$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
-			       			$module = $this->_noauth['module'];
-			       			$controller = $this->_noauth['controller'];
-			       			$action = $this->_noauth['action'];
-						} else {
-							$module = $this->_noacl['module'];
-			       			$controller = $this->_noacl['controller'];
-			       			$action = $this->_noacl['action'];
-						}
-						
-					}
-					
+				$acl_manager = new Sigma_Acl_Manager($role,$module); $acl_manager->load();
+		
+				if ( !$acl_manager->loadFromCache() ) {
+					// non c'è in cache
+					$module = $this->_noacl['module'];
+	       			$controller = $this->_noacl['controller'];
+	       			$action = $this->_noacl['action'];
 				} else {
 				
-					if ( !$acl->isAllowed($role,$controller,$action) ){
+					$acl = $acl_manager->getAcl();
+					
+					if ( ! $acl->has($controller) ) {
 						
-						// non posso accedere direttamente a quella azione ma forse posso a tutto l'oggetto...
-		
-						if ( !$acl->isAllowed($role,$controller,null) ) {
+						if ( !$acl->isAllowed($role,null,null) ) {
+									 
+							if ( empty($auth_session->storage) ) {
+								$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
+				       			$module = $this->_noauth['module'];
+				       			$controller = $this->_noauth['controller'];
+				       			$action = $this->_noauth['action'];
+							} else {
+								$module = $this->_noacl['module'];
+				       			$controller = $this->_noacl['controller'];
+				       			$action = $this->_noacl['action'];
+							}
 							
-							// non posso accedere direttamente a quella risorsa ma forse posso a tutto l'ambiente ...
-		
-							if ( !$acl->isAllowed($role,null,null) ) {
-								 
-								if ( empty($auth_session->storage) ) {
-									$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
-					       			$module = $this->_noauth['module'];
-					       			$controller = $this->_noauth['controller'];
-					       			$action = $this->_noauth['action'];
-								} else {
-									$module = $this->_noacl['module'];
-					       			$controller = $this->_noacl['controller'];
-					       			$action = $this->_noacl['action'];
+						}
+						
+					} else {
+					
+						if ( !$acl->isAllowed($role,$controller,$action) ){
+							
+							// non posso accedere direttamente a quella azione ma forse posso a tutto l'oggetto...
+			
+							if ( !$acl->isAllowed($role,$controller,null) ) {
+								
+								// non posso accedere direttamente a quella risorsa ma forse posso a tutto l'ambiente ...
+			
+								if ( !$acl->isAllowed($role,null,null) ) {
+									 
+									if ( empty($auth_session->storage) ) {
+										$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
+						       			$module = $this->_noauth['module'];
+						       			$controller = $this->_noauth['controller'];
+						       			$action = $this->_noauth['action'];
+									} else {
+										$module = $this->_noacl['module'];
+						       			$controller = $this->_noacl['controller'];
+						       			$action = $this->_noacl['action'];
+									}
+									
 								}
 								
 							}
@@ -158,12 +162,20 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 						}
 						
 					}
-					
+				
 				}
 			
+			} catch (Zend_Exception $e) {
+				$module = $this->_noauth['module'];
+       			$controller = $this->_noauth['controller'];
+       			$action = $this->_noauth['action'];
+			} catch (Exception $e){
+				$module = $this->_noauth['module'];
+       			$controller = $this->_noauth['controller'];
+       			$action = $this->_noauth['action'];
 			}
 
-        	$log->log("Eseguo: $module _ $controller -> $action", Zend_Log::DEBUG);
+        	$log->log("Eseguo: $module -> $controller -> $action", Zend_Log::NOTICE);
         	
         	$request->setModuleName($module);
         	$request->setControllerName($controller);

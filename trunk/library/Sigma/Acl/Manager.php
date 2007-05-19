@@ -21,7 +21,7 @@
  * @package 	Sigma_Plugin
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
- * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ * @version		0.0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
  */
 class Sigma_Acl_Manager {
 	
@@ -72,8 +72,7 @@ class Sigma_Acl_Manager {
 			$this->role = $role;
 			$this->modulo = $modulo;
 
-		}
-		catch (Zend_Exception $e) {
+		}catch (Zend_Exception $e) {
 			throw $e;
 		}
 		
@@ -135,6 +134,17 @@ class Sigma_Acl_Manager {
 		
 		return false;
 		
+	}
+	
+	/**
+	 * Rigenera la cache
+	 */
+	public function regenCache() {
+		$this->acl = new Zend_Acl();
+		Zend_Registry::get('log')->log('REGEN CACHE FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
+		$this->_addRole();
+		$this->_addRules();
+		$this->_cacheit();
 	}
 	
 	/**

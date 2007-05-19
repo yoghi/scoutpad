@@ -3,6 +3,22 @@
 	{
 
 		
+		function insert($data){
+			
+			$where = array();
+			
+			foreach( $data as $key => $value ){
+				if ( is_null($value) ) $where[] = $key.' IS NULL';
+				else $where[] = $key." = '$value'";
+			}
+
+			if ( $this->fetchAll($where)->count() > 0 ) { //riga gia presente
+				Zend_Registry::get('log')->log('la ACL che si vuole inserire gia\' esiste',Zend_Log::WARN);
+				return false;
+			} else parent::insert($data);
+			
+		}
+		
 		/**
 		 * Cerca le ACL di un determinato modulo
 		 *

@@ -6,3 +6,13 @@ db.config.password = <password>
 db.config.dbname = <dbname>
 auth.token = <generic token>
 view.path = <path where locate templates>
+
+[session]
+
+[mail]
+#server = <server.dominio.it>
+#ssl = <tls>
+#port = 25
+#auth = login
+#username = <username>
+#password = <password>

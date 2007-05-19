@@ -21,7 +21,7 @@
  * @package 	Sigma_View
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
- * @version		0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ * @version		0.0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
  */
 class Sigma_View_TemplateLite extends Zend_View_Abstract
 {
@@ -87,7 +87,10 @@ class Sigma_View_TemplateLite extends Zend_View_Abstract
 		$this->_ctemplate = $name;
 		ob_start();
         $this->_run($l[0].$this->_file); 
-
+        $out = ob_get_contents();
+        ob_clean();
+        
+        return $out;
         //$this->addFilter(ob_get_clean()); // filter output
         
 	}

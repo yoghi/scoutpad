@@ -22,7 +22,6 @@ ini_set('session.save_path','/tmp');
 
 include 'Zend/Loader.php';
 
-
 /**
  * Zend Class
  */
@@ -50,15 +49,19 @@ Zend_Loader::loadClass('Zend_Log_Formatter_Xml');
 Zend_Loader::loadClass('Sigma_Controller_Action');
 Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
 Zend_Loader::loadClass('Sigma_View_TemplateLite');
+Zend_Loader::loadClass('Sigma_Flow_Token');
 
-Zend_Loader::loadClass('Sigma_Form_Help');
 
-
+if (!defined('CONFIG_FILE')) {
+	define('CONFIG_FILE', '/home/workspace/Scout/ScoutPad/application/config.ini');
+}
 
 if (!defined('TEMPLATE_LITE_DIR')) {
 	define('TEMPLATE_LITE_DIR', '/home/workspace/Scout/ScoutPad/library/Sigma/Template_Lite' . DIRECTORY_SEPARATOR);
 	require('/home/workspace/Scout/ScoutPad/library/Sigma/Template_Lite/class.template.php');
 }
+
+
 
 function sigma_error_handler($errno, $errmsg, $filename, $linenum, $vars) {
 
@@ -95,7 +98,7 @@ try {
 
 	// load configuration
 	try {
-		$config = new Zend_Config_Ini('/home/workspace/Scout/ScoutPad/application/config.ini', 'general');
+		$config = new Zend_Config_Ini(CONFIG_FILE, 'general');
 		Zend_Registry::set('config', $config);
 	} catch (Zend_Config_Exception $e) {
 		echo '<h1>Misconfiguration</h1>';
@@ -106,9 +109,13 @@ try {
 	if ( !is_null($config->db->adapter) ) {
 		//database 
 		try {
+			
 			$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->asArray() );
-			Zend_Registry::set('database', $db);
+			$db->getConnection(); //controllo se il db esiste davvero!
+
 			Zend_Db_Table::setDefaultAdapter($db);
+			Zend_Registry::set('database', $db);
+			
 		} catch (Zend_Db_Exception $e){
 			echo '<h1>Misconfiguration</h1>';
 			echo '<b>Database selected in config.ini not avaible</b>';
@@ -116,7 +123,7 @@ try {
 		}
 		//Loggo su tabella
 		Zend_Loader::loadClass('Zend_Log_Writer_Db');
-		$log->addWriter(new Zend_Log_Writer_Db($db,'Log')); //ora anche su db
+		$log->addWriter(new Zend_Log_Writer_Db($db,'Log')); //ora anche su db, ATTENTO non controlla in automatico la connettività
 	}
 	
 	// Autentication
@@ -152,20 +159,15 @@ try {
 	    	echo $exceptions->getMessage().'<br/>';
 	    	echo $exceptions->getFile().', '.$exceptions->getLine().'<br/>';
 	    	echo '</li>';
+	    	echo '<pre>';
+	    	echo $exceptions->getTraceAsString();
+	    	echo '</pre>';
 	    }
 	    echo '</ul>';
 	} else {
 	    $response->sendHeaders();
 	    $response->outputBody();
 	}
-	
-	echo Sigma_Form_Help::getInstance()->randToken();
-	
-	/*for ( $i = 141; $i < 185; $i++ ){
-		$oct = octdec($i);
-		echo "$i => ".chr($oct)."\n";
-	}
-	*/
 	
 }
 catch (Exception $e){
