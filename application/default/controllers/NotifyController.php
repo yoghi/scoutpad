@@ -35,13 +35,16 @@ class NotifyController extends Sigma_Controller_Action
 							$this->view->title = 'Errore';
 							$this->view->notify_type = 'warnMacro';
 							$this->view->notify_link_text = 'Clicca qui per ritornare alla pagina di partenza';
+							$this->flow_token->delete($token_id); // ho finito di utilizzarlo
 							break;
 						case 'complete':
 							$this->view->title = 'Completato';
 							$this->view->notify_type = 'infoMacro';
 							$this->view->notify_link_text = 'Clicca qui per ritornare alla pagina di partenza';
+							$this->flow_token->delete($token_id); // ho finito di utilizzarlo
 							break;
 						case 'conferma':
+							$this->view->notify_type = 'checkMacro';
 							$this->view->title = 'Conferma';
 							$this->view->notify_link_text = 'Clicca qui per ritornare alla pagina di partenza';
 							$this->view->notify_link2_text = 'Clicca qui per confermare';
@@ -55,8 +58,7 @@ class NotifyController extends Sigma_Controller_Action
 					}
 					
 					$this->view->notify_text = $content['info']['text'];
-
-					$this->flow_token->delete($token_id); // ho finito di utilizzarlo
+					
 					
 				} else {
 					$this->view->title = 'Errore';

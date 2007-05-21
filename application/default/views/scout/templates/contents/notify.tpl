@@ -11,8 +11,12 @@
 	
 	{if isset($notify_link2_text)}
 		<h4>
-			<a style="text-decoration:none;" href="{$before_page}">&ldquo; {$notify_link_text} &rdquo; </a>
-			<a style="text-decoration:none;" href="{$next_page}">&ldquo; {$notify_link2_text} &rdquo; </a>
+			<p>	
+				<a style="text-decoration:none;" href="{$before_page}">&ldquo; {$notify_link_text} &rdquo; </a>
+			</p>
+			<p style="font-size: 160%" >
+				<a style="text-decoration:none;" href="{$next_page}">&ldquo; {$notify_link2_text} &rdquo; </a> 
+			</p>
 		</h4>
 	{else}
 		<h4><a style="text-decoration:none;" href="{$before_page}">&ldquo; {$notify_link_text} &rdquo; </a></h4>
