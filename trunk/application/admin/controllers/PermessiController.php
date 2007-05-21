@@ -222,35 +222,40 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		
 	}
 	
+	/**
+	 * rimuovo un ACL
+	 * @todo verificare che non si elimino ACL fondamentali
+	 */
 	public function removeAction(){
 		
-		$auth_module = Zend_Registry::get('auth_module');
-		$session = $auth_module->getStorage();
-	
-		require_once 'Zend/Session/Namespace.php';
-    	$namespace = new Zend_Session_Namespace('Zend_Auth');
-		//var_dump($namespace->storage);
-		
-		$this->view->title = "Conferma rimozione regola ACL";
-		
 		if ( !isset($this->params['id']) ) $this->_redirect('/admin/permessi/');
-		if ( '1' == $this->params['id'] ) $this->_redirect('/errore/invalid/');
+		if ( '1' == $this->params['id'] ) $this->notify('/admin/permessi/','errore','Non si possono rimuovere le ACL di BASE');
 		
-		$acl_db = new Acl();
+		try {
+			$acl_db = new Acl();
+			$acl_single = $acl_db->find($this->params['id'])->toArray();
+			
+			if ( count($acl_single) == 0 ) $this->notify('/admin/permessi/','errore','ACL inesistente'); 
+			
+			$modulo = $acl_single[0]['Modulo'];
+			$controller = is_null($acl_single[0]['Controller']) ? '*' :  $acl_single[0]['Controller'];
+			$azione = is_null($acl_single[0]['Action']) ? '*' :  $acl_single[0]['Action'];
+			
+			$stone = $acl_single[0]['stone'];
+			
+			/**
+			 * Stone non è configurabile da utente, ma solo lato programmazione interna!!
+			 */
+			if ( $stone == 1 ) { //fondamentale, allora devo chiedere la conferma altrimenti, elimino subito
+				$this->notify('/admin/permessi/','conferma','Sicuro di voler eliminare questa regola la ACL '.$this->params['id']." : $modulo-&gt;$controller-&gt;$azione",'/admin/permessi/delete/id/'.$this->params['id']);
+			} else {
+				$this->deleteAction();
+			}
+			
+		} catch ( Exception $e) {
+			$this->notify('/admin/permessi/','errore','servizio non disponibile'); 
+		}
 		
-		$acl_single = $acl_db->find($this->params['id'])->toArray();
-		
-		$modulo = $acl_single[0]['Modulo'];
-		$controller = is_null($acl_single[0]['Controller']) ? '*' :  $acl_single[0]['Controller'];
-		$azione = is_null($acl_single[0]['Action']) ? '*' :  $acl_single[0]['Action'];
-		
-		$this->view->testo_conferma = "Sicuro di voler eliminare questa regola ACL : ";
-		$this->view->errore = $this->params['id'].") $modulo-&gt;$controller-&gt;$azione";
-		
-		$this->view->confirm_uri = '/admin/permessi/delete/';
-		
-		$this->view->actionTemplate = 'contents/confirm.tpl';
-		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}
 	
 	public function addAction(){
@@ -296,13 +301,50 @@ class Admin_PermessiController extends Sigma_Controller_Action
 	
 	public function changeAction(){}
 	
+	/**
+	 * Elimino definitivamente una ACL 
+	 * @todo: verificare che non sia marchiata fondamentale
+	 */
 	public function deleteAction(){
-		//ricorda che non è possibile eliminare le entry importanti ... (Es. login, notify, default...)
-		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
-
-			
 		
+		//ricorda che non è possibile eliminare le entry importanti ... (Es. login, notify, default...)
+		$id = $this->_getParam('id'); //id dell'ACL
+		
+		if ( !is_null($id) ) {
+			
+			if ( !isset($this->params['id']) ) $this->_redirect('/admin/permessi/');
+			if ( '1' == $this->params['id'] ) $this->notify('/admin/permessi/','errore','Non si possono rimuovere le ACL di BASE');
+			
+			try {
+			
+				$acl_db = new Acl();
+				$acl_single = $acl_db->find($this->params['id'])->toArray();
+				
+				if ( count($acl_single) == 0 ) $this->notify('/admin/permessi/','errore','ACL inesistente'); 
+				
+				$where = $acl_db->getAdapter()->quoteInto('id = ?',$id);
+				$ret = $acl_db->delete($where);
+				
+				if ( $ret > 0 ) {
+					
+					$modulo = $acl_single[0]['Modulo'];
+					$controller = is_null($acl_single[0]['Controller']) ? '*' :  $acl_single[0]['Controller'];
+					$azione = is_null($acl_single[0]['Action']) ? '*' :  $acl_single[0]['Action'];
+					$role = is_null($acl_single[0]['Role']) ? '*' :  $acl_single[0]['Role'];
+					
+					Zend_Registry::get('log')->log('rimossa la ACL n° '.$id."$modulo-&gt;$controller-&gt;$azione in $role",Zend_Log::NOTICE);
+							
+					$this->notify('/admin/permessi/','complete',$id.' ACL eliminata : '."$modulo-&gt;$controller-&gt;$azione in $role"); 
+				}
+				
+			} catch (Exception $e) {
+				$this->notify('/admin/permessi/','errore','servizio non disponibile'); 
+			}
+			
+		} else {
+			$this->_redirect('/admin/permessi/');
 		}
+		
 	}
 
 	public function noRouteAction()
