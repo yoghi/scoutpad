@@ -71,7 +71,9 @@
 							
 							<ul style="list-style: none;">								
 								<li style="display: inline;"><a href="/admin/permessi/remove/id/{$id}">remove</a></li>
-								<li style="display: inline;margin-left: 1.4em;"><a href="/admin/permessi/edit/id/{$id}">edit</a></li>
+								<!--  
+									<li style="display: inline;margin-left: 1.4em;"><a href="/admin/permessi/edit/id/{$id}">edit</a></li>
+								 -->
 								<li style="display: inline;margin-right: 1.4em;">&nbsp;</li> 
 							</ul>
 						
