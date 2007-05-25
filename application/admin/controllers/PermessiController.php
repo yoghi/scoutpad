@@ -126,7 +126,7 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		$acl_list = array();
 		
 		//non ho settato ne role ne moduli quindi voglio le regole che valgono per tutti e su tutti i moduli
-		if ( count($this->_getAllParams()) == 3 ) {
+		if ( count($this->_getAllParams()) == 3 || ( is_null($this->role) && is_null($this->modulo) ) ) {
 			
 			$this->view->title_acl = 'Elenco ACL applicabili su tutti gli utenti';
 
@@ -188,8 +188,9 @@ class Admin_PermessiController extends Sigma_Controller_Action
 	private function _modulo(Zend_Filter_Alpha $filter){
 		
 		if ( isset($this->params['modulo']) ){
-			$this->modulo = $filter->filter($this->params['modulo']);
+			$this->modulo = strtolower($filter->filter($this->params['modulo']));
 			Zend_Registry::get('log')->log('Modulo: '.$this->role,Zend_Log::DEBUG);
+			if ( $this->modulo == 'all' ) $this->modulo = null;
 		} else Zend_Registry::get('log')->log('parametro Modulo mancante',Zend_Log::DEBUG);
 		
 	}
@@ -197,7 +198,7 @@ class Admin_PermessiController extends Sigma_Controller_Action
 	private function _action(Zend_Filter_Alpha $filter){
 		
 		if ( isset($this->params['azione']) ){
-			$this->azione = $filter->filter($this->params['azione']);
+			$this->azione = strtolower($filter->filter($this->params['azione']));
 			Zend_Registry::get('log')->log('Action: '.$this->azione,Zend_Log::DEBUG);
 		} else Zend_Registry::get('log')->log('parametro Action mancante',Zend_Log::DEBUG);
 		
@@ -206,7 +207,7 @@ class Admin_PermessiController extends Sigma_Controller_Action
 	private function _controller(Zend_Filter_Alpha $filter){
 		
 		if ( isset($this->params['risorsa']) ){
-			$this->risorsa = $filter->filter($this->params['risorsa']);
+			$this->risorsa = strtolower($filter->filter($this->params['risorsa']));
 			Zend_Registry::get('log')->log('Risorsa: '.$this->risorsa,Zend_Log::DEBUG);
 		} else Zend_Registry::get('log')->log('parametro Risorsa mancante',Zend_Log::DEBUG);
 		
@@ -216,8 +217,9 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		
 		if ( isset($this->params['role']) ){
 			//$this->role = $filter->filter($this->params['role']);
-			$this->role = $this->params['role'];
+			$this->role = strtolower($this->params['role']);
 			Zend_Registry::get('log')->log('Role: '.$this->role,Zend_Log::DEBUG);
+			if ( $this->role == 'all' ) $this->role = null;
 		} else Zend_Registry::get('log')->log('parametro Role mancante',Zend_Log::DEBUG);
 		
 	}
@@ -258,6 +260,9 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		
 	}
 	
+	/**
+	 * Aggiungi una regola ACL
+	 */
 	public function addAction(){
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {	
@@ -268,10 +273,10 @@ class Admin_PermessiController extends Sigma_Controller_Action
 				
 					$acl = new Acl();
 					
-					$modulo = $_POST['form_modulo'] != '' ? $_POST['form_modulo'] : null;
-					$controller = $_POST['form_controller'] != '' ? $_POST['form_controller'] : null;
-					$azione = $_POST['form_action'] != '' ? $_POST['form_action'] : null;
-					$role = $_POST['form_role'] != 'all' ? $_POST['form_role'] : null;
+					$modulo = $_POST['form_modulo'] != '' ? strtolower($_POST['form_modulo']) : null;
+					$controller = $_POST['form_controller'] != '' ? strtolower($_POST['form_controller']) : null;
+					$azione = $_POST['form_action'] != '' ? strtolower($_POST['form_action']) : null;
+					$role = $_POST['form_role'] != 'all' ? strtolower($_POST['form_role']) : null;
 					
 					$date = array(
 						'Modulo' => $modulo,
@@ -284,7 +289,7 @@ class Admin_PermessiController extends Sigma_Controller_Action
 					
 					if ( $ret === false ) $this->notify('/admin/permessi/','errore','risorsa non disponibile');
 					
-					$acl_manager = new Sigma_Acl_Manager($_POST['form_role'],$modulo);
+					$acl_manager = new Sigma_Acl_Manager($role,$modulo);
 					$acl_manager->regenCache();
 					
 					$this->notify('/admin/permessi/','complete','inserimento completato con successo di '.$modulo.' -> '.$controller.' -> '.$azione.' in '.$_POST['form_role']);
@@ -298,8 +303,6 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		}
 		
 	}
-	
-	public function changeAction(){}
 	
 	/**
 	 * Elimino definitivamente una ACL 
@@ -332,12 +335,16 @@ class Admin_PermessiController extends Sigma_Controller_Action
 					$azione = is_null($acl_single[0]['Action']) ? '*' :  $acl_single[0]['Action'];
 					$role = is_null($acl_single[0]['Role']) ? '*' :  $acl_single[0]['Role'];
 					
-					Zend_Registry::get('log')->log('rimossa la ACL n° '.$id."$modulo-&gt;$controller-&gt;$azione in $role",Zend_Log::NOTICE);
+					Zend_Registry::get('log')->log('rimossa la ACL '.$id." : $modulo-&gt;$controller-&gt;$azione in $role",Zend_Log::NOTICE);
+					
+					$acl_manager = new Sigma_Acl_Manager($acl_single[0]['Role'],$acl_single[0]['Modulo']);
+					$acl_manager->regenCache();
 							
 					$this->notify('/admin/permessi/','complete',$id.' ACL eliminata : '."$modulo-&gt;$controller-&gt;$azione in $role"); 
 				}
 				
 			} catch (Exception $e) {
+				Zend_Registry::get('log')->log($e->getMessage(),Zend_Log::ERR);
 				$this->notify('/admin/permessi/','errore','servizio non disponibile'); 
 			}
 			

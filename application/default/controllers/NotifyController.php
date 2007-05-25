@@ -89,6 +89,17 @@ class NotifyController extends Sigma_Controller_Action
 		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}
 	
+	public function permissionAction(){
+		if ( !is_null($this->identita) ) $this->view->before_page = '/home/';
+		else $this->view->before_page = '/login/';
+		$this->view->title = 'Errore';
+		$this->view->notify_type = 'warnMacro';
+		$this->view->actionTemplate = 'contents/notify.tpl';
+		$this->view->notify_link_text = 'Clicca qui per ritornare alla pagina di partenza';
+		$this->view->notify_text = 'Non sei in possesso dei permessi necessari per accedere a questa risorsa';
+		$this->getResponse()->setBody( $this->view->render('site.tpl') );
+	}
+	
 }
 
 ?>

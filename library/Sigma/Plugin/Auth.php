@@ -38,8 +38,8 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 		 * @var array
 		 */
 		private $_noacl = array('module' => 'default',
-								'controller' => 'errore',
-								'action' => 'privileges');
+								'controller' => 'notify',
+								'action' => 'permission');
 
 		/**
 		 * Questa classe è un Plugin da eseguire prima di passare il controllo ad un Controller specifico in modo da poter controllare con le ACL l'accesso alle risorse.
