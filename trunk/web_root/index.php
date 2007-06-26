@@ -110,7 +110,7 @@ try {
 		//database 
 		try {
 			
-			$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->asArray() );
+			$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->toArray() );
 			$db->getConnection(); //controllo se il db esiste davvero!
 
 			Zend_Db_Table::setDefaultAdapter($db);
@@ -138,6 +138,20 @@ try {
 	)); 
 	$frontController->setRouter(new Zend_Controller_Router_Rewrite());
 	$frontController->setDispatcher(new Zend_Controller_Dispatcher_Standard());
+	
+	/**
+	 * errore "script 'script/login.phtml' not found in path dovuto ai nuovi helper introdotti"
+	 * @see http://www.nabble.com/got-Zend_View_Exception-t3814949s16154.html
+	*/ 
+	$frontController->setParam('noViewRenderer',true);
+
+	
+	/*Zend_Loader::loadClass('Sigma_Flow_Storage_Interface');
+	Zend_Loader::loadClass('Sigma_Flow_Storage_Session');
+	$r = new Sigma_Flow_Storage_Session();
+	$r->write(array(2,3,5,'p'));
+	$r->clear();
+	var_dump($r->isEmpty());*/
 	
 	//run
 	$request = new Zend_Controller_Request_Http();
