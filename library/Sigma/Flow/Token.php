@@ -30,14 +30,7 @@ class Sigma_Flow_Token {
      *
      * @var Sigma_Form_Help
      */
-    protected static $_instance = null;
-    
-    /**
-     * Session Namespace for control Session 'Sigma'
-     * 
-     * @var Zend_Session_Namespace 
-     */
-    protected $flow = null;
+    protected static $_instance = null; 
     
     /**
      * Lenght of token used into forms 
@@ -46,6 +39,13 @@ class Sigma_Flow_Token {
      */
     private $lenght = 8;
 	
+    /**
+     * Where storage token
+     *
+     * @var Sigma_Flow_Storage_Interface
+     */
+    private $storage = null;
+    
     /**
      * Returns an instance of Sigma_Form_Help
      *
@@ -61,33 +61,22 @@ class Sigma_Flow_Token {
 
         return self::$_instance;
     }
-	
-    /**
-     * Classe adibita alla gestione dei Form durante una sessione di lavoro di un utente
-     * Features:
-     * 		*) one-use form
-     * 		*) ip check
-     *
-     */
-	private function __construct(){
-		
-		Zend_Loader::loadClass('Token','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-		
-		$this->flow = new Zend_Session_Namespace('Sigma_Flow');
-		//$this->flo->before_page = $sigma_flow->last_page;	// è la pagina visitata precedentemente
-		//$this->flo->last_page = $_SERVER["REQUEST_URI"];	// è la pagina corrente (ossia l'ultima)
-		//$_SERVER['HTTP_REFERER']  pagina da cui provengo! 
 
-	}
+    /**
+     * Singleton pattern implementation makes "new" unavailable
+     *
+     * @return void
+     */
+	private function __construct(){}
 	
 	/**
 	 * Inserisce un token in memoria
 	 *
 	 * @param string $reference l'url di riferimento sorgente (da dove provengo)
-	 * @param Array $info l'informazione da memorizzare
+	 * @param array $info l'informazione da memorizzare
 	 * 
 	 * @return string token code 
-	 * @throws Exception
+	 * @throws Sigma_Flow_Storage_Exception
 	 */
 	public function insert($reference,array $info){
 		
@@ -102,58 +91,45 @@ class Sigma_Flow_Token {
 		
 		try {
 			
-			$token = new Token();
-			$token->insert($data);
+			$this->storage->write($data);
+	
+		}catch(Sigma_Flow_Storage_Exception $e){
 			
-		}catch(Zend_Db_Adapter_Exception $e){
-			
-			if ( substr($e->getCode(),0,2) == '23' ) { //riprovo...potrebbe essere stato solo un problema di token
-				
-				try {
-					$data['token'] = $this->randToken();
-					Zend_Registry::get('log')->log('Provo un diverso token',Zend_Log::WARN );
-					$token->insert($data);
-				} catch (Exception $e){
-					throw $e;
-				}
-				
+			try {
+				$data['token'] = $this->randToken();
+				Zend_Registry::get('log')->log('Provo un diverso token',Zend_Log::WARN );
+				$this->storage->write($data);
+			} catch (Sigma_Flow_Storage_Exception $e){
+				throw $e;
 			}
 			
-		}catch( Zend_Exception $e){
-			Zend_Registry::get('log')->log($e->getMessage(),Zend_Log::ERR ); //registro l'errore e propago l'ecezzione
-			throw $e;
 		}
 		
 		return $data['token'];
 	}
 	
-	
 	/**
 	 * Restituisce il contenuto del Token
 	 * @param string $token il token da cercare
-	 * @return Zend_Db_Table_Rowset
+	 * @return mixed
 	 */
 	public function getTokenContent($token_id){
 		
 		try {
 			
-			$token = new Token();
-			$data = $token->find($token_id); //Zend_Db_Table_Rowset
+			$this->storage->read();
+	
+		}catch(Sigma_Flow_Storage_Exception $e){
 			
-		}catch( Zend_Exception $e){
-			Zend_Registry::get('log')->log($e->getMessage(),Zend_Log::ERR ); //registro l'errore e propago l'ecezzione
-			throw $e;
+			try {
+				$data['token'] = $this->randToken();
+				Zend_Registry::get('log')->log('Provo un diverso token',Zend_Log::WARN );
+				$this->storage->write($data);
+			} catch (Sigma_Flow_Storage_Exception $e){
+				throw $e;
+			}
+			
 		}
-		
-		if ( $data->count() == 0 ) return null; //non ho trovato la notifica
-		
-		$d = $data->toArray();
-		
-		$ret = array();
-		$ret['info'] = unserialize(base64_decode($d[0]['info']));
-		$ret['url'] = $d[0]['uri']; 
-		
-		return $ret;
 		
 	}
 	
@@ -184,6 +160,10 @@ class Sigma_Flow_Token {
 		
 		return $count;
 		
+	}
+	
+	public function setStorage( Sigma_Flow_Storage_Interface $s ){
+		$this->storage = $s;
 	}
 	
 	
