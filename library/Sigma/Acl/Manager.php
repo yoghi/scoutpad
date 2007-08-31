@@ -21,7 +21,7 @@
  * @package 	Sigma_Plugin
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
- * @version		0.0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ * @version		0.0.2 - 2007 agosto 31 - 11:12 - Stefano Tamagnini  
  */
 class Sigma_Acl_Manager {
 	
@@ -101,7 +101,7 @@ class Sigma_Acl_Manager {
 			} else {					
 				$this->acl = new Zend_Acl();
 				Zend_Registry::get('log')->log('ACL MANAGER FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
-				$this->_addInheritRole();
+				$this->_addInheritRole($this->role);
 				$this->_addRules();
 				$this->_cacheit();
 			}
@@ -143,7 +143,7 @@ class Sigma_Acl_Manager {
 		$this->acl = new Zend_Acl();
 		$role = is_null($this->role) ? 'guest' : $this->role;
 		Zend_Registry::get('log')->log('REGEN CACHE FOR '.$role.' OVER '.$this->modulo,Zend_Log::DEBUG);
-		$this->_addInheritRole();
+		$this->_addInheritRole($this->role);
 		$this->_addRules();
 		$this->_cacheit(true);
 	}
@@ -152,7 +152,7 @@ class Sigma_Acl_Manager {
 	 * Salva in memoria cache le ACL
 	 * @param boolean $override sovrascrivi il precedente cache obj 
 	 */
-	private function _cacheit($override){
+	private function _cacheit($override = false){
 
 		$acl_cache = new AclCache();
 		
@@ -176,7 +176,7 @@ class Sigma_Acl_Manager {
 			$data['Object'] = base64_encode(  serialize( $this->acl ) );
 			$acl_cache->insert($data);
 			Zend_Registry::get('log')->log('cached acl obj into db with '.$this->num_regole.' regole',Zend_Log::DEBUG);
-		}
+		} else Zend_Registry::get('log')->log('nessuna regola messa in cache',Zend_Log::WARN);
 
 	}
 	
@@ -184,10 +184,8 @@ class Sigma_Acl_Manager {
 	 * Aggiunge un i richiedenti (Role) in modo da considerare anche gli inherits
 	 * @param string $role richiedente
 	 */
-	private function _addInheritRole() {
-		
-		$role = $this->role;
-		
+	private function _addInheritRole($role) {
+
 		if ( $role === null ) {
 			// vuole dire che è un utente NULL => di fatto GUEST!
 			$role = 'guest';
@@ -208,7 +206,8 @@ class Sigma_Acl_Manager {
 		
 		if ( !is_null($ris[0]['inherit']) ) {
 			$this->other_role[] = $ris[0]['inherit'];
-			$this->_addRole($ris[0]['inherit']);
+			// devo verificare che anche lui non abbia altri inherit!!
+			$this->_addInheritRole($ris[0]['inherit']);
 		} 
 		
 		$this->acl->addRole( new Zend_Acl_Role($ris[0]['nome']) , $ris[0]['inherit'] );
