@@ -28,7 +28,7 @@ class Rubrica_IndexController extends Sigma_Controller_Action
 	function init()
 	{
 		try {
-			Zend_Loader::loadClass('Staff','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass('User','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 		}
 		catch (Zend_Exception $e) {
 			var_dump($e);
@@ -39,7 +39,7 @@ class Rubrica_IndexController extends Sigma_Controller_Action
 	{
 		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/rubrica/views/scout');
 		$view->title = "Elenco membri";
-		$staff = new Staff();
+		$staff = new User();
 		
 		//$view->membri = $staff->fetchAll();
 		
@@ -81,7 +81,7 @@ class Rubrica_IndexController extends Sigma_Controller_Action
 						'status' => $status
 					);
 					try {
-						$staff = new Staff();
+						$staff = new User();
 						$staff->insert($data);
 					}
 					catch( Zend_Exception $e){
@@ -94,7 +94,7 @@ class Rubrica_IndexController extends Sigma_Controller_Action
 		}
 
 		// set up an "empty" album
-		$staff = new Staff();
+		$staff = new User();
 		$staff->id = '';
 		$staff->nome = '';
 		$staff->cognome = '';
@@ -112,7 +112,7 @@ class Rubrica_IndexController extends Sigma_Controller_Action
 	{
 		$view->setScriptPath('/home/workspace/Scout/ScoutPad/application/rubrica/views/scout');
 		$view->title = "Modifica membro";
-		$staff = new Staff();
+		$staff = new User();
 
 		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
 			

@@ -25,7 +25,7 @@ class NotifyController extends Sigma_Controller_Action
 			try {
 				
 				$content = $this->flow_token->getTokenContent($token_id); //array oppure null
-		
+
 				if ( !is_null($content)) {				
 					
 					$this->view->before_page = $content['url'];
