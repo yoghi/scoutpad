@@ -17,5 +17,5 @@ On default all people can READ but you must specify for other power;
 
 {{{
 $permission = new Sigma_Acl_Permission();
-$permission->hasPermission($user_id,$modulo,'permessi','E');
+$permission->hasPermission($user_id,$module_name,$controller_name,power_to_test);
 }}}
