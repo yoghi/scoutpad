@@ -1,7 +1,8 @@
-#permission under scoutpad
+# permission under scoutpad 
 
 = Introduction =
 
+Permission is a extension of canonical ACL.
 On default all people can READ but you must specify for other power; 
 
 
