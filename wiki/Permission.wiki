@@ -11,7 +11,7 @@ On default all people can READ but you must specify for other power;
   * READ
   * WRITE
   * EXECUTE
-  * NOTREAD
+  * NOTREAD (_the user can't read the output_)
 
 
 = Usage =
