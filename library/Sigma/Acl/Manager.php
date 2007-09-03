@@ -9,7 +9,7 @@
  * with this package in the file LICENSE.txt.
  *
  * @category   Sigma
- * @package    Sigma_Plugin
+ * @package    Sigma_Acl
  * @copyright  Copyright (c) 2007 Stefano Tamagnini 
  * @author	   Stefano Tamagnini
  * @license    New BSD License
@@ -18,7 +18,7 @@
 
 /**
  * @category	Sigma
- * @package 	Sigma_Plugin
+ * @package 	Sigma_Acl
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
  * @version		0.0.2 - 2007 agosto 31 - 11:12 - Stefano Tamagnini  
@@ -26,52 +26,57 @@
 class Sigma_Acl_Manager {
 	
 	/**
-	 * Zend_Acl object
-	 * @var Zend_Acl
+	 * Sigma_Acl object
+	 * @var Sigma_Acl
 	 */
 	private $acl = null;
+
+	/**
+	 * Identificativo dell'utente corrente (0 = guest)
+	 *
+	 * @var integer 
+	 */
+	private $user_id = 0;
+	
 	/**
 	 * Role corrente
 	 * @var string
 	 */
 	private $role = null;
+	
+	/**
+	 * Disable cache
+	 * @var boolean
+	 */
+	private $disable_cache = false;
+	
 	/**
 	 * Modulo corrente
 	 * @var string
 	 */
 	private $modulo = null;
-	/**
-	 * Numero di regole per modulo
-	 * @var int
-	 */
-	private $num_regole = 0;
-	/**
-	 * Inherit role
-	 * @var array
-	 */
-	private $other_role = array();
 	
 	/**
-	 * Classe per semplificare la creazione e storaging delle ACL
-	 * 
+	 * Classe per semplificare la creazione e storaging delle ACL di un dato "Utente"
+	 *
+	 * @param integer $user_id identificativo utente 
 	 * @param string $role ruolo da usare
 	 * @param string $modulo modulo da usa
+	 * @param string $cache abilito la cache o meno
 	 * @throws Zend_Exception
 	 */
-	public function __construct($role,$modulo) {
+	public function __construct($user_id,$role,$modulo,$cache = true) {
 		
 		try {
-			Zend_Loader::loadClass('Acl','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-			Zend_Loader::loadClass('AclCache','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-			Zend_Loader::loadClass('AclRole','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-			Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 			
-			Zend_Loader::loadClass('Zend_Acl');
-			Zend_Loader::loadClass('Zend_Acl_Role');
-			Zend_Loader::loadClass('Zend_Acl_Resource');
+			Zend_Loader::loadClass('AclCache','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass('Sigma_Acl');
+			
 			$this->role = $role;
 			$this->modulo = $modulo;
-
+			$this->user_id = $user_id;
+			$this->disable_cache = !$cache;
+			
 		}catch (Zend_Exception $e) {
 			throw $e;
 		}
@@ -80,6 +85,7 @@ class Sigma_Acl_Manager {
 	
 	/**
 	 * Carica in memoria le ACL di un dato modulo per un dato richiedente (Role)
+	 * @return boolean true se il procedimento è andato a buon fine
 	 * @throws Zend_Exception
 	 */
 	public function load(){
@@ -94,57 +100,40 @@ class Sigma_Acl_Manager {
 			
 			$r = $acl_cache->fetchAll($where)->toArray();
 			
-			if ( count($r) > 0 ) {
+			if ( count($r) > 0 && !$this->disable_cache ) {
+				
+				// E' gia presente in cache
 				Zend_Registry::get('log')->log('ACL MANAGER FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
 				Zend_Registry::get('log')->log('loading from cache .... ',Zend_Log::DEBUG);
 				$this->acl = unserialize( base64_decode($r[0]['Object']) );
-			} else {					
-				$this->acl = new Zend_Acl();
-				Zend_Registry::get('log')->log('ACL MANAGER FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
-				$this->_addInheritRole($this->role);
-				$this->_addRules();
+				return true;
+				
+			} else {	
+								
+				$this->acl = new Sigma_Acl($this->user_id,$this->role,$this->modulo);
 				$this->_cacheit();
+				
+
+			}
+
+			// in DEFAULT guest deve avere almeno 1 regola!! (Es. Notify)
+			if ( $this->acl->count() == 0 && $this->modulo == 'defualt'  ) {
+				Zend_Registry::get('log')->log('Non ci sono regole controllare che l\'utente erediti da guest e che guest abbia tutti i diritti fondamentali!',Zend_Log::CRIT);
+				return false;	
 			}
 			
-	}
-	
-	/**
-	 * Carica in memoria le ACL di un dato modulo per un dato richiedente (Role) prendendo i dati dalla cache
-	 * @return boolean true se il procedimento è andato a buon fine
-	 * @throws Zend_Exception
-	 */
-	public function loadFromCache(){
-		
-		$acl_cache = new AclCache();
-			
-		if ( !is_null($this->role) ) $where[] = 'Role = '.$acl_cache->getAdapter()->quote($this->role);
-		else throw new Zend_Exception('You must specific the role for create Sigma_Acl_Manager');
-		
-		if ( !is_null($this->modulo) ) $where[] = 'Modulo = '.$acl_cache->getAdapter()->quote($this->modulo);
-		else throw new Zend_Exception('You must specific the module for create Sigma_Acl_Manager');
-		
-		$r = $acl_cache->fetchAll($where)->toArray();
-		
-		if ( count($r) > 0 ) {
-			Zend_Registry::get('log')->log('ACL MANAGER FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
-			Zend_Registry::get('log')->log('loading from cache .... ',Zend_Log::DEBUG);
-			$this->acl = unserialize( base64_decode($r[0]['Object']) );
 			return true;
-		} 
-		
-		return false;
-		
 	}
 	
 	/**
 	 * Rigenera la cache
 	 */
 	public function regenCache() {
-		$this->acl = new Zend_Acl();
-		$role = is_null($this->role) ? 'guest' : $this->role;
-		Zend_Registry::get('log')->log('REGEN CACHE FOR '.$role.' OVER '.$this->modulo,Zend_Log::DEBUG);
-		$this->_addInheritRole($this->role);
-		$this->_addRules();
+			
+		Zend_Registry::get('log')->log('REGEN CACHE FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
+ 
+		$this->acl = new Sigma_Acl($this->user_id,$this->role,$this->modulo);
+		
 		$this->_cacheit(true);
 	}
 	
@@ -155,12 +144,13 @@ class Sigma_Acl_Manager {
 	private function _cacheit($override = false){
 
 		$acl_cache = new AclCache();
-		
+		$data['User'] = $this->user_id;
 		$data['Modulo'] = $this->modulo;
 		$data['Role'] = is_null($this->role) ? 'guest' : $this->role;
 		
 		if ( $override ) {
 			
+			$where[] = $acl_cache->getAdapter()->quoteInto('User = ? ',$this->user_id);
 			$where[] = $acl_cache->getAdapter()->quoteInto('Modulo = ? ',$this->modulo);
 			$where[] = $acl_cache->getAdapter()->quoteInto('Role = ? ',$data['Role']);
 			
@@ -172,119 +162,22 @@ class Sigma_Acl_Manager {
 		
 		Zend_Registry::get('log')->log('cached acl di '.$data['Role'].' per il modulo '.$data['Modulo'],Zend_Log::DEBUG);
 		
-		if ( $this->num_regole > 0 ){
+		if ( $this->acl->count() > 0 ){
+			
 			$data['Object'] = base64_encode(  serialize( $this->acl ) );
 			$acl_cache->insert($data);
-			Zend_Registry::get('log')->log('cached acl obj into db with '.$this->num_regole.' regole',Zend_Log::DEBUG);
+			
+			Zend_Registry::get('log')->log('cached acl obj into db with '.$this->acl->count().' regole',Zend_Log::DEBUG);
+			
 		} else Zend_Registry::get('log')->log('nessuna regola messa in cache',Zend_Log::WARN);
 
 	}
 	
 	/**
-	 * Aggiunge un i richiedenti (Role) in modo da considerare anche gli inherits
-	 * @param string $role richiedente
-	 */
-	private function _addInheritRole($role) {
-
-		if ( $role === null ) {
-			// vuole dire che è un utente NULL => di fatto GUEST!
-			$role = 'guest';
-		}
-		 
-		$acl_role = new AclRole();
-		
-		$where = 'nome = '. $acl_role->getAdapter()->quote($role);
-		
-		$ris = $acl_role->fetchAll($where)->toArray();
-		
-		if ( count($ris) == 0 ) {
-			Zend_Registry::get('log')->log('ruolo inesistente: '.$role,Zend_Log::ERR);
-			return;
-		}
-		
-		Zend_Registry::get('log')->log('cerco di creare il ruolo di '.$role,Zend_Log::DEBUG);
-		
-		if ( !is_null($ris[0]['inherit']) ) {
-			$this->other_role[] = $ris[0]['inherit'];
-			// devo verificare che anche lui non abbia altri inherit!!
-			$this->_addInheritRole($ris[0]['inherit']);
-		} 
-		
-		$this->acl->addRole( new Zend_Acl_Role($ris[0]['nome']) , $ris[0]['inherit'] );
-		
-		Zend_Registry::get('log')->log('add role : '.$ris[0]['nome'],Zend_Log::DEBUG);
-	
-	}
-
-	/**
-	 * Aggiunge le regole ACL 
-	 */
-	private function _addRules(){
-
-		foreach( array_reverse($this->other_role) as $role){	
-			$this->_addRule($role,$this->modulo);
-		}
-		
-		// aggingo le ACL del ROLE corrente
-		$this->_addRule($this->role,$this->modulo);
-		
-	}
-	
-	/**
-	 * Aggiunge solo le regole di un dato richiedente su un dato modulo
-	 * @param string $role richiedente
-	 * @param string $modulo modulo
-	 */
-	private function _addRule($role,$modulo){
-		
-		$log = Zend_Registry::get('log');
-		
-		$role_name = is_null($role) ? 'guest' : $role;
-		
-		$log->log('cerco di aggiungere la regola per '.$role_name.' nel modulo '.$modulo ,Zend_Log::DEBUG);
-		
-		$acl_db = new Acl();
-		$where = array();
-		$where[] = 'Modulo = '.$acl_db->getAdapter()->quote($modulo);
-		
-		if ( !is_null($role) && $role != 'guest'  ) $where[] = 'Role = '.$acl_db->getAdapter()->quote($role);
-		else $where[] = 'Role IS NULL';
-		
-		// itero su ogni acl restituita e genero il corretto array
-
-		$regole = $acl_db->fetchAll($where)->toArray();
-		
-		foreach($regole  as $acl_single){
-			
-			$modulo_s = $acl_single['Modulo'];
-			$controller_s = is_null($acl_single['Controller']) ? '*' :  $acl_single['Controller'];
-			$action_s = is_null($acl_single['Action']) ? '*' :  $acl_single['Action'];
-			
-			$acl_list[$role][$acl_single['id']] = array (
-						'Modulo' => $modulo_s,
-						'Controller' => $controller_s,
-						'Action' => $action_s
-			);
-			
-			if ( !$this->acl->has($acl_single['Controller']) ){
-				$this->acl->add( new Zend_Acl_Resource($acl_single['Controller']) );
-			}
-			
-			$this->acl->allow($role,$acl_single['Controller'],$acl_single['Action']);
-			
-			$log->log("allow($role_name,".$acl_single['Controller'].",".$acl_single['Action'].")",Zend_Log::DEBUG);
-
-		}
-
-		$this->num_regole = $this->num_regole + count($regole);
-		
-	}
-	
-	/**
 	 * Return Zend Acl Object
-	 * @return Zend_Acl oggetto per gestire le acl; 
+	 * @return Sigma_Acl oggetto per gestire le acl; 
 	 */
-	public function getAcl(){
+	public function Acl(){
 		return $this->acl;
 	}
 

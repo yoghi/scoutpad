@@ -25,7 +25,7 @@
 class HomeController extends Sigma_Controller_Action
 {	
 	
-	public function indexAction(){
+	public function indexAction(){		
 		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
 		$this->view->actionTemplate = 'contents/home.tpl';	
 		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );

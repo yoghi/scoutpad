@@ -19,12 +19,12 @@ class Sigma_Flow_Storage_Database implements Sigma_Flow_Storage_Interface {
 	 */
 	private $tablename; 
 	
+	
 	/**
-	 * Name of current Member (Es. IDToken)
-	 * 
-	 * @var string
+	 * Last token inserted!
 	 */
-	private $member;
+	private $last;
+	
 	
 	/**
 	 * Costruttore per salvare i dati flow (Flow,Token) in un database
@@ -33,25 +33,18 @@ class Sigma_Flow_Storage_Database implements Sigma_Flow_Storage_Interface {
 	 * @param string $tablename
 	 * @throws Sigma_Flow_Storage_Exception If tablename not supported
 	 */
-	public function __construct($member,$tablename = null) {
+	public function __construct($tablename = self::TABLENAME ) {
 		
 		try {
 			
-			if (is_null( $tablename ) ) { 
-				Zend_Loader::loadClass(Sigma_Flow_Storage_Database::TABLENAME ,'/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-				$this->tablename = Sigma_Flow_Storage_Database::TABLENAME; 
-			} else {
-				Zend_Loader::loadClass(ucfirst($tablename) ,'/home/workspace/Scout/ScoutPad/application/default/models/tables/');
-				$this->tablename = ucfirst($tablename); //qui ci sono se la load è andata a buon fine!!
-			}
+			Zend_Loader::loadClass(ucfirst($tablename) ,'/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			$this->tablename = ucfirst($tablename); //qui ci sono se la load è andata a buon fine!!
 			
 		} catch (Zend_Exception $e) {
 			Zend_Registry::get('log')->log('Non posso accedere alla tabella dei token',Zend_Log::ERR );
 			throw new Sigma_Flow_Storage_Exception('Impossibile accedere alla tabella corretta');
 		}
-		
-		$this->member = $member;
-		
+
 	}
 	
 	/**
@@ -82,13 +75,13 @@ class Sigma_Flow_Storage_Database implements Sigma_Flow_Storage_Interface {
      * @throws Sigma_Flow_Storage_Exception If reading contents from storage is impossible
      * @return mixed
      */
-	public function read(){
+	public function read($find){
 		
 	 	try {
 	 		
 			$obj = $this->tablename."";
 			$token = new $obj();
-			$data = $token->find($this->member); //Zend_Db_Table_Rowset
+			$data = $token->find($find); //Zend_Db_Table_Rowset
 			
 		}catch( Zend_Exception $e){
 			Zend_Registry::get('log')->log($e->getMessage(),Zend_Log::ERR ); //registro l'errore e propago l'ecezzione
@@ -102,9 +95,20 @@ class Sigma_Flow_Storage_Database implements Sigma_Flow_Storage_Interface {
 		$ret = array();
 		$ret['info'] = unserialize(base64_decode($d[0]['info']));
 		$ret['url'] = $d[0]['uri']; 
-		
+
 		return $ret;
 		
+	}
+	
+	/**
+     * Defined by Sigma_Flow_Storage_Interface
+     * Inutile dentro un db dove i token non sono divisi per utente!
+     *
+     * @throws Sigma_Flow_Storage_Exception If clearing contents from storage is impossible
+     * @return void
+     */
+	public function clear(){
+		$this->clearAll();
 	}
 	
 	/**
@@ -113,7 +117,43 @@ class Sigma_Flow_Storage_Database implements Sigma_Flow_Storage_Interface {
      * @throws Sigma_Flow_Storage_Exception If clearing contents from storage is impossible
      * @return void
      */
-	public function clear(){
+	public function clearAll(){
+		
+		try {
+			
+			$obj = $this->tablename."";
+			$token = new $obj();
+			$token->delete('true');
+			
+		} catch( Zend_Exception $e){
+			Zend_Registry::get('log')->log($e->getMessage(),Zend_Log::ERR ); //registro l'errore e propago l'ecezzione
+			throw $e;
+		}
+		
+	}
+	
+	/**
+     * Defined by Sigma_Flow_Storage_Interface
+     *
+     * @throws Sigma_Flow_Storage_Exception If it is impossible to determine whether storage is empty
+     * @return boolean
+     */
+	public function isEmpty(){
+		
+		try {
+	 		
+			$obj = $this->tablename."";
+			$token = new $obj();
+			$data = $token->find('*'); //Zend_Db_Table_Rowset
+			
+		}catch( Zend_Exception $e){
+			Zend_Registry::get('log')->log($e->getMessage(),Zend_Log::ERR ); //registro l'errore e propago l'ecezzione
+			throw $e;
+		}
+		
+		if ( $data->count() == 0 ) return true;
+		
+		return false;
 		
 	}
 	

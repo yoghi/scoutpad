@@ -39,10 +39,11 @@ interface Sigma_Flow_Storage_Interface {
      *
      * Behavior is undefined when storage is empty.
      *
+     * @param mixed $idtoken
      * @throws Sigma_Flow_Storage_Exception If reading contents from storage is impossible
      * @return mixed
      */
-    public function read();
+    public function read($idtoken);
     
     /**
      * Writes $contents to storage
@@ -54,7 +55,7 @@ interface Sigma_Flow_Storage_Interface {
     public function write($contents);
 	
 	/**
-     * Clears contents from storage of current 
+     * Clears contents from storage
      *
      * @throws Sigma_Flow_Storage_Exception If clearing contents from storage is impossible
      * @return void

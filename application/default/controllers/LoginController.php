@@ -29,7 +29,7 @@ class LoginController extends Sigma_Controller_Action
 	{
 
 		try {
-			Zend_Loader::loadClass('Staff','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass('User','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 		}
 		catch (Zend_Exception $e) {
 			var_dump($e);
@@ -76,7 +76,7 @@ class LoginController extends Sigma_Controller_Action
 
 				$auth_module = Zend_Registry::get('auth_module');
 				$database = Zend_Registry::get('database');
-				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array('field_password' => 'password','field_username' => 'mail','table' => 'Staff' ,'username' => $mail, 'password' => $password));
+				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array('field_password' => 'password','field_username' => 'mail','table' => 'User' ,'username' => $mail, 'password' => $password));
 
 				try {
 
@@ -121,7 +121,7 @@ class LoginController extends Sigma_Controller_Action
 					$token = Zend_Registry::get('config')->auth->token;
 					$password_new = sha1($token.$password);
 
-					$s = new Staff();
+					$s = new User();
 
 					$db = $s->getAdapter();
 		
@@ -178,7 +178,7 @@ class LoginController extends Sigma_Controller_Action
 
 				try {
 
-					$s = new Staff();
+					$s = new User();
 
 					$db = $s->getAdapter();
 

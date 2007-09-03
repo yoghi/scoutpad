@@ -93,7 +93,7 @@ class Sigma_Flow_Token {
 			
 			$this->storage->write($data);
 	
-		}catch(Sigma_Flow_Storage_Exception $e){
+		} catch(Sigma_Flow_Storage_Exception $e){
 			
 			try {
 				$data['token'] = $this->randToken();
@@ -117,17 +117,11 @@ class Sigma_Flow_Token {
 		
 		try {
 			
-			$this->storage->read();
+			return $this->storage->read($token_id);
 	
-		}catch(Sigma_Flow_Storage_Exception $e){
+		} catch(Sigma_Flow_Storage_Exception $e){
 			
-			try {
-				$data['token'] = $this->randToken();
-				Zend_Registry::get('log')->log('Provo un diverso token',Zend_Log::WARN );
-				$this->storage->write($data);
-			} catch (Sigma_Flow_Storage_Exception $e){
-				throw $e;
-			}
+				return null;
 			
 		}
 		

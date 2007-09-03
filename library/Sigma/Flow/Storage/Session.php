@@ -2,6 +2,8 @@
 
 /**
  * Classe per memorizzare informazioni del Flow (Flow,Token..) in sessione
+ * NB: 1 token alla volta!!!
+ * @todo estendere la possibilità di avere piu token in sessione!
  */
 class Sigma_Flow_Storage_Session implements Sigma_Flow_Storage_Interface {
 	
@@ -88,7 +90,7 @@ class Sigma_Flow_Storage_Session implements Sigma_Flow_Storage_Interface {
      * @throws Sigma_Flow_Storage_Exception If reading contents from storage is impossible
      * @return mixed
      */
-    public function read(){
+    public function read($find){
     	return $this->_session->{$this->_member};
     }
     

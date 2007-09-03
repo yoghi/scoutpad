@@ -71,8 +71,10 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			if ( !empty($auth_session->storage) ) {
 				$token = $auth_session->storage;
 				$role = isset($token['role']) ? $token['role'] : 'guest';
+				$id = isset($token['id']) ? intval($token['id']) : 0;
 			} else {
 				$role = 'guest';
+				$id = 0;
 			}
 
 			// :module/:controller/:action/*
@@ -84,7 +86,6 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			 */
 			$controller = ($request->getControllerName() == '') ? 'index' : $request->getControllerName();
 			$action = ($request->getActionName() == '') ? 'index' : $request->getActionName();
-			
 			
         	$log = Zend_Registry::get('log');
         	
@@ -104,17 +105,30 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 
 			try {
 			
-				$acl_manager = new Sigma_Acl_Manager($role,$module); $acl_manager->load();
+				// preparo il gestore ACL per un determinato utente, ruolo e mdoulo
+				/**
+				 * @todo: rimuovere false e sostituirlo con un parametro di configurazione!
+				 */ 
+				$acl_manager = new Sigma_Acl_Manager($id,$role,$module,false);
 		
-				if ( !$acl_manager->loadFromCache() ) {
+				if ( !$acl_manager->load()) {
+					
 					// non c'è in cache
 					$module = $this->_noacl['module'];
 	       			$controller = $this->_noacl['controller'];
 	       			$action = $this->_noacl['action'];
+	       			
+	       			// forzo come pagina precedente index in quanto dovrebbe poter sempre andare!
+	       			$flow_token = Sigma_Flow_Token::getInstance()->insert('/index/',array('type'=>'errore','text'=>'Problemi in cache; svuota i cookie e riprova, se il problema persiste contattaci direttamente','next'=>'/index/'));
+	       			$log->log('L\'utente '.$id.' ha problemi nella propria configurazione!! (rigenerale la cache dell\'utente dopo le modifiche) ',Zend_Log::ERR);
+	       			$action = 'index';
+	       			$request->setParam('id',$flow_token);
+	       			
 				} else {
 				
-					$acl = $acl_manager->getAcl();
-					
+					$acl = $acl_manager->Acl();
+
+					// Ho in memoria ACL questa risorsa o non la conosco?
 					if ( ! $acl->has($controller) ) {
 						
 						if ( !$acl->isAllowed($role,null,null) ) {
@@ -125,6 +139,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				       			$controller = $this->_noauth['controller'];
 				       			$action = $this->_noauth['action'];
 							} else {
+								$log->log('Utente autenticato cmq. non gli e\' permesso l\'accesso',Zend_Log::DEBUG);
 								$module = $this->_noacl['module'];
 				       			$controller = $this->_noacl['controller'];
 				       			$action = $this->_noacl['action'];
@@ -150,6 +165,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 						       			$controller = $this->_noauth['controller'];
 						       			$action = $this->_noauth['action'];
 									} else {
+										$log->log('Utente autenticato cmq. non gli e\' permesso l\'accesso',Zend_Log::DEBUG);
 										$module = $this->_noacl['module'];
 						       			$controller = $this->_noacl['controller'];
 						       			$action = $this->_noacl['action'];
@@ -164,22 +180,30 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 					}
 				
 				}
+				
 			
 			} catch (Zend_Exception $e) {
 				$module = $this->_noauth['module'];
        			$controller = $this->_noauth['controller'];
        			$action = $this->_noauth['action'];
+       			$log->log('Eccezzione tipo Zend : '.$e->getMessage(),Zend_Log::WARN);
 			} catch (Exception $e){
 				$module = $this->_noauth['module'];
        			$controller = $this->_noauth['controller'];
        			$action = $this->_noauth['action'];
+       			$log->log('Eccezzione Generica'.$e->getMessage(),Zend_Log::ERR);
 			}
 
-        	$log->log("Eseguo: $module -> $controller -> $action", Zend_Log::NOTICE);
-        	
         	$request->setModuleName($module);
         	$request->setControllerName($controller);
         	$request->setActionName($action);
+        	
+			$log->log("( Eseguo: $module -> $controller -> $action )", Zend_Log::NOTICE);
+        	
+        	foreach( $request->getParams() as $req_param_key => $req_param_value ){
+        		$log->log("\t".$req_param_key.' => '.$req_param_value, Zend_Log::NOTICE);
+        	}
+        	
 	}
 	                             
 }

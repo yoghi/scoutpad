@@ -1,5 +1,5 @@
 <?php
-	class Staff extends Zend_Db_Table
+	class User extends Zend_Db_Table
 	{
 
 		public function insert(&$data){
@@ -25,7 +25,7 @@
 		public function getAttivi() 
 		{
 			
-			$sql="select * from Staff where status=1 order by nome ASC, gruppo DESC ";
+			$sql="select * from User where status=1 order by nome ASC, gruppo DESC ";
 			
 			$s = array(
 				'db' => $this->_db,
@@ -39,7 +39,7 @@
 		public function getCollaboratori() 
 		{
 			
-			$sql="select * from Staff where status=0 order by nome ASC, gruppo DESC ";
+			$sql="select * from User where status=0 order by nome ASC, gruppo DESC ";
 			
 			$s = array(
 				'db' => $this->_db,
