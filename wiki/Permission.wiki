@@ -1,0 +1,21 @@
+#permission under scoutpad
+
+= Introduction =
+
+On default all people can READ but you must specify for other power; 
+
+
+== The list of Power ==
+
+  * READ
+  * WRITE
+  * EXECUTE
+  * NOTREAD
+
+
+= Usage =
+
+{{{
+$permission = new Sigma_Acl_Permission();
+$permission->hasPermission($user_id,$modulo,'permessi','E');
+}}}
