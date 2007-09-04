@@ -21,7 +21,7 @@
  * @package 	Sigma_Plugin
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
- * @version		0.0.1 - 2007 aprile 19 - 20:34 - Stefano Tamagnini  
+ * @version		0.0.2 - 2007 settembre 03 - 11:23 - Stefano Tamagnini  
  */
 class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 
@@ -111,7 +111,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				 */ 
 				$acl_manager = new Sigma_Acl_Manager($id,$role,$module,false);
 		
-				if ( !$acl_manager->load()) {
+				if ( !$acl_manager->load() ) {
 					
 					// non c'è in cache
 					$module = $this->_noacl['module'];
@@ -194,6 +194,18 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
        			$log->log('Eccezzione Generica'.$e->getMessage(),Zend_Log::ERR);
 			}
 
+			// can user see?
+			if ( ! $acl->hasPermission($controller,'R') ) {
+				$module = $this->_noacl['module'];
+       			$controller = $this->_noacl['controller'];
+       			// forzo come pagina precedente index in quanto dovrebbe poter sempre andare!
+       			$flow_token = Sigma_Flow_Token::getInstance()->insert('/index/',array('type'=>'errore','text'=>'Spiacente non puoi visualizzare l\'informazione da te richiesta','next'=>'/index/'));
+       			$action = 'index';
+       			$request->setParam('id',$flow_token);
+			}
+			
+			
+			
         	$request->setModuleName($module);
         	$request->setControllerName($controller);
         	$request->setActionName($action);
