@@ -1,9 +1,9 @@
-# permission under scoutpad 
-
 = Introduction =
 
 Permission is a extension of canonical ACL.
-On default all people can READ but you must specify for other power; 
+On default all people can READ but you must specify for other power or for negate access; 
+
+Utile se si vuole dare accesso ad una risorsa in sola lettura e scrittura , ma non nell'aggiunta di parametri; oppure per negare la scrittura ad un singolo utente una data risorsa ma non la sua visualizzazione. 
 
 
 == The list of Power ==
