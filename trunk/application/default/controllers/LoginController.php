@@ -88,15 +88,15 @@ class LoginController extends Sigma_Controller_Action
 						$this->_redirect('/home/');
 					}
 
-					$this->_redirect('/errore/');
+					$this->notify('/login/','errore','Autenticazione Fallita');
 		
 				} catch (Exception $e) {
 					echo $e->getMessage();
 				}
-			}
+			} else $this->notify('/login/','errore','Campi vuoti','/login/');
 		}
 		else {
-			$this->_redirect('/');
+			$this->_redirect('/login/');
 		}
 
 	}
@@ -133,7 +133,7 @@ class LoginController extends Sigma_Controller_Action
 
 						Zend_Log::log('Richiesta conferma di un utente non valido: '.$mail, Zend_Log::LEVEL_DEBUG);
 
-						$this->_redirect('/errore/');
+						$this->notify('/login/','errore','Spiacente conferma non valida');
 					}
 
 					$user->password = $password_new;
@@ -190,7 +190,7 @@ class LoginController extends Sigma_Controller_Action
 							
 						Zend_Log::log('Richiesta re-invio password di un utente non valido: '.$mail, Zend_Log::LEVEL_DEBUG);
 
-						$this->_redirect('/errore/');
+						$this->notify('/login/','errore','Impossibile inviare/resettare la password');
 					}
 					
 					$this->view->confim_text = array('Mail inviata correttamente!');

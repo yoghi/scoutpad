@@ -66,6 +66,7 @@ class Sigma_Acl_Permission {
 			$where = array();
 			$where[] = 'User = '.$permission_db->getAdapter()->quote($user_id);
 			$where[] = 'Modulo = '.$permission_db->getAdapter()->quote($modulo);
+			
 			if (is_null($controller))  $where[] = 'Controller IS NULL ';
 			else $where[] = 'Controller = '.$permission_db->getAdapter()->quote($controller);
 			

@@ -85,6 +85,7 @@ class Sigma_Acl_Manager {
 	
 	/**
 	 * Carica in memoria le ACL di un dato modulo per un dato richiedente (Role)
+	 * 
 	 * @return boolean true se il procedimento è andato a buon fine
 	 * @throws Zend_Exception
 	 */
