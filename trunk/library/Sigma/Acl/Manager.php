@@ -68,7 +68,7 @@ class Sigma_Acl_Manager {
 	public function __construct($user_id,$role,$modulo,$cache = true) {
 		
 		try {
-			
+		
 			Zend_Loader::loadClass('AclCache','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 			Zend_Loader::loadClass('Sigma_Acl');
 			
@@ -166,6 +166,9 @@ class Sigma_Acl_Manager {
 		if ( $this->acl->count() > 0 ){
 			
 			$data['Object'] = base64_encode(  serialize( $this->acl ) );
+			
+			Zend_Registry::get('log')->log('Serializzo oggetto lungo : '. strlen($data['Object']),Zend_Log::NOTICE);
+			
 			$acl_cache->insert($data);
 			
 			Zend_Registry::get('log')->log('cached acl obj into db with '.$this->acl->count().' regole',Zend_Log::DEBUG);

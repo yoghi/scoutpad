@@ -100,16 +100,11 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
         	 * => se si vuole accedere a index usare index!!
         	 */
 
-        	//$acl_cache = new AclCache();        	
-			//$r = $acl_cache->fetchAll($where)->toArray();
-
 			try {
 			
 				// preparo il gestore ACL per un determinato utente, ruolo e mdoulo
-				/**
-				 * @todo: rimuovere false e sostituirlo con un parametro di configurazione!
-				 */ 
-				$acl_manager = new Sigma_Acl_Manager($id,$role,$module,false);
+				$acl_cache = Zend_Registry::get('config');
+				$acl_manager = new Sigma_Acl_Manager($id,$role,$module,$acl_cache->acl->cache);
 		
 				if ( !$acl_manager->load() ) {
 					
@@ -199,7 +194,8 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				$module = $this->_noacl['module'];
        			$controller = $this->_noacl['controller'];
        			// forzo come pagina precedente index in quanto dovrebbe poter sempre andare!
-       			$flow_token = Sigma_Flow_Token::getInstance()->insert('/index/',array('type'=>'errore','text'=>'Spiacente non puoi visualizzare l\'informazione da te richiesta','next'=>'/index/'));
+				$_SERVER['HTTP_REFERER']...
+       			$flow_token = Sigma_Flow_Token::getInstance()->insert('/index/',array('type'=>'errore','text'=>'Spiacente non puoi visualizzare l\'informazione da te richiesta','next'=>'/home/'));
        			$action = 'index';
        			$request->setParam('id',$flow_token);
 			}

@@ -81,8 +81,6 @@ class Sigma_Acl extends Zend_Acl {
 		
 		//class
 		Zend_Loader::loadClass('Sigma_Acl_Permission');
-		Zend_Loader::loadClass('Zend_Acl_Role');
-		Zend_Loader::loadClass('Zend_Acl_Resource');
 		
 		Zend_Registry::get('log')->log('Creo ACL per '.$this->role.' nel modulo '.$this->modulo,Zend_Log::DEBUG);
 		
@@ -258,6 +256,23 @@ class Sigma_Acl extends Zend_Acl {
 
 		$this->num_regole = $this->num_regole + count($regole);
 		
+	}
+	
+	/**
+	 * Gestisco la serializzazione
+	 * nota bene come debbano essere inseriti anche i campi ereditati! Non metto Sigma_Acl_Permission in quanto non contiene dati importanti
+	 */
+	function __sleep(){
+		return array('user_id','role','modulo','num_regole','_roleRegistry','_resources','_rules');
+	}
+	
+	/**
+	 * Gestisco la serializzazione
+	 * Attenzione che non c'è l'autoload delle classi mancanti
+	 */
+	function __wakeup(){
+		Zend_Loader::loadClass('Sigma_Acl_Permission');
+		$this->permission = new Sigma_Acl_Permission();
 	}
 	
 }
