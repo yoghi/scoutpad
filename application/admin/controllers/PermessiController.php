@@ -316,14 +316,14 @@ class Admin_PermessiController extends Sigma_Controller_Action
 		if ( !is_null($id) ) {
 			
 			if ( !isset($this->params['id']) ) $this->_redirect('/admin/permessi/');
-			if ( '1' == $this->params['id'] ) $this->notify('/admin/permessi/','errore','Non si possono rimuovere le ACL di BASE');
 			
 			try {
 			
 				$acl_db = new Acl();
 				$acl_single = $acl_db->find($this->params['id'])->toArray();
 				
-				if ( count($acl_single) == 0 ) $this->notify('/admin/permessi/','errore','ACL inesistente'); 
+				if ( count($acl_single) == 0 ) $this->notify('/admin/permessi/','errore','ACL inesistente');
+				if ( $acl_single['Stone'] == 1 ) $this->notify('/admin/permessi/','errore','Non si possono rimuovere le ACL di BASE'); 
 				
 				$where = $acl_db->getAdapter()->quoteInto('id = ?',$id);
 				$ret = $acl_db->delete($where);

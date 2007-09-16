@@ -60,6 +60,7 @@ class Scoutpad {
 	private function __construct(){
 
 		try {
+			
 			/**
 			 * Zend Class
 			 */
@@ -89,6 +90,7 @@ class Scoutpad {
 			Zend_Loader::loadClass('Sigma_View_TemplateLite');
 			Zend_Loader::loadClass('Sigma_Flow_Token');
 			Zend_Loader::loadClass('Sigma_Flow_Storage_Interface');
+			
 		} catch (Zend_Exception $e) {
 
 		}
@@ -98,8 +100,8 @@ class Scoutpad {
 		}
 
 		if (!defined('TEMPLATE_LITE_DIR')) {
-			define('TEMPLATE_LITE_DIR', BASE_DIRECTORY.'/library/Sigma/Template_Lite' . DIRECTORY_SEPARATOR);
-			require(BASE_DIRECTORY.'/library/Sigma/Template_Lite/class.template.php');
+			define('TEMPLATE_LITE_DIR', BASE_DIRECTORY.'/library/Template_Lite' . DIRECTORY_SEPARATOR);
+			require(BASE_DIRECTORY.'/library/Template_Lite/class.template.php');
 		}
 
 		set_error_handler(array('scoutpad','error_handler'));
