@@ -16,3 +16,8 @@ o
 $acl_manager->Acl->hasPermission($permesso);
 }}}
 
+
+
+// MOLTO COMODO : 
+
+$request->isXmlHttpRequest()....  
