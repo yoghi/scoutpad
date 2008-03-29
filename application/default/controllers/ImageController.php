@@ -65,6 +65,7 @@ class ImageController extends Sigma_Controller_Action
 	 */
 	public function indexAction(){
 		
+		// c'è un url?
 		if ( $this->_url() ){
 						
 			if ( $this->cache ) {
@@ -183,7 +184,7 @@ class ImageController extends Sigma_Controller_Action
 								$type = 'image/png';
 								break;
 							default:
-								$this->_redirect('/errore/notsupported/');
+								$this->notify('/image/','errore','formato immagine non supportata');
 						}
 						
 						$data = array(
@@ -200,6 +201,13 @@ class ImageController extends Sigma_Controller_Action
 							Zend_Registry::get('log')->log($e->getMessage(),Zend_Log::ERR );
 						}
 						
+					} else {
+						
+						Zend_Loader::loadClass('Sigma_DirectoryIterator');
+						$s = new Sigma_DirectoryIterator($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $this->image_dir);
+						
+						exit;
+						
 					}
 						
 				}
@@ -214,14 +222,15 @@ class ImageController extends Sigma_Controller_Action
 				$filename = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $this->image_dir. $this->image_name;
 
 				if ( !file_exists($filename) ){
-					$this->_redirect('/errore/fourhundredfour/');
+					//$this->_redirect('/errore/fourhundredfour/');
+					$this->notify('/image/','errore','immagine non trovata');
 				}
 				
 				$size = getimagesize($filename);
 		
 				if ($size === false)
 				{
-					$this->_redirect('/errore/invalid/');
+					$this->notify('/image/','errore','immagine non supportata, dimensione errata.');
 					//echo 'Not a valid image supplied, or this script does not have permissions to access it.';
 				}
 		
@@ -252,7 +261,7 @@ class ImageController extends Sigma_Controller_Action
 						break;
 				
 					default:
-						$this->_redirect('/errore/notsupported/');
+						$this->notify('/image/','errore','formato immagine non supportato');
 				}
 				
 				// guardo se devo modificare il colore all'immagine
@@ -327,15 +336,23 @@ class ImageController extends Sigma_Controller_Action
 						break;
 				
 					default:
-						$this->_redirect('/errore/notsupported/');
+						$this->notify('/image/','errore','formato immagine non supportata');
 				}
 				
-				imagedestroy($this->image);				
+				imagedestroy($this->image);
 				return;
 			}			
 			
 		} else {
-			$this->_redirect('/errore/fourhundredfour/');
+			// non c'è un'immagine
+			//$this->notify('/image/','errore','immagine non trovata');
+			$this->image = imagecreatetruecolor(100,100);
+			$background_color = imagecolorallocate($this->image, 0, 0, 0);
+			$text_color = imagecolorallocate($this->image, 255, 255, 255);
+			imagestring($this->image, 5, 8, 40,  "Image 404", $text_color);
+			$this->_response->setHeader('Content-type','image/gif','true');
+			imagegif($this->image);
+			imagedestroy($this->image);
 		}
 		
 	}
@@ -436,7 +453,7 @@ class ImageController extends Sigma_Controller_Action
 					$source_image = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $dir. $image_name;
 	
 					if (!file_exists($source_image)) {
-						$this->_redirect('/errore/fourhundredfour/');
+						$this->notify('/image/','errore','formato immagine non trovata');
 					}
 						
 					//	dimensioni immagine
@@ -444,7 +461,7 @@ class ImageController extends Sigma_Controller_Action
 			
 					if ($image_details === false)
 					{
-						$this->_redirect('/errore/invalid/');
+						$this->notify('/image/','errore','formato immagine non supportato/valido , dimensioni non compatibili');
 						//echo 'Not a valid image supplied, or this script does not have permissions to access it.';
 					}
 					
@@ -475,8 +492,7 @@ class ImageController extends Sigma_Controller_Action
 							break;
 					
 						default:
-							$this->_redirect('/errore/notsupported/');
-							echo 'Unsupported image file format.';
+							$this->notify('/image/','errore','formato immagine non supportata');
 							exit();
 					}
 					
@@ -487,7 +503,7 @@ class ImageController extends Sigma_Controller_Action
 		}
 		else
 		{
-			$this->_redirect('/errore/fourhundredfour/');
+			$this->notify('/image/','errore','formato immagine non trovata');
 		}
 		
 		// rifletto l'immagine
@@ -627,13 +643,14 @@ class ImageController extends Sigma_Controller_Action
 					
 					case UPLOAD_ERR_INI_SIZE:
 					case UPLOAD_ERR_FORM_SIZE:
-						$this->_redirect('/errore/toobig/maxsize/'.$max_size);
+						//$this->_redirect('/errore/toobig/maxsize/'.$max_size);
+						$this->notify('/image/','errore','dimensione dell\'immagine ecessiva; dimensione massima consentita'.$max_size);
 						break;
 					case UPLOAD_ERR_NO_FILE:
-						$this->_redirect('/errore/missing/');
+						$this->notify('/image/','errore','immagine mancante');
 						break;
 					case UPLOAD_ERR_NO_TMP_DIR:
-						$this->_redirect('/errore/notavaible/');
+						$this->notify('/image/','errore','directory temporanea attualmente non disponibile');
 						break;
 					default:
 						break;
@@ -687,7 +704,7 @@ class ImageController extends Sigma_Controller_Action
 				
 				if ( $row !== null && count($row) > 0  ){
 					 //l'immagine già esiste
-					 $this->_redirect('/errore/exist/');		 
+					 $this->notify('/image/','errore','immagine già presente!');
 				} else {
 					//posso inserirla
 					
@@ -721,7 +738,7 @@ class ImageController extends Sigma_Controller_Action
 				if ( move_uploaded_file($_FILES["ufile"]["tmp_name"],$_SERVER['DOCUMENT_ROOT'].DIRECTORY_SEPARATOR.$dir.$_FILES['ufile']['name']) ) {
 					$this->_redirect($uri);
 				} else {
-					$this->_redirect('/errore/');
+					$this->notify('/image/','errore','errore durante la gestione -upload- dell\'immagine');
 				}
 				
 			}

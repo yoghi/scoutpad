@@ -9,6 +9,13 @@ view.path = <path where locate templates>
 
 [session]
 
+[database]
+#adapter = PDO_<type db>
+#config.host = <host Es. localhost>
+#config.username = <username>
+#config.password = <password>
+#config.dbname = <database name>
+
 [mail]
 #server = <server.dominio.it>
 #ssl = <tls>

@@ -22,7 +22,7 @@ img {
 
 
 .sidebar {
-	background: #E6E6E6 url("/image/index/url/icons.box-gray-top.gif") no-repeat scroll left top;
+	background: #E6E6E6 url("/image/index/url/icons.box-gray-top.gif/") no-repeat scroll left top;
 	padding: 8px;
 	width: 194px;
 }
@@ -57,7 +57,7 @@ img {
 }
 
 .external a{
-	background: transparent url("/image/index/url/icons.external.png") no-repeat scroll right center;
+	background: transparent url("/image/index/url/icons.external.png/") no-repeat scroll right center;
 	padding-right: 13px;	
 	margin-right: 2px;
 	color: #000099;
@@ -73,7 +73,7 @@ img {
 }
 
 .secure a{
-	background: transparent url("/image/index/url/icons.lock_icon.gif") no-repeat scroll right top;
+	background: transparent url("/image/index/url/icons.lock_icon.gif/") no-repeat scroll right top;
 	padding-right: 15px;	
 	margin-right: 4px;
 	color: gray;
@@ -91,7 +91,7 @@ img {
 }
 
 .infoMacro{
-	background-image: url("/image/index/url/emoticons.check.gif");
+	background-image: url("/image/index/url/emoticons.check.gif/");
 	background-repeat: no-repeat;
 	background-position: 10px 10px;
 	background-color: #ddffdd;
@@ -123,7 +123,7 @@ img {
 }
 
 .checkMacro{
-	background-image: url("/image/index/url/emoticons.information.gif");
+	background-image: url("/image/index/url/emoticons.information.gif/");
 	background-repeat: no-repeat;
 	background-position: 10px 10px;
 	background-color: #ddffdd;
@@ -157,7 +157,7 @@ img {
 
 .warnMacro{
 	width: 85%;
-	background-image: url("/image/index/url/emoticons.warning.gif");
+	background-image: url("/image/index/url/emoticons.warning.gif/");
 	background-repeat: no-repeat;
 	background-position: 10px 10px;
 	background-color: #ddffdd;

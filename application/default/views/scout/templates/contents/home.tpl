@@ -1,8 +1,6 @@
 <div id="contents">
 
 	<h3>Zona di Rimini</h3>
-	
-	<h3>29 / 07 / 07 - 1 / 08 / 07</h3>
  	
 	<div class="logo">
 		<div class="first">
