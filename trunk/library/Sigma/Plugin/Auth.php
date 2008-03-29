@@ -63,7 +63,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 		 * @param	Zend_Controller_Request_Abstract $request
 		 * @return	void
 		 */
-		public function preDispatch(Zend_Controller_Request_Abstract $request)
+		public function preDispatch(Sigma_Controller_Request_Http $request)
 		{
 
 			$auth_session = new Zend_Session_Namespace('Zend_Auth');
@@ -190,16 +190,16 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			}
 
 			// can user see?
+			/*
 			if ( ! $acl->hasPermission($controller,'R') ) {
 				$module = $this->_noacl['module'];
        			$controller = $this->_noacl['controller'];
        			// forzo come pagina precedente index in quanto dovrebbe poter sempre andare!
-				$_SERVER['HTTP_REFERER']...
-       			$flow_token = Sigma_Flow_Token::getInstance()->insert('/index/',array('type'=>'errore','text'=>'Spiacente non puoi visualizzare l\'informazione da te richiesta','next'=>'/home/'));
+       			$flow_token = Sigma_Flow_Token::getInstance()->insert($request->getFrompage(),array('type'=>'errore','text'=>'Spiacente non puoi visualizzare l\'informazione da te richiesta','next'=>'/home/'));
        			$action = 'index';
        			$request->setParam('id',$flow_token);
 			}
-			
+			*/
 			
 			
         	$request->setModuleName($module);
@@ -209,7 +209,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			$log->log("( Eseguo: $module -> $controller -> $action )", Zend_Log::NOTICE);
         	
         	foreach( $request->getParams() as $req_param_key => $req_param_value ){
-        		$log->log("\t".$req_param_key.' => '.$req_param_value, Zend_Log::NOTICE);
+        		if ( $req_param_key != 'error_handler' ) $log->log("\t".$req_param_key.' => '.$req_param_value, Zend_Log::NOTICE);
         	}
         	
 	}

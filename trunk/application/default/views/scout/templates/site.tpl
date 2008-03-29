@@ -6,8 +6,8 @@
 		{if isset($stylesheet) }
 			{$stylesheet}
 		{/if}
-		<meta name="keywords" content="Campetti di Specialita della Zona di Rimini - AGESCI -" />
-		<meta name="description" content="Campetti di Specialita della Zona di Rimini - AGESCI -" />
+		<meta name="keywords" content="...." />
+		<meta name="description" content="...." />
 		<link rel="alternate" type="application/rss+xml" title="SigmaLab RSS Feed" href="/feed/" />
 		{if isset($headers) }
 			{$headers}

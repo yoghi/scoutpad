@@ -17,7 +17,7 @@
 
 set_include_path(get_include_path() . PATH_SEPARATOR . BASE_DIRECTORY .'/library');
 
-include 'Zend/Loader.php';
+require_once 'Zend/Loader.php';
 
 date_default_timezone_set('Europe/Rome');
 
@@ -36,14 +36,14 @@ class Scoutpad {
 	/**
 	 * Singleton instance
 	 *
-	 * @var Sigma_Form_Help
+	 * @var Scoutpad
 	 */
 	protected static $_instance = null;
 
 	/**
-	 * Returns an instance of Sigma_Form_Help, Singleton pattern implementation
+	 * Returns an instance of Scoutpad, Singleton pattern implementation
 	 *
-	 * @return Sigma_Flow_Token Provides a fluent interface
+	 * @return Scoutpad
 	 */
 	public static function getInstance()
 	{
@@ -67,32 +67,41 @@ class Scoutpad {
 			Zend_Loader::loadClass('Zend_Registry');
 			Zend_Loader::loadClass('Zend_View');
 			Zend_Loader::loadClass('Zend_Config_Ini');
+			
 			Zend_Loader::loadClass('Zend_Db');
 			Zend_Loader::loadClass('Zend_Db_Table');
 			Zend_Loader::loadClass('Zend_Db_Table_Rowset');
+			
+			Zend_Loader::loadClass('Zend_Log');
+			Zend_Loader::loadClass('Zend_Log_Writer_Stream');
+			Zend_Loader::loadClass('Zend_Log_Formatter_Xml');
+			
 			Zend_Loader::loadClass('Zend_Controller_Front');
-			Zend_Loader::loadClass('Zend_Controller_Action');
 			Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
+			Zend_Loader::loadClass('Zend_Controller_Request_Http');
+			Zend_Loader::loadClass('Zend_Controller_Action');
 			Zend_Loader::loadClass('Zend_Controller_Dispatcher_Standard');
+			
 			Zend_Loader::loadClass('Zend_Auth');
 			Zend_Loader::loadClass('Zend_Session');
 			Zend_Loader::loadClass('Zend_Session_Abstract');
 			Zend_Loader::loadClass('Zend_Session_Namespace');
-			Zend_Loader::loadClass('Zend_Log');
-			Zend_Loader::loadClass('Zend_Log_Writer_Stream');
-			Zend_Loader::loadClass('Zend_Log_Formatter_Xml');
-
+			
 			/**
 			 * Sigma Class
 			 */
-			Zend_Loader::loadClass('Sigma_Controller_Action');
-			Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
-			Zend_Loader::loadClass('Sigma_View_TemplateLite');
 			Zend_Loader::loadClass('Sigma_Flow_Token');
 			Zend_Loader::loadClass('Sigma_Flow_Storage_Interface');
+			Zend_Loader::loadClass('Sigma_Controller_Action');
+			Zend_Loader::loadClass('Sigma_Controller_Request_Http');
+			Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
+			Zend_Loader::loadClass('Sigma_View_TemplateLite');
+			
+			
 			
 		} catch (Zend_Exception $e) {
-
+			var_dump($e->getTrace());
+			echo '<h3>'.$e->getMessage().' '.$e->getFile().' riga '.$e->getLine().'</h3>';
 		}
 
 		if (!defined('CONFIG_FILE')) {
@@ -113,6 +122,7 @@ class Scoutpad {
 	 * Esegue l'applicazione
 	 */
 	public function run(){
+		
 		try {
 
 			$log = new Zend_Log();
@@ -174,21 +184,31 @@ class Scoutpad {
 			// Autentication
 			Zend_Registry::set('auth_module', Zend_Auth::getInstance());
 
-
+			/**
+			 * require_once 'Zend/Controller/Request/Apache404.php'; 
+			 *	$request = new Zend_Controller_Request_Apache404(); 
+			 */
 
 			// setting controller
 			$frontController = Zend_Controller_Front::getInstance();
-			$frontController->setControllerDirectory(array(
-			'default' => '/home/workspace/Scout/ScoutPad/application/default/controllers',
-			'rubrica' => '/home/workspace/Scout/ScoutPad/application/rubrica/controllers',
-			'admin' => '/home/workspace/Scout/ScoutPad/application/admin/controllers'
-			)); 
 			$frontController->setRouter(new Zend_Controller_Router_Rewrite());
-			$frontController->setDispatcher(new Zend_Controller_Dispatcher_Standard());
+			
+			/**
+			 * Se volessi cambiare il dispatcher di default lo dovrei fare prima di settare le directory oppure settando le directory direttamente nell'oggetto dispatcher
+			 */
+			$frontController->setControllerDirectory(array(
+				'default' => '/home/workspace/Scout/ScoutPad/application/default/controllers',
+				'rubrica' => '/home/workspace/Scout/ScoutPad/application/rubrica/controllers',
+				'admin' => '/home/workspace/Scout/ScoutPad/application/admin/controllers'
+			));
+			
+			
+			//$frontController->setBaseUrl('/application/myapp');
 
 			/**
 			 * errore "script 'script/login.phtml' not found in path dovuto ai nuovi helper introdotti"
 			 * @see http://www.nabble.com/got-Zend_View_Exception-t3814949s16154.html
+			 * @todo sarebbe meglio riscrivere l'helper
 			 */
 			$frontController->setParam('noViewRenderer',true);
 
@@ -201,12 +221,15 @@ class Scoutpad {
 			 var_dump($r->isEmpty());*/
 
 			//run
-			$request = new Zend_Controller_Request_Http();
+			$request = new Sigma_Controller_Request_Http();
 
 			Zend_Loader::loadClass('Sigma_Plugin_Auth');
 			$frontController->registerPlugin(new Sigma_Plugin_Auth());
-			//$frontController->throwExceptions(true); //attivo l'uso delle ecezzioni al difuori di Zend!!!
+			
+			//attivo l'uso delle ecezzioni al difuori di Zend!!! Utile in caso di dev...
+			//$frontController->throwExceptions(true); 
 			//$controller->setParam('sitemap', $sitemap);
+			
 			$frontController->returnResponse(true);
 			$response = $frontController->dispatch($request);
 
@@ -231,6 +254,7 @@ class Scoutpad {
 			} else {
 				$response->sendHeaders();
 				$response->outputBody();
+				//echo '<a href="/',$request->getFromPage(),'">',$request->getFromPage(),'</a>';
 			}
 
 		}

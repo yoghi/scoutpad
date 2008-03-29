@@ -70,9 +70,9 @@ class Sigma_Controller_Action extends Zend_Controller_Action {
 	}
 
 	/**
-	 * Notifica all'utente qualcosa (Error/Warn/Info)
+	 * Notifica all'utente qualcosa (errore/complete/conferma)
 	 * 
-	 * @param string $uri 	URL a cui rimandare dopo la notifica
+	 * @param string $uri URL a cui rimandare dopo la notifica
 	 * @param string $type	tipo di notifica
 	 * @param mixed $info	array con le informazioni della notifica
 	 * @param string $next	URL di destinazione (in caso di conferma)

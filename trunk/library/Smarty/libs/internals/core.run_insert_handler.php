@@ -30,7 +30,8 @@ function smarty_core_run_insert_handler($params, &$smarty)
                                                              $smarty->_plugins['insert'][$_name][2],
                                                              !empty($params['args']['script']) ? true : false);
         }
-        return $smarty->_smarty_md5."{insert_cache $_arg_string}".$smarty->_smarty_md5;
+        echo "\{insert_cache $_arg_string\}";
+        return $smarty->_smarty_md5."{insert_cache $_arg_string}".$smarty->_smarty_md5;		
     } else {
         if (isset($params['args']['script'])) {
             $_params = array('resource_name' => $smarty->_dequote($params['args']['script']));
