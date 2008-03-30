@@ -18,4 +18,6 @@ PS: in futuro sarà possibile anche pensare a delle _eccezzioni_ ai ruoli ma per
 
 Un ruolo ha in se il concetto di eredità; per esemplificare 
 
-_ruolo Ruolo1 eredita da Ruolo significa che ha tutte le responsaiblità di R, più eventuali nuove responsabilità_
+_ruolo SuperPippo eredita da Pippo significa che ha tutte le responsaiblità di Pippo, più eventuali nuove responsabilità_
+
+PS: per semplicità la ereditarietà multipla non viene considerata. 
