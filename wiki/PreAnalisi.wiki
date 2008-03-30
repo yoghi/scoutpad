@@ -28,6 +28,9 @@ Un ruolo *ha o non ha* accesso ad una specifica risorsa, questo significa che la
 
 Il sistema è visto come N moduli che poggiano su una infrastruttura comune; questi moduli sono fruitori delle risorse del sistema e sono anche essi risorsa del sistema. Questo significa che per accedere alle risorse dell'infrastruttura di base i moduli useranno i permessi di accesso dei loro utilizzatori; poiche il sistema dara accesso ai moduli in base ai permessi su di loro, questo significa che sarà necessario specificare sia i permessi sui moduli sia sulle parti comuni. Questo può sembrare molto esoso ma permette di controllare la sicurezza di tutti i dati che vengono manipolati sia il come vengono manipolati. 
 
+Es. il documento elenco ragazzi voglio che sia acessibile (visualizzare) a tutti i ragazzi e ai capi (che ne hanno diritto), 
+ma voglio che venga usato il modulo X (che visualizza dati non sensibili) dai ragazzi e il modulo Y dai capi autorizzati in quanto il modulo Y può prevedere anche la modifica di tali dati.
+
 
 = Conclusioni = 
 
