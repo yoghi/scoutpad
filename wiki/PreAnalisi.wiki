@@ -53,3 +53,6 @@ Es:
   * member => staff => responsabile => superresponsabile
 
 questa catena allarga sempre i privilegi su una serie di dati prodotti da sempre più persone; ovviamente più si sale meno utenti hanno tale ruolo. 
+
+Allo stesso tempo è necessario distinguere _member_ di cosa, ci possono essere più gruppi logici al cui interno c'è un member sarà quindi opportuna specificare bene questa cosa:
+_radioamatori_member_ o _calciatori_staff_.
