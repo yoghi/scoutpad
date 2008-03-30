@@ -50,8 +50,6 @@ Es:
   * admin (entita che non eredita da nessuno)
   * guest (utente generico, sconosciuto al sistema) - nessun privilegio - 
 
-				|guest|
-			|	member	|
-		|		staff		|
-	|			responsabile		|
-|				capocampo			|
+  * member => staff => responsabile => superresponsabile
+
+questa catena allarga sempre i privilegi su una serie di dati prodotti da sempre più persone; ovviamente più si sale meno utenti hanno tale ruolo. 
