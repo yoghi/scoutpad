@@ -42,3 +42,5 @@ Tutto questo è possibile esplicitarlo con le ACL (Access Control List) ed event
 Come si è capito il controllo non è su singolo utente, ma su un gruppo di utenti, che esso corrisponda ad un solo utente o a più utenti; 
 
 *Ci sarà proliferazione di ruoli? si certo se non viene usata la dovuta attenzione. *
+
+La creazione dei ruoli per facilità sarebbe il caso che fosse sempre rappresentata come un albero, in modo da coprire tutte le aree in maniera intelligente.
