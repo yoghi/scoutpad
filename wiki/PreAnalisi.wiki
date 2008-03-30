@@ -21,3 +21,7 @@ Un ruolo ha in se il concetto di eredità; per esemplificare
 _ruolo SuperPippo eredita da Pippo significa che ha tutte le responsaiblità di Pippo, più eventuali nuove responsabilità_
 
 PS: per semplicità la ereditarietà multipla non viene considerata. 
+
+= Conclusioni = 
+
+Tutto questo è possibile esplicitarlo con le ACL (Access Control List) ed eventualmente estenderlo con le Permission. 
