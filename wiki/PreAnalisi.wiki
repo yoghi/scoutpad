@@ -18,4 +18,4 @@ PS: in futuro sarà possibile anche pensare a delle _eccezzioni_ ai ruoli ma per
 
 Un ruolo ha in se il concetto di eredità; per esemplificare 
 
-_ruolo R1 eredita da R significa che ha tutte le responsaiblità di R, più eventuali nuove responsabilità_
+_ruolo Ruolo1 eredita da Ruolo significa che ha tutte le responsaiblità di R, più eventuali nuove responsabilità_
