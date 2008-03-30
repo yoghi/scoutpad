@@ -2,8 +2,7 @@
 
 = Utente =
 
-Chi si avvicina a questo sistema puo essere sia un ragazzo sia un adulto, in entrambi i casi
-dipende sempre da che responsabilità uno si prende; da notare che la regola del minimo privilegio deve sempre valere è anche vera la situazione in cui una persona ricopre un "ruolo" solo per un periodo prefissato, magari anche più ruoli. 
+Chi si avvicina a questo sistema puo essere sia un ragazzo sia un adulto, questo gia pone il primo problema, in secondo luogo poi c'è che responsabilità uno ha; da notare che la regola del minimo privilegio deve sempre valere è anche vera la situazione in cui una persona ricopre un _ruolo_ solo per un periodo prefissato, magari anche più ruoli. 
 
 
 = Head2 =
