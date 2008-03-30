@@ -24,6 +24,11 @@ PS: per semplicità la ereditarietà multipla non viene considerata.
 
 Un ruolo *ha o non ha* accesso ad una specifica risorsa, questo significa che la sua granularità non è molto fina.
 
+= Risorsa = 
+
+Il sistema è visto come N moduli che poggiano su una infrastruttura comune; questi moduli sono fruitori delle risorse del sistema e sono anche essi risorsa del sistema. Questo significa che per accedere alle risorse dell'infrastruttura di base i moduli useranno i permessi di accesso dei loro utilizzatori; poiche il sistema dara accesso ai moduli in base ai permessi su di loro, questo significa che sarà necessario specificare sia i permessi sui moduli sia sulle parti comuni. Questo può sembrare molto esoso ma permette di controllare la sicurezza di tutti i dati che vengono manipolati sia il come vengono manipolati. 
+
+
 = Conclusioni = 
 
 Tutto questo è possibile esplicitarlo con le ACL (Access Control List) ed eventualmente estenderlo con le [Permission] per ottenere un grado maggiore di dettaglio sui permessi. 
