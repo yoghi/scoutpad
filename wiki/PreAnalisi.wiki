@@ -16,7 +16,6 @@ PS: in futuro sarà possibile anche pensare a delle _eccezzioni_ ai ruoli ma per
 
 = Albero delle responsabilità =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Un ruolo ha in se il concetto di eredità; per esemplificare 
+
+_ruolo R1 eredita da R significa che ha tutte le responsaiblità di R, più eventuali nuove responsabilità_
