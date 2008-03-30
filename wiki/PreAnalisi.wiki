@@ -2,7 +2,17 @@
 
 = Utente =
 
-Chi si avvicina a questo sistema puo essere sia un ragazzo sia un adulto, questo gia pone il primo problema, in secondo luogo poi c'è che responsabilità uno ha; da notare che la regola del minimo privilegio deve sempre valere è anche vera la situazione in cui una persona ricopre un _ruolo_ solo per un periodo prefissato, magari anche più ruoli. 
+Chi si avvicina a questo sistema puo essere sia un ragazzo sia un adulto.
+
+In entrambi i casi : 
+
+  * deve valere la regola del minimo privilegio
+  * la responsabilità dell'utente viene espressa mediante _ruoli_
+  * è possibile ricoprire più _ruoli_
+  * un ruolo ha un periodi di valità limitato o illimitato
+
+
+
 
 
 = Head2 =
