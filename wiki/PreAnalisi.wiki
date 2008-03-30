@@ -50,10 +50,8 @@ Es:
   * admin (entita che non eredita da nessuno)
   * guest (utente generico, sconosciuto al sistema) - nessun privilegio - 
 
-    * member - utente ragazzo o capo - privilegi specifici - 
-
-      * staff - privilegi specifici - 
-
-      * responsabile - privilegi maggiori - 
-
-      * capocampo
+				|guest|
+			|	member	|
+		|		staff		|
+	|			responsabile		|
+|				capocampo			|
