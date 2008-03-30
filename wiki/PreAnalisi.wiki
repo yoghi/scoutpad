@@ -14,7 +14,7 @@ In entrambi i casi :
 PS: in futuro sarà possibile anche pensare a delle _eccezzioni_ ai ruoli ma per ora meglio essere inflessibili.
 
 
-= Albero delle responsabilità =
+= Ruolo =
 
 Un ruolo ha in se il concetto di eredità; per esemplificare 
 
@@ -22,6 +22,8 @@ _ruolo SuperPippo eredita da Pippo significa che ha tutte le responsaiblità di 
 
 PS: per semplicità la ereditarietà multipla non viene considerata. 
 
+Un ruolo *ha o non ha* accesso ad una specifica risorsa, questo significa che la sua granularità non è molto fina.
+
 = Conclusioni = 
 
-Tutto questo è possibile esplicitarlo con le ACL (Access Control List) ed eventualmente estenderlo con le [Permission] . 
+Tutto questo è possibile esplicitarlo con le ACL (Access Control List) ed eventualmente estenderlo con le [Permission] per ottenere un grado maggiore di dettaglio sui permessi. 
