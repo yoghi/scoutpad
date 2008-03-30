@@ -24,4 +24,4 @@ PS: per semplicità la ereditarietà multipla non viene considerata.
 
 = Conclusioni = 
 
-Tutto questo è possibile esplicitarlo con le ACL (Access Control List) ed eventualmente estenderlo con le Permission. 
+Tutto questo è possibile esplicitarlo con le ACL (Access Control List) ed eventualmente estenderlo con le _Permission_ . 
