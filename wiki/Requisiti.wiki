@@ -10,3 +10,7 @@
 = Coordinazione =
 
 Ricordandosi che la coordinazione è un problema primario; 
+
+  * Poter essere aggiornati sui cambiamenti di un determinato documento
+  * Avere sempre sotto controllo cosa succede sui propri documenti
+  * Avere le versioni precedenti del documento (_versioning_)
