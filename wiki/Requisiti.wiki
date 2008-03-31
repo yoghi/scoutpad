@@ -5,4 +5,6 @@
 Ricordandosi che la coordinazione è un problema primario; 
 
   * Supporto multi-utenti
-  * Supporto multi-gruppo, nel senso di gruppi logici di persone che possono usare una risorsa generica. Es. rubrica. 
+  * Supporto multi-gruppo, nel senso di gruppi logici di persone Es: suddivisione geografica : di Rimini, di Cattolica, etc.. 
+  * Condivisione di informazioni (Es: rubriche, testi, immagini)
+  * 
