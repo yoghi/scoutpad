@@ -1,6 +1,6 @@
-#summary Requisiti
+#summary Requisiti dell'applicazione
 
-= Requisiti =
+=Coordinazione =
 
 Ricordandosi che la coordinazione è un problema primario; 
 
