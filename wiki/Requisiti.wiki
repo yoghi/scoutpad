@@ -1,8 +1,8 @@
 #summary Requisiti
 
-= Introduction =
+= Introduzione =
 
-La coordinazione è un problema primario soprattutto nei casi in cui si abbia poco tempo a disposizione;  per potersi coordinare è necessario poter avere a disposizione anche _documenti_ di vario tipo condivisi: chiamando questi ultimi in generale _risorse_ è possibile delineare i seguenti requisiti : 
+La coordinazione è un problema primario;  per potersi coordinare è necessario poter avere a disposizione anche _documenti_ di vario tipo condivisi: chiamando questi ultimi in generale _risorse_ è possibile delineare i seguenti requisiti : 
 
 
   * possibilità di condividere risorse
