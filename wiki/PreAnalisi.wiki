@@ -9,7 +9,7 @@ In entrambi i casi :
   * deve valere la regola del minimo privilegio
   * la responsabilità dell'utente viene espressa mediante _ruoli_
   * è possibile ricoprire più _ruoli_
-  * è possibile che appartenga a più gruppi logici
+  * è possibile che appartenga a più _gruppi logici_
   * un ruolo ha un periodi di valità limitato o illimitato
 
 PS: in futuro sarà possibile anche pensare a delle _eccezzioni_ ai ruoli ma per ora meglio essere inflessibili.
