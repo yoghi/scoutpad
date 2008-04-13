@@ -93,7 +93,10 @@ class ContactController extends Sigma_Controller_Action
 					//$mail_server->send($transport);
 					
 					//$this->getRequest()->getRequestUri()
-					echo $this->notify()...
+					/**
+					 * @todo sistemare questa classe!!!
+					 */
+					echo $this->notify();
 					//$this->_redirect('/errore/complete/');
 					
 				} catch (Exception $e) {
