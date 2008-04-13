@@ -1,0 +1,25 @@
+[general]
+db.adapter = <PDO_type>
+db.config.host = <hostname>
+db.config.username = <username>
+db.config.password = <password>
+db.config.dbname = <dbname>
+auth.token = <generic token>
+view.path = <path where locate templates>
+
+[session]
+
+[database]
+#adapter = PDO_<type db>
+#config.host = <host Es. localhost>
+#config.username = <username>
+#config.password = <password>
+#config.dbname = <database name>
+
+[mail]
+#server = <server.dominio.it>
+#ssl = <tls>
+#port = 25
+#auth = login
+#username = <username>
+#password = <password>
