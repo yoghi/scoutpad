@@ -26,7 +26,8 @@ if ( version_compare(phpversion(), '5.2.0', '<') ) {
 }
 
 
-define('BASE_DIRECTORY',dirname(dirname(__FILE__))); // Es: home/workspace/Scout/ScoutPad indica dove si trova il direttorio dell'applicazione!!
+// Es: home/workspace/Scout/ScoutPad indica dove si trova il direttorio dell'applicazione!!
+define('BASE_DIRECTORY',dirname(dirname(__FILE__))); 
 
 require_once(BASE_DIRECTORY.'/application/Scoutpad.php');
 
