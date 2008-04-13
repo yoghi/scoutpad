@@ -39,10 +39,11 @@ class Sigma_Acl_Manager {
 	private $user_id = 0;
 	
 	/**
-	 * Role corrente
-	 * @var string
+	 * Roles correnti
+	 * @var array
 	 */
-	private $role = null;
+	private $rolesId = null;	
+	
 	
 	/**
 	 * Disable cache
@@ -52,7 +53,7 @@ class Sigma_Acl_Manager {
 	
 	/**
 	 * Modulo corrente
-	 * @var string
+	 * @var integer
 	 */
 	private $modulo = null;
 	
@@ -60,20 +61,27 @@ class Sigma_Acl_Manager {
 	 * Classe per semplificare la creazione e storaging delle ACL di un dato "Utente"
 	 *
 	 * @param integer $user_id identificativo utente 
-	 * @param string $role ruolo da usare
+	 * @param string $role ruolo/i da usare
 	 * @param string $modulo modulo da usa
 	 * @param string $cache abilito la cache o meno
 	 * @throws Zend_Exception
 	 */
-	public function __construct($user_id,$role,$modulo,$cache = true) {
+	public function __construct($user_id,$rolesId,$modulo_name,$cache = true) {
 		
 		try {
 		
 			Zend_Loader::loadClass('AclCache','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 			Zend_Loader::loadClass('Sigma_Acl');
 			
-			$this->role = $role;
-			$this->modulo = $modulo;
+			/*
+			$r = explode(",",$rolesId);
+			
+			foreach ($r as $ruolo){
+				$this->roleId[] = $ruolo;
+			}
+			*/
+			$this->rolesId = $rolesId;
+			$this->modulo = Sigma_Acl_Manager::getModuleId($modulo_name);
 			$this->user_id = $user_id;
 			$this->disable_cache = !$cache;
 			
@@ -92,9 +100,18 @@ class Sigma_Acl_Manager {
 	public function load(){
 
 			$acl_cache = new AclCache();
-		
-			if ( !is_null($this->role) ) $where[] = 'Role = '.$acl_cache->getAdapter()->quote($this->role);
-			else throw new Zend_Exception('You must specific the role for create Sigma_Acl_Manager');
+			
+			//if ( !is_null($this->roleId) ) $where[] = 'Role = '.$acl_cache->getAdapter()->quote($this->roleId);
+			//else throw new Zend_Exception('You must specific the role for create Sigma_Acl_Manager');
+			
+			if ( count($this->rolesId) != 0 ) {
+				
+				foreach ($this->rolesId as $role){
+					$where[] = 'Role = '.$acl_cache->getAdapter()->quote($role);
+				}
+				
+			} else throw new Zend_Exception('You must specific the role/s for create Sigma_Acl_Manager');
+			
 			
 			if ( !is_null($this->modulo) ) $where[] = 'Modulo = '.$acl_cache->getAdapter()->quote($this->modulo);
 			else throw new Zend_Exception('You must specific the module for create Sigma_Acl_Manager');
@@ -104,14 +121,13 @@ class Sigma_Acl_Manager {
 			if ( count($r) > 0 && !$this->disable_cache ) {
 				
 				// E' gia presente in cache
-				Zend_Registry::get('log')->log('ACL MANAGER FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
 				Zend_Registry::get('log')->log('loading from cache .... ',Zend_Log::DEBUG);
 				$this->acl = unserialize( base64_decode($r[0]['Object']) );
 				return true;
 				
 			} else {	
 								
-				$this->acl = new Sigma_Acl($this->user_id,$this->role,$this->modulo);
+				$this->acl = new Sigma_Acl($this->user_id,$this->rolesId,$this->modulo);
 				$this->_cacheit();
 				
 
@@ -131,9 +147,9 @@ class Sigma_Acl_Manager {
 	 */
 	public function regenCache() {
 			
-		Zend_Registry::get('log')->log('REGEN CACHE FOR '.$this->role.' OVER '.$this->modulo,Zend_Log::DEBUG);
+		Zend_Registry::get('log')->log('REGEN CACHE FOR '.$this->rolesId.' LOGIC GROUP: '.$this->logicGroupId.' OVER '.$this->modulo,Zend_Log::DEBUG);
  
-		$this->acl = new Sigma_Acl($this->user_id,$this->role,$this->modulo);
+		$this->acl = new Sigma_Acl($this->user_id,$this->rolesId,$this->modulo);
 		
 		$this->_cacheit(true);
 	}
@@ -147,11 +163,22 @@ class Sigma_Acl_Manager {
 		$acl_cache = new AclCache();
 		$data['User'] = $this->user_id;
 		$data['Modulo'] = $this->modulo;
-		$data['Role'] = is_null($this->role) ? 'guest' : $this->role;
+		
+		if ( count($this->rolesId) == 0 ){
+			$data['Role'] = 1;
+		} else {
+			$r = '';
+			$max = count($this->rolesId);
+			for ($i = 0; $i < $max-2; $i++){
+				$r .= $this->rolesId[$i].',';
+			}
+			$r .= $this->rolesId[$max-1];
+			$data['Role'] = $r;
+		}
 		
 		if ( $override ) {
 			
-			$where[] = $acl_cache->getAdapter()->quoteInto('User = ? ',$this->user_id);
+			//$where[] = $acl_cache->getAdapter()->quoteInto('User = ? ',$this->user_id);
 			$where[] = $acl_cache->getAdapter()->quoteInto('Modulo = ? ',$this->modulo);
 			$where[] = $acl_cache->getAdapter()->quoteInto('Role = ? ',$data['Role']);
 			
@@ -161,7 +188,7 @@ class Sigma_Acl_Manager {
 			
 		}
 		
-		Zend_Registry::get('log')->log('cached acl di '.$data['Role'].' per il modulo '.$data['Modulo'],Zend_Log::DEBUG);
+		Zend_Registry::get('log')->log('cached acl di '. Sigma_Acl_Manager::getRoleName($data['Role']).' per il modulo '.Sigma_Acl_Manager::getModuleName($data['Modulo']),Zend_Log::DEBUG);
 		
 		if ( $this->acl->count() > 0 ){
 			
@@ -185,6 +212,66 @@ class Sigma_Acl_Manager {
 		return $this->acl;
 	}
 
+	/**
+	 * Restituisce il nome di un ruolo a partire dal suo id
+	 * @param int $roleId identificativo del ruolo
+	 */
+	public static function getRoleName($roleId){
+		
+		Zend_Loader::loadClass('AclRole','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+		
+		$acl_role = new AclRole();
+		
+		$where[] = 'id = '.$acl_role->getAdapter()->quote($roleId);
+		
+		$r = $acl_role->fetchAll($where)->toArray();
+		
+		if ( count($r) > 0 ) {
+			return $r[0]['nome'];
+		} else return 0;
+		
+	}
+	
+	/**
+	 * Restituisce l'id di un modulo a partire dal nome
+	 * @param string $module_name nome del modulo 
+	 */
+	public static function getModuleId($module_name){
+		
+		Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+		
+		$module_list = new Modules();
+		
+		$where[] = 'nome = '.$module_list->getAdapter()->quote($module_name);
+		
+		$r = $module_list->fetchAll($where)->toArray();
+		
+		if ( count($r) > 0 ) {
+			return $r[0]['id'];
+		} else return 0;
+		
+	}
+	
+	/**
+	 * Restituisce il nome di un modulo a partire dall'id
+	 * @param string $module_name nome del modulo 
+	 */
+	public static function getModuleName($moduleId){
+		
+		Zend_Loader::loadClass('Modules','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+		
+		$module_list = new Modules();
+		
+		$where[] = 'id = '.$module_list->getAdapter()->quote($moduleId);
+		
+		$r = $module_list->fetchAll($where)->toArray();
+		
+		if ( count($r) > 0 ) {
+			return $r[0]['nome'];
+		} else return 0;
+		
+	}
+	
 }
 
 

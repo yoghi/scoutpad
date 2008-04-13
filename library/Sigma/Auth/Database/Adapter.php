@@ -116,7 +116,6 @@ class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
         }
         
         if ( !empty($data) ){
-        	//ok
         	$tokenValid    = true;
         	$tokenIdentity = &$data[0];
         } else {
