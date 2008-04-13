@@ -70,16 +70,24 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			
 			if ( !empty($auth_session->storage) ) {
 				$token = $auth_session->storage;
-				$role = isset($token['role']) ? $token['role'] : 'guest';
-				$id = isset($token['id']) ? intval($token['id']) : 0;
+				
+				if ( isset($token['role']) ) {
+					$rolesId = array();
+					$r = explode(",",$token['role']);
+					foreach($r as $role) $rolesId[] = $role;
+				} else {
+					$rolesId = array(1);											// (RoleId = 1) => guest
+				}
+						
+				$id = isset($token['id']) ? intval($token['id']) : 0;				// utente inesistente o guest
 			} else {
-				$role = 'guest';
+				$rolesId = array(1);
 				$id = 0;
 			}
 
 			// :module/:controller/:action/*
 			// :controller/:action/*
-        	$module = $request->getModuleName();
+        	$module_name = $request->getModuleName();
 			
         	/*
         	 * Per il Modular Directory Structure => http://framework.zend.com/manual/en/zend.controller.modular.html
@@ -89,8 +97,11 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			
         	$log = Zend_Registry::get('log');
         	
-        	$log->log("'$role' richiede di usare il controller '$controller' nel modulo : '$module' per compiere '$action'" , Zend_Log::DEBUG);
-        	
+			foreach ($rolesId as $role){
+				$role_name = Sigma_Acl_Manager::getRoleName($role);
+				$log->log("Il ruolo '$role_name' richiede di usare il controller '$controller' nel modulo : '$module_name' per compiere '$action'" , Zend_Log::DEBUG);
+			}
+			                	
         	/**
         	 * 'member' richiede di usare il controller 'torriana' nel modulo : 'default' per compiere 'index'
         	 * 'member' richiede di usare il controller 'permessi' nel modulo : 'admin' per compiere 'index' 
@@ -104,12 +115,12 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			
 				// preparo il gestore ACL per un determinato utente, ruolo e mdoulo
 				$acl_cache = Zend_Registry::get('config');
-				$acl_manager = new Sigma_Acl_Manager($id,$role,$module,$acl_cache->acl->cache);
-		
+				$acl_manager = new Sigma_Acl_Manager($id,$rolesId,$module_name,$acl_cache->acl->cache);
+				
 				if ( !$acl_manager->load() ) {
 					
 					// non c'è in cache
-					$module = $this->_noacl['module'];
+					$module_name = $this->_noacl['module'];
 	       			$controller = $this->_noacl['controller'];
 	       			$action = $this->_noacl['action'];
 	       			
@@ -123,67 +134,71 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 				
 					$acl = $acl_manager->Acl();
 
+					$select = false;
+					
 					// Ho in memoria ACL questa risorsa o non la conosco?
 					if ( ! $acl->has($controller) ) {
 						
-						if ( !$acl->isAllowed($role,null,null) ) {
-									 
-							if ( empty($auth_session->storage) ) {
-								$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
-				       			$module = $this->_noauth['module'];
-				       			$controller = $this->_noauth['controller'];
-				       			$action = $this->_noauth['action'];
-							} else {
-								$log->log('Utente autenticato cmq. non gli e\' permesso l\'accesso',Zend_Log::DEBUG);
-								$module = $this->_noacl['module'];
-				       			$controller = $this->_noacl['controller'];
-				       			$action = $this->_noacl['action'];
+						foreach ($rolesId as $role){
+							if ( $acl->isAllowed($role,null,null) ) {
+								$select = true;
+								break;
 							}
-							
 						}
 						
 					} else {
 					
-						if ( !$acl->isAllowed($role,$controller,$action) ){
-							
-							// non posso accedere direttamente a quella azione ma forse posso a tutto l'oggetto...
-			
-							if ( !$acl->isAllowed($role,$controller,null) ) {
+						foreach ($rolesId as $role){
+						
+							if ( !$acl->isAllowed($role,$controller,$action) ){
 								
-								// non posso accedere direttamente a quella risorsa ma forse posso a tutto l'ambiente ...
-			
-								if ( !$acl->isAllowed($role,null,null) ) {
-									 
-									if ( empty($auth_session->storage) ) {
-										$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
-						       			$module = $this->_noauth['module'];
-						       			$controller = $this->_noauth['controller'];
-						       			$action = $this->_noauth['action'];
-									} else {
-										$log->log('Utente autenticato cmq. non gli e\' permesso l\'accesso',Zend_Log::DEBUG);
-										$module = $this->_noacl['module'];
-						       			$controller = $this->_noacl['controller'];
-						       			$action = $this->_noacl['action'];
+								// non posso accedere direttamente a quella azione ma forse posso a tutto l'oggetto...
+				
+								if ( !$acl->isAllowed($role,$controller,null) ) {
+									
+									// non posso accedere direttamente a quella risorsa ma forse posso a tutto l'ambiente ...
+				
+									if ( !$acl->isAllowed($role,null,null) ) {
+										 
+										$select = true;
+										break;									
+										
 									}
 									
 								}
 								
 							}
-							
+						
 						}
 						
+					}// fine else - risorsa 
+					
+					if ( $select ){
+						
+						if ( empty($auth_session->storage) ) {
+							$log->log('Utente non autenticato!!', Zend_Log::DEBUG);
+			       			$module_name = $this->_noauth['module'];
+			       			$controller = $this->_noauth['controller'];
+			       			$action = $this->_noauth['action'];
+						} else {
+							$log->log('Utente autenticato cmq. non gli e\' permesso l\'accesso',Zend_Log::DEBUG);
+							$module_name = $this->_noacl['module'];
+			       			$controller = $this->_noacl['controller'];
+			       			$action = $this->_noacl['action'];
+						}
+					
 					}
 				
-				}
+				}// fine else - cache
 				
 			
 			} catch (Zend_Exception $e) {
-				$module = $this->_noauth['module'];
+				$module_name = $this->_noauth['module'];
        			$controller = $this->_noauth['controller'];
        			$action = $this->_noauth['action'];
        			$log->log('Eccezzione tipo Zend : '.$e->getMessage(),Zend_Log::WARN);
 			} catch (Exception $e){
-				$module = $this->_noauth['module'];
+				$module_name = $this->_noauth['module'];
        			$controller = $this->_noauth['controller'];
        			$action = $this->_noauth['action'];
        			$log->log('Eccezzione Generica'.$e->getMessage(),Zend_Log::ERR);
@@ -192,7 +207,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			// can user see?
 			/*
 			if ( ! $acl->hasPermission($controller,'R') ) {
-				$module = $this->_noacl['module'];
+				$module_name = $this->_noacl['module'];
        			$controller = $this->_noacl['controller'];
        			// forzo come pagina precedente index in quanto dovrebbe poter sempre andare!
        			$flow_token = Sigma_Flow_Token::getInstance()->insert($request->getFrompage(),array('type'=>'errore','text'=>'Spiacente non puoi visualizzare l\'informazione da te richiesta','next'=>'/home/'));
@@ -202,11 +217,11 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 			*/
 			
 			
-        	$request->setModuleName($module);
+        	$request->setModuleName($module_name);
         	$request->setControllerName($controller);
         	$request->setActionName($action);
         	
-			$log->log("( Eseguo: $module -> $controller -> $action )", Zend_Log::NOTICE);
+			$log->log("( Eseguo: $module_name -> $controller -> $action )", Zend_Log::NOTICE);
         	
         	foreach( $request->getParams() as $req_param_key => $req_param_value ){
         		if ( $req_param_key != 'error_handler' ) $log->log("\t".$req_param_key.' => '.$req_param_value, Zend_Log::NOTICE);

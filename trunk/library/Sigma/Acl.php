@@ -40,21 +40,22 @@ class Sigma_Acl extends Zend_Acl {
 	
 	/**
 	 * Role corrente
-	 * @var string
+	 * @var array
 	 */
-	private $role = null;
+	private $roleId = null;
 	
 	/**
 	 * Modulo corrente
-	 * @var string
+	 * @var integer
 	 */
-	private $modulo = null;
+	private $moduloId = null;
 	
 	/**
 	 * Inherit role
 	 * @var array
 	 */
 	private $other_role = array();
+	
 
 	/**
 	 * Numero di regole per modulo
@@ -66,11 +67,12 @@ class Sigma_Acl extends Zend_Acl {
 	 * Costruttore Sigma_Acl
 	 *
 	 * @param integer $user_id identificativo dell'utente
+	 * @param array $roleId array con gli id dei ruoli dell'utente
 	 */
-	public function __construct($user_id,$role,$modulo){
+	public function __construct($user_id,$roleId,$moduloId){
 		
-		$this->role = $role;
-		$this->modulo = $modulo;
+		$this->roleId = $roleId;
+		$this->moduloId = $moduloId;
 		$this->user_id = $user_id;
 		
 		//database
@@ -82,10 +84,15 @@ class Sigma_Acl extends Zend_Acl {
 		//class
 		Zend_Loader::loadClass('Sigma_Acl_Permission');
 		
-		Zend_Registry::get('log')->log('Creo ACL per '.$this->role.' nel modulo '.$this->modulo,Zend_Log::DEBUG);
-		
 		$this->permission = new Sigma_Acl_Permission();
-		$this->_addInheritRole($this->role);
+		
+		//$this->_addInheritRole($this->roleId);
+		
+		foreach ($this->roleId as $role){
+			Zend_Registry::get('log')->log('creo ACL per '.Sigma_Acl_Manager::getRoleName($role).' nel modulo '.Sigma_Acl_Manager::getModuleName($this->moduloId),Zend_Log::DEBUG);
+			$this->_addInheritRole($role);
+		}
+		
 		$this->_addRules();
 		
 	}
@@ -106,40 +113,53 @@ class Sigma_Acl extends Zend_Acl {
 	 * @return boolean 
 	 */
 	public function hasPermission($controller,$permesso){
-		return $this->permission->hasPermission($this->user_id,$this->modulo,$controller,$permesso);
+		return $this->permission->hasPermission($this->user_id,$this->moduloId,$controller,$permesso);
 	}
 	
 	/**
 	 * Aggiunge un i richiedenti (Role) in modo da considerare anche gli inherits
-	 * @param string $role richiedente
+	 * uno alla volta. 
+	 * @param integer $role richiedente
 	 */
-	private function _addInheritRole($role) {
+	private function _addInheritRole($roleId) {
 
-		if ( $role === null ) {
-			// vuole dire che è un utente NULL => di fatto GUEST!
-			$role = 'guest';
+		if ( $roleId === null ) {
+			Zend_Registry::get('log')->log('identificativo nullo non acettabile',Zend_Log::CRIT);
 		}
 		 
 		$acl_role = new AclRole();
 		
-		$where = 'nome = '. $acl_role->getAdapter()->quote($role);
+		$where = 'id = '. $acl_role->getAdapter()->quote($roleId);
 		
 		$ris = $acl_role->fetchAll($where)->toArray();
 		
 		if ( count($ris) == 0 ) {
-			Zend_Registry::get('log')->log('ruolo inesistente: '.$role,Zend_Log::ERR);
+			Zend_Registry::get('log')->log('ruolo inesistente, con codice: '.$roleId,Zend_Log::ERR);
 			return;
 		}
 		
-		Zend_Registry::get('log')->log('cerco di creare il ruolo di '.$role,Zend_Log::DEBUG);
+		Zend_Registry::get('log')->log('cerco di creare il ruolo di '.$ris[0]['nome'],Zend_Log::DEBUG);
 		
 		if ( !is_null($ris[0]['inherit']) ) {
-			$this->other_role[] = $ris[0]['inherit'];
-			// devo verificare che anche lui non abbia altri inherit!!
-			$this->_addInheritRole($ris[0]['inherit']);
+
+			// devo verificare che anche lui non abbia altri inherit!! - EREDITARIETA' MULTIPLA -
+			$inherit = explode(",",$ris[0]['inherit']);
+			
+			if ( count($inherit) == 1 ) {
+				$this->_addInheritRole($ris[0]['inherit']);
+				$this->other_role[] = $ris[0]['inherit'];
+				Zend_Registry::get('log')->log('eredito da '.$ris[0]['inherit'],Zend_Log::DEBUG);
+			} else {
+				foreach ($inherit as $inh){
+					$this->_addInheritRole($inh);
+					$this->other_role[] = $inh;
+					Zend_Registry::get('log')->log('eredito da '.$inh,Zend_Log::DEBUG);
+				}
+			}
+			
 		} 
 		
-		$this->addRole( new Zend_Acl_Role($ris[0]['nome']) , $ris[0]['inherit'] );
+		$this->addRole( new Zend_Acl_Role($ris[0]['id']) , $ris[0]['inherit']);
 		
 		Zend_Registry::get('log')->log('add role : '.$ris[0]['nome'],Zend_Log::DEBUG);
 	
@@ -152,11 +172,14 @@ class Sigma_Acl extends Zend_Acl {
 	private function _addRules(){
 
 		foreach( array_reverse($this->other_role) as $role){	
-			$this->_addRule($role,$this->modulo);
+			$this->_addRule($role,$this->moduloId);
 		}
 
-		// aggingo le ACL del ROLE corrente
-		$this->_addRule($this->role,$this->modulo);
+		// aggingo le ACL del ROLE corrente - NOTA : se faccio cosi passo un array.... 
+		foreach ($this->roleId as $role){
+			$this->_addRule($role,$this->moduloId);
+		}
+		
 		
 		//aggiungo le ACL dell'utente corrente
 		$this->_addUserRule();
@@ -170,13 +193,13 @@ class Sigma_Acl extends Zend_Acl {
 	private function _addUserRule(){
 		//$this->user_id;
 		$log = Zend_Registry::get('log');
-		$log->log('cerco di aggiungere la regola per '.$this->user_id.' nel modulo '.$this->modulo ,Zend_Log::DEBUG);
+		$log->log('cerco di aggiungere la regola per l\'utente '.$this->user_id.' nel modulo '.Sigma_Acl_Manager::getModuleName($this->moduloId) ,Zend_Log::DEBUG);
 		
 		$acl_db = new AclUser();
 		
 		$where = array();
 		$where[] = 'User = '.$acl_db->getAdapter()->quote($this->user_id);
-		$where[] = 'Modulo = '.$acl_db->getAdapter()->quote($this->modulo);
+		$where[] = 'Modulo = '.$acl_db->getAdapter()->quote($this->moduloId);
 		
 		$regole = $acl_db->fetchAll($where)->toArray();
 		
@@ -213,19 +236,21 @@ class Sigma_Acl extends Zend_Acl {
 	 * @param string $role richiedente
 	 * @param string $modulo modulo
 	 */
-	private function _addRule($role,$modulo){
+	private function _addRule($roleId,$moduloId){
 		
 		$log = Zend_Registry::get('log');
 		
-		$role_name = is_null($role) ? 'guest' : $role;
+		$role_name = Sigma_Acl_Manager::getRoleName($roleId);
 		
-		$log->log('cerco di aggiungere la regola per '.$role_name.' nel modulo '.$modulo ,Zend_Log::DEBUG);
+		$modulo_name = Sigma_Acl_Manager::getModuleName($moduloId);
+		
+		$log->log('cerco di aggiungere la regola per il ruolo '.$role_name.' nel modulo '.$modulo_name ,Zend_Log::DEBUG);
 		
 		$acl_db = new Acl();
 		$where = array();
-		$where[] = 'Modulo = '.$acl_db->getAdapter()->quote($modulo);
+		$where[] = 'Modulo = '.$acl_db->getAdapter()->quote($moduloId);
 		
-		if ( !is_null($role) && $role != 'guest'  ) $where[] = 'Role = '.$acl_db->getAdapter()->quote($role);
+		if ( !is_null($roleId) && $role_name != 'guest'  ) $where[] = 'Role = '.$acl_db->getAdapter()->quote($role);
 		else $where[] = 'Role IS NULL';
 		
 		// itero su ogni acl restituita e genero il corretto array
@@ -237,18 +262,18 @@ class Sigma_Acl extends Zend_Acl {
 			$modulo_s = $acl_single['Modulo'];
 			$controller_s = is_null($acl_single['Controller']) ? '*' :  $acl_single['Controller'];
 			$action_s = is_null($acl_single['Action']) ? '*' :  $acl_single['Action'];
-			
+			/*
 			$acl_list[$role][$acl_single['id']] = array (
 						'Modulo' => $modulo_s,
 						'Controller' => $controller_s,
 						'Action' => $action_s
 			);
-			
+			*/
 			if ( !$this->has($acl_single['Controller']) ){
 				$this->add( new Zend_Acl_Resource($acl_single['Controller']) );
 			}
 			
-			$this->allow($role,$acl_single['Controller'],$acl_single['Action']);
+			$this->allow($role_name,$acl_single['Controller'],$acl_single['Action']);
 			
 			$log->log("allow($role_name,".$acl_single['Controller'].",".$acl_single['Action'].")",Zend_Log::DEBUG);
 
