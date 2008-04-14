@@ -16,4 +16,4 @@ Moduli :
 
 Todo :
   * Manage Exception
-  * 
+  * Sigma_Log => migliorare i parametri del config
