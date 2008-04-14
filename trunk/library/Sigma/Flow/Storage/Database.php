@@ -37,7 +37,7 @@ class Sigma_Flow_Storage_Database implements Sigma_Flow_Storage_Interface {
 		
 		try {
 			
-			Zend_Loader::loadClass(ucfirst($tablename) ,'/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass(ucfirst($tablename) ,BASE_DIRECTORY.'/application/modules/default/models/tables/');
 			$this->tablename = ucfirst($tablename); //qui ci sono se la load è andata a buon fine!!
 			
 		} catch (Zend_Exception $e) {
