@@ -73,7 +73,7 @@ class Sigma_Log extends Zend_Log {
 					case 'Zend_Log_Writer_Stream':
 						
 						Zend_Loader::loadClass('Zend_Log_Writer_Stream');
-						$l = new $appender['type'](BASE_DIRECTORY.'/data/tmp/'.$appender['stream']);
+						$l = new $appender['type'](BASE_DIRECTORY.'/data/logs/'.$appender['stream']);
 						
 						break;
 					case 'Zend_Log_Writer_Db':
