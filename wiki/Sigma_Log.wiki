@@ -1,0 +1,12 @@
+#summary Logger System
+
+= Introduction =
+
+Sigma_Log eredita da [http://framework.zend.com/manual/en/zend.log.html Zend_Log]; ha come caratteristica di avere aggiunto un ulteriore livello di priorita : *AUDIT* e di poter essere inizializzato attraverso [http://framework.zend.com/manual/en/zend.config.html Zend_Config] (file .ini per esempio) 
+
+
+= Caratteristiche =
+
+  * Nuovo livello di priorita _AUDIT_
+  * Configurazione attraverso _array_ o _[http://framework.zend.com/manual/en/zend.config.html Zend_Config]_
+  * 
