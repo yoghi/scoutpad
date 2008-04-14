@@ -21,7 +21,7 @@ require_once 'Zend/Loader.php';
 
 date_default_timezone_set('Europe/Rome');
 
-ini_set('session.save_path','/tmp');
+ini_set('session.save_path',BASE_DIRECTORY.'/data/tmp');
 
 
 /**
@@ -29,7 +29,7 @@ ini_set('session.save_path','/tmp');
  * @package 	Scoutpad
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
- * @version		0.0.2 - 2007 maggio 13 - 19:00 - Stefano Tamagnini
+ * @version		0.0.3 - 2008 aprile 13 - 14:00 - Stefano Tamagnini
  */
 class Scoutpad {
 
@@ -73,8 +73,6 @@ class Scoutpad {
 			Zend_Loader::loadClass('Zend_Db_Table_Rowset');
 			
 			Zend_Loader::loadClass('Zend_Log');
-			Zend_Loader::loadClass('Zend_Log_Writer_Stream');
-			Zend_Loader::loadClass('Zend_Log_Formatter_Xml');
 			
 			Zend_Loader::loadClass('Zend_Controller_Front');
 			Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
@@ -90,9 +88,11 @@ class Scoutpad {
 			/**
 			 * Sigma Class
 			 */
+			Zend_Loader::loadClass('Sigma_Log');
 			Zend_Loader::loadClass('Sigma_Flow_Token');
 			Zend_Loader::loadClass('Sigma_Flow_Storage_Interface');
 			Zend_Loader::loadClass('Sigma_Controller_Action');
+			Zend_Loader::loadClass('Sigma_Controller_Dispatcher');
 			Zend_Loader::loadClass('Sigma_Controller_Request_Http');
 			Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
 			Zend_Loader::loadClass('Sigma_View_TemplateLite');
@@ -105,15 +105,15 @@ class Scoutpad {
 		}
 
 		if (!defined('CONFIG_FILE')) {
-			define('CONFIG_FILE', BASE_DIRECTORY.'/application/config.ini');
+			define('CONFIG_FILE', BASE_DIRECTORY.'/config/config.ini');
 		}
 
+		/*
 		if (!defined('TEMPLATE_LITE_DIR')) {
 			define('TEMPLATE_LITE_DIR', BASE_DIRECTORY.'/library/Template_Lite' . DIRECTORY_SEPARATOR);
 			require(BASE_DIRECTORY.'/library/Template_Lite/class.template.php');
 		}
-
-		set_error_handler(array('scoutpad','error_handler'));
+		*/
 
 
 	}
@@ -124,31 +124,22 @@ class Scoutpad {
 	public function run(){
 		
 		try {
-
-			$log = new Zend_Log();
-			Zend_Registry::set('log',$log);
-			//formatter default `timestamp`, `message`, `priority`, `priorityName`
-
-			$formatter = new Zend_Log_Formatter_Xml();
-			$stream = new Zend_Log_Writer_Stream('/tmp/debug.xml');
-			$stream->setFormatter($formatter);
-			$log->addWriter($stream); //sicuramente su file
-
-			$stream_debug = new Zend_Log_Writer_Stream('/tmp/debug.txt');
-			$log->addWriter($stream_debug);
-
-			// load configuration
+			
 			try {
-				$config = new Zend_Config_Ini(CONFIG_FILE, 'general');
+				
+				$config = new Zend_Config_Ini(CONFIG_FILE, 'dev');
 				Zend_Registry::set('config', $config);
+				
 			} catch (Zend_Config_Exception $e) {
 				echo '<h1>Misconfiguration</h1>';
-				echo '<b>config.ini not found or not readable</b>';
+				echo '<b>config.ini not found or not readable</b><br/>';
+				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
 				exit;
 			}
-
+			
+			set_error_handler(array('scoutpad','error_handler'));
+			
 			if ( !is_null($config->db->adapter) ) {
-				//database
 				try {
 
 					$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->toArray() );
@@ -160,79 +151,46 @@ class Scoutpad {
 				} catch (Zend_Db_Exception $e){
 					echo '<h1>Misconfiguration</h1>';
 					echo '<b>Database selected in config.ini not avaible</b>';
+					echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
 					exit;
 				}
-				//Loggo su tabella
-				Zend_Loader::loadClass('Zend_Log_Writer_Db');
-				$log->addWriter(new Zend_Log_Writer_Db($db,'Log')); //ora anche su db, ATTENTO non controlla in automatico la connettività
-
-
-				// Flow Control
-				Zend_Loader::loadClass('Sigma_Flow_Storage_Database');
-				Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Database() );
-
-			} else {
-
-				// no database
-
-				// Flow Control
-				Zend_Loader::loadClass('Sigma_Flow_Storage_Session');
-				Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Session() );
-
 			}
-
-			// Autentication
-			Zend_Registry::set('auth_module', Zend_Auth::getInstance());
-
-			/**
-			 * require_once 'Zend/Controller/Request/Apache404.php'; 
-			 *	$request = new Zend_Controller_Request_Apache404(); 
-			 */
-
+			
+			$request = new Sigma_Controller_Request_Http(); //serve veramente?
+			
 			// setting controller
 			$frontController = Zend_Controller_Front::getInstance();
 			$frontController->setRouter(new Zend_Controller_Router_Rewrite());
+			$frontController->setDispatcher(new Sigma_Controller_Dispatcher());			
+			$frontController->returnResponse(true);
 			
-			/**
-			 * Se volessi cambiare il dispatcher di default lo dovrei fare prima di settare le directory oppure settando le directory direttamente nell'oggetto dispatcher
-			 */
+			/*
 			$frontController->setControllerDirectory(array(
 				'default' => '/home/workspace/Scout/ScoutPad/application/default/controllers',
 				'rubrica' => '/home/workspace/Scout/ScoutPad/application/rubrica/controllers',
 				'admin' => '/home/workspace/Scout/ScoutPad/application/admin/controllers'
 			));
+			*/
 			
+			// BASE URL 
+			if (  !is_null($config->base_url) ) $frontController->setBaseUrl($config->base_url);
 			
-			//$frontController->setBaseUrl('/application/myapp');
-
-			/**
-			 * errore "script 'script/login.phtml' not found in path dovuto ai nuovi helper introdotti"
-			 * @see http://www.nabble.com/got-Zend_View_Exception-t3814949s16154.html
-			 * @todo sarebbe meglio riscrivere l'helper
-			 */
-			$frontController->setParam('noViewRenderer',true);
-
-
-			/*Zend_Loader::loadClass('Sigma_Flow_Storage_Interface');
-			 Zend_Loader::loadClass('Sigma_Flow_Storage_Session');
-			 $r = new Sigma_Flow_Storage_Session();
-			 $r->write(array(2,3,5,'p'));
-			 $r->clear();
-			 var_dump($r->isEmpty());*/
-
-			//run
-			$request = new Sigma_Controller_Request_Http();
-
-			Zend_Loader::loadClass('Sigma_Plugin_Auth');
-			$frontController->registerPlugin(new Sigma_Plugin_Auth());
+			try {
+				
+				$log = new Sigma_Log($config->logger);
+				Zend_Registry::set('log',$log);
+				
+			} catch (Zend_Log_Exception $e){
+				echo '<h1>Misconfiguration</h1>';
+				echo '<b>Logger selected in config.ini not avaible or malformatted</b>';
+				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
+				exit;
+			}
 			
-			//attivo l'uso delle ecezzioni al difuori di Zend!!! Utile in caso di dev...
-			//$frontController->throwExceptions(true); 
-			//$controller->setParam('sitemap', $sitemap);
+exit;
 			
-			$frontController->returnResponse(true);
 			$response = $frontController->dispatch($request);
-
+			
 			if ($response->isException()) {
 				$e = $response->getException();
 				// handle exceptions ...
@@ -280,7 +238,8 @@ class Scoutpad {
 
 		$err .= "\n";
 
-		Zend_Registry::get('log')->log($err, Zend_Log::DEBUG);
+		if ( Zend_Registry::isRegistered('log') ) Zend_Registry::get('log')->log($err, Zend_Log::DEBUG);
+		else echo $err;
 
 	}
 

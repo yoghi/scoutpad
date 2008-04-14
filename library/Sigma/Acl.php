@@ -68,6 +68,7 @@ class Sigma_Acl extends Zend_Acl {
 	 *
 	 * @param integer $user_id identificativo dell'utente
 	 * @param array $roleId array con gli id dei ruoli dell'utente
+	 * @param integer $moduloId modulo su cui si agira
 	 */
 	public function __construct($user_id,$roleId,$moduloId){
 		
