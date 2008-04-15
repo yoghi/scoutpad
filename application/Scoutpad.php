@@ -60,31 +60,32 @@ class Scoutpad {
 	private function __construct(){
 
 		try {
-			
+				
 			/**
 			 * Zend Class
 			 */
 			Zend_Loader::loadClass('Zend_Registry');
 			Zend_Loader::loadClass('Zend_View');
 			Zend_Loader::loadClass('Zend_Config_Ini');
-			
+				
 			Zend_Loader::loadClass('Zend_Db');
 			Zend_Loader::loadClass('Zend_Db_Table');
 			Zend_Loader::loadClass('Zend_Db_Table_Rowset');
-			
+				
 			Zend_Loader::loadClass('Zend_Log');
-			
+				
 			Zend_Loader::loadClass('Zend_Controller_Front');
 			Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
 			Zend_Loader::loadClass('Zend_Controller_Request_Http');
 			Zend_Loader::loadClass('Zend_Controller_Action');
 			Zend_Loader::loadClass('Zend_Controller_Dispatcher_Standard');
+			Zend_Loader::loadClass('Zend_Config_Exception');	
 			
 			Zend_Loader::loadClass('Zend_Auth');
 			Zend_Loader::loadClass('Zend_Session');
 			Zend_Loader::loadClass('Zend_Session_Abstract');
 			Zend_Loader::loadClass('Zend_Session_Namespace');
-			
+				
 			/**
 			 * Sigma Class
 			 */
@@ -96,9 +97,9 @@ class Scoutpad {
 			Zend_Loader::loadClass('Sigma_Controller_Request_Http');
 			Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
 			Zend_Loader::loadClass('Sigma_View_TemplateLite');
-			
-			
-			
+				
+				
+				
 		} catch (Zend_Exception $e) {
 			var_dump($e->getTrace());
 			echo '<h3>'.$e->getMessage().' '.$e->getFile().' riga '.$e->getLine().'</h3>';
@@ -109,11 +110,11 @@ class Scoutpad {
 		}
 
 		/*
-		if (!defined('TEMPLATE_LITE_DIR')) {
+		 if (!defined('TEMPLATE_LITE_DIR')) {
 			define('TEMPLATE_LITE_DIR', BASE_DIRECTORY.'/library/Template_Lite' . DIRECTORY_SEPARATOR);
 			require(BASE_DIRECTORY.'/library/Template_Lite/class.template.php');
-		}
-		*/
+			}
+			*/
 
 
 	}
@@ -122,25 +123,19 @@ class Scoutpad {
 	 * Esegue l'applicazione
 	 */
 	public function run(){
-		
+
 		try {
-			
+				
 			try {
+
+				if ( !file_exists(CONFIG_FILE) ) throw new Zend_Config_Exception('File config.ini not exist or not readible in config/ ');
 				
 				$config = new Zend_Config_Ini(CONFIG_FILE, 'dev');
 				Zend_Registry::set('config', $config);
-				
-			} catch (Zend_Config_Exception $e) {
-				echo '<h1>Misconfiguration</h1>';
-				echo '<b>config.ini not found or not readable</b><br/>';
-				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
-				exit;
-			}
-			
-			set_error_handler(array('scoutpad','error_handler'));
-			
-			if ( !is_null($config->db->adapter) ) {
-				try {
+					
+				set_error_handler(array('scoutpad','error_handler'));
+					
+				if ( !is_null($config->db->adapter) ) {
 
 					$db = Zend_Db::factory( $config->db->adapter ,$config->db->config->toArray() );
 					$db->getConnection(); //controllo se il db esiste davvero!
@@ -148,49 +143,88 @@ class Scoutpad {
 					Zend_Db_Table::setDefaultAdapter($db);
 					Zend_Registry::set('database', $db);
 
-				} catch (Zend_Db_Exception $e){
-					echo '<h1>Misconfiguration</h1>';
-					echo '<b>Database selected in config.ini not avaible</b>';
-					echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
-					exit;
 				}
-			}
-			
-			$request = new Sigma_Controller_Request_Http(); //serve veramente?
-			
-			// setting controller
-			$frontController = Zend_Controller_Front::getInstance();
-			$frontController->setRouter(new Zend_Controller_Router_Rewrite());
-			$frontController->setDispatcher(new Sigma_Controller_Dispatcher());			
-			$frontController->returnResponse(true);
-			
-			/*
-			$frontController->setControllerDirectory(array(
-				'default' => '/home/workspace/Scout/ScoutPad/application/default/controllers',
-				'rubrica' => '/home/workspace/Scout/ScoutPad/application/rubrica/controllers',
-				'admin' => '/home/workspace/Scout/ScoutPad/application/admin/controllers'
-			));
-			*/
-			
-			// BASE URL 
-			if (  !is_null($config->base_url) ) $frontController->setBaseUrl($config->base_url);
-			
-			try {
+					
+				$request = new Sigma_Controller_Request_Http(); //serve veramente?
+					
+				// setting controller
+				$frontController = Zend_Controller_Front::getInstance();
+					
+				$router = new Zend_Controller_Router_Rewrite();
+					
+				/**
+				 * @see http://framework.zend.com/manual/en/zend.controller.router.html#zend.controller.router.add-config
+				 */
+				if ( isset($config->routes) ) $router->addConfig($config,'routes');	
+					
+				$frontController->setRouter($router);
+					
+				if ( isset( $config->dispatcher->adapter) ) {
+
+					$dispatcher_adapter = $config->dispatcher->adapter;
+	
+					Zend_Loader::loadClass($dispatcher_adapter);
+	
+					$dispatcher = new $dispatcher_adapter();
+					
+					if ( ! $dispatcher instanceof Zend_Controller_Dispatcher_Interface ) throw new Zend_Controller_Dispatcher_Exception('Invalid dispatcher selectet');
+	
+					$frontController->setDispatcher($dispatcher);
+				
+				}
+					
+				$frontController->returnResponse(true);
+					
+				// BASE URL
+				if (  !is_null($config->base_url) ) $frontController->setBaseUrl($config->base_url);
 				
 				$log = new Sigma_Log($config->logger);
 				Zend_Registry::set('log',$log);
 				
+				//Zend_Loader::loadClass('Sigma_Flow_Storage_Database');
+				//Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Database() );
+				
+				//Zend_Loader::loadClass('Sigma_Flow_Storage_Session');
+				//Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Session() );
+				
+				Zend_Registry::set('auth_module', Zend_Auth::getInstance());
+
+			} catch (Zend_Config_Exception $e) {
+				echo '<h1>Misconfiguration</h1>';
+				echo '<b>config.ini invalid</b><br/>';
+				echo '<ul><li><b>'.$e->getMessage().'</b></li>';
+				echo '</ul>';
+				exit;
 			} catch (Zend_Log_Exception $e){
 				echo '<h1>Misconfiguration</h1>';
 				echo '<b>Logger selected in config.ini not avaible or malformatted</b>';
 				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
 				exit;
+			} catch (Zend_Db_Exception $e){
+				echo '<h1>Misconfiguration</h1>';
+				echo '<b>Database selected in config.ini not avaible</b>';
+				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
+				exit;
+			} catch (Zend_Controller_Router_Exception $e) {
+				echo '<h1>Misconfiguration</h1>';
+				echo '<b>Invalid routing params in config.ini</b><br/>';
+				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
+				exit;
+			} catch (Zend_Controller_Dispatcher_Exception $e){
+				echo '<h1>Misconfiguration</h1>';
+				echo '<b>Invalid dispatcher params in config.ini</b><br/>';
+				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
+				exit;
+			} catch (Zend_Exception $e){ //Zend_Controller_Exception 
+				echo '<h1>Misconfiguration</h1>';
+				echo '<b>Generic problem</b><br/>';
+				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
+				exit;
 			}
-			
 exit;
-			
+				
 			$response = $frontController->dispatch($request);
-			
+				
 			if ($response->isException()) {
 				$e = $response->getException();
 				// handle exceptions ...
@@ -225,6 +259,9 @@ exit;
 	}
 
 
+	/**
+	 * Error Handler alternativo , non visualizza mai gli errori a schermo
+	 */
 	public static function error_handler($errno, $errmsg, $filename, $linenum, $vars) {
 
 
@@ -239,7 +276,6 @@ exit;
 		$err .= "\n";
 
 		if ( Zend_Registry::isRegistered('log') ) Zend_Registry::get('log')->log($err, Zend_Log::DEBUG);
-		else echo $err;
 
 	}
 
