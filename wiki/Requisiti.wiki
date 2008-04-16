@@ -7,6 +7,15 @@
   * Condivisione di informazioni (Es: rubriche, testi, immagini)
   * Gestione dei permessi sulle risorse e sulle informazioni
 
+= A livello tecnico = 
+
+  * Struttura Modulare
+  * Un framework di supporto per avere delle funzionalità garantite
+       * autenticazione degli utenti
+       * meccanismi di sicurezza sull'intenzionalità dell'utente
+       * logging e auditing 
+       * configurabile da file di testo
+
 = Coordinazione =
 
 Ricordandosi che la coordinazione è un problema primario; 
