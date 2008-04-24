@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<name></name>
+	<site>
+		<url></url>
+		<title></title>
+	</site>
+	<description></description>
+	<acl/>
+	<options/>
+	<revision/>
+	<update>
+		<frequency></frequency>
+		<link></link>
+	</update>
+</module>

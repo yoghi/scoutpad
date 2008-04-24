@@ -67,6 +67,7 @@ class Scoutpad {
 			Zend_Loader::loadClass('Zend_Registry');
 			Zend_Loader::loadClass('Zend_View');
 			Zend_Loader::loadClass('Zend_Config_Ini');
+			Zend_Loader::loadClass('Zend_Config_Xml');
 				
 			Zend_Loader::loadClass('Zend_Db');
 			Zend_Loader::loadClass('Zend_Db_Table');
@@ -108,6 +109,13 @@ class Scoutpad {
 		if (!defined('CONFIG_FILE')) {
 			define('CONFIG_FILE', BASE_DIRECTORY.'/config/config.ini');
 		}
+		
+		/**
+		 * @todo da sistemare ... 
+		 */
+		if ( !defined('BASE_DIRECTORY') ) {
+			define('BASE_DIRECTORY',dirname(dirname(__FILE__)));
+		} 
 
 		/*
 		 if (!defined('TEMPLATE_LITE_DIR')) {
@@ -128,10 +136,23 @@ class Scoutpad {
 				
 			try {
 
-				if ( !file_exists(CONFIG_FILE) ) throw new Zend_Config_Exception('File config.ini not exist or not readible in config/ ');
+				if ( !file_exists(CONFIG_FILE) ) throw new Zend_Config_Exception('Configuration file not exist or not readible ');
 				
-				$config = new Zend_Config_Ini(CONFIG_FILE, 'dev');
-				Zend_Registry::set('config', $config);
+				$cfg_filename = split("[/\\.]",CONFIG_FILE);
+				$n = count($cfg_filename)-1;
+				$exts = $cfg_filename[$n];
+				
+				if ( "xml" != $exts && "ini" != $exts ) throw new Zend_Config_Exception('Configuration file are extension '.$exts.' not allowed ');
+				
+				if ( "ini" == $exts ) {
+					$config = new Zend_Config_Ini(CONFIG_FILE, 'dev');
+					Zend_Registry::set('config', $config);
+				} 
+				
+				if ( "xml" == $exts ) {
+					$config = new Zend_Config_Xml(CONFIG_FILE, 'dev');
+					Zend_Registry::set('config', $config);
+				}
 					
 				set_error_handler(array('scoutpad','error_handler'));
 					
@@ -151,7 +172,7 @@ class Scoutpad {
 				$frontController = Zend_Controller_Front::getInstance();
 					
 				$router = new Zend_Controller_Router_Rewrite();
-					
+				
 				/**
 				 * @see http://framework.zend.com/manual/en/zend.controller.router.html#zend.controller.router.add-config
 				 */
@@ -191,7 +212,7 @@ class Scoutpad {
 
 			} catch (Zend_Config_Exception $e) {
 				echo '<h1>Misconfiguration</h1>';
-				echo '<b>config.ini invalid</b><br/>';
+				echo '<b>Config file : '.CONFIG_FILE.' is invalid</b><br/>';
 				echo '<ul><li><b>'.$e->getMessage().'</b></li>';
 				echo '</ul>';
 				exit;
@@ -221,6 +242,16 @@ class Scoutpad {
 				echo '<ul><li><b>'.$e->getMessage().'</li></ul></b>';
 				exit;
 			}
+			
+			//echo xdebug_memory_usage(true).'byte - '.xdebug_time_index().'s <br/>';
+			//echo memory_get_usage(true).'<br/>';
+			
+			//echo xdebug_dump_superglobals();
+			
+			//echo '<a href="file://'.xdebug_get_profiler_filename().'">Profile</a>';
+			
+			var_dump($frontController->getDispatcher()->getControllerDirectory());
+			
 exit;
 				
 			$response = $frontController->dispatch($request);
@@ -276,6 +307,8 @@ exit;
 		$err .= "\n";
 
 		if ( Zend_Registry::isRegistered('log') ) Zend_Registry::get('log')->log($err, Zend_Log::DEBUG);
+		
+		//echo "Called @ ". xdebug_call_file(). " : ". xdebug_call_line(). " from ". xdebug_call_function().'<br/>';
 
 	}
 

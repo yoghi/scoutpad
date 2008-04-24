@@ -25,6 +25,7 @@ if ( version_compare(phpversion(), '5.2.0', '<') ) {
 	exit;
 }
 
+//http://scoutpad/...?XDEBUG_PROFILE genero il xdebug profile file 
 
 // Es: home/workspace/Scout/ScoutPad indica dove si trova il direttorio dell'applicazione!!
 define('BASE_DIRECTORY',dirname(dirname(__FILE__))); 

@@ -13,23 +13,19 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
      * @param array $params
      * @return void
      */
-    public function __construct($options = null,array $params = array())
+    public function __construct(array $params = array())
     {
+    	
         parent::__construct($params);
         $this->_curModule = $this->getDefaultModule();
         $this->_directoryModule = BASE_DIRECTORY.'/application/modules/';
         
-    	if (is_array($config)) {
-			$this->setOptions($config);
-        } elseif ($config instanceof Zend_Config) {
-			$this->setConfig($config);
-        } else {
-        	$this->_loadFromDirectory();
-        }
+        $cfg = Zend_Registry::get('config');
+        if ( isset ($cfg->dispatcher) ) $this->setOptions($cfg->dispatcher->toArray());
         
     }
     
-    public function setOptions(array $options){
+    public function setOptions(array $options){ 
     	
     	if (isset($options['modules'])) {
     		
@@ -51,7 +47,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     					
     					$db = Zend_Registry::get('database');
     					
-    					$this->_loadFromDb($db);
+    					$this->_loadFromDb();
     					
     					break;
     				default:
@@ -68,20 +64,64 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     }
     
     public function setConfig(Zend_Config $config){
-    	return $this->setOptions($config->toArray());
+    	return $this->setOptions($config->toArray()); 
     }
 	
-	private function _loadFromDb(Zend_Db $db){
+	private function _loadFromDb(){ 
+		
 		Zend_Loader::loadClass('Modules',BASE_DIRECTORY.'/application/models/tables/');
-		...
+		
+		$modules = new Modules();
+		$r = $modules->fetchAllActive();
+		foreach($r as $mod) {
+			$this->addControllerDirectory(BASE_DIRECTORY.'/application/modules/'.$mod->path_name,$mod->name);
+		}
+		
+		if ( count($r) == 0 ) $this->_loadFromDirectory();
+		
 	}
 	
 	/**
 	 * Carico i moduli da una directory
 	 * NB: tutti i moduli presenti saranno considerati ATTIVI e VALIDI
+	 * 
+	 * @param Zend_Db $db in caso sia possibile salvare i dati ricavati su un database.
 	 */
-	private function _loadFromDirectory(){
-		$front->addModuleDirectory($this->_directoryModule);
+	private function _loadFromDirectory(){		
+		
+		//scandisco la directory e per ogni cartella cerco il file description.xml o description.ini
+
+		try{
+            $dir = new DirectoryIterator($this->_directoryModule);
+        }catch(Exception $e){
+            throw new Zend_Controller_Exception("Default modules directory not readable");
+        }
+        
+        foreach ($dir as $file) {
+        	
+            if ($file->isDot() || !$file->isDir()) {
+                continue;
+            }
+
+            $module    = $file->getFilename();
+
+            // Don't use SCCS directories as modules
+            if (preg_match('/^[^a-z]/i', $module) || ('CVS' == $module)) {
+                continue;
+            }
+
+            $moduleDir = $file->getPathname();
+
+            if ( file_exists($moduleDir. DIRECTORY_SEPARATOR . 'description.xml' ) ) {
+            	
+            	$cfg = new Zend_Config_Xml($moduleDir. DIRECTORY_SEPARATOR . 'description.xml');
+            	
+            	$this->addControllerDirectory($moduleDir . DIRECTORY_SEPARATOR . 'controllers' , $cfg->name );
+				
+            }
+            
+        }
+		
 	}
 	
 	
