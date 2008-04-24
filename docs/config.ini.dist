@@ -1,6 +1,6 @@
-############################
-## Common 
-############################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Common 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 [common] 
 auth.token = <generic token>
@@ -14,64 +14,64 @@ logger.appender.audit.fields = "timestamp,priorityName,message,visitorIp,request
 
 dispatcher.adapter = Zend_Controller_Dispatcher_Standard
 dispatcher.modules.source = directory
-# dispatcher.modules.directory = /home/workspace/Scout/ScoutPad/application/modules/ # facoltativo
-# Or 
-#dispatcher.adapter = Sigma_Controller_Dispatcher
-#dispatcher.modules.source = database
-#dispatcher.modules.tablename = Modules
-#dispatcher.modules.source.directory.admin =   /home/workspace/Scout/ScoutPad/application/modules/admin/controllers
+; dispatcher.modules.directory = /home/workspace/Scout/ScoutPad/application/modules/ ; facoltativo
+; Or 
+;dispatcher.adapter = Sigma_Controller_Dispatcher
+;dispatcher.modules.source = database
+;dispatcher.modules.tablename = Modules
+;dispatcher.modules.source.directory.admin =   /home/workspace/Scout/ScoutPad/application/modules/admin/controllers
 
-#############################
-## Developer Configuration
-##  'dev' eredita da 'common', se non c'è in 'dev' allora guardo in 'common'
-#############################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Developer Configuration
+;;  'dev' eredita da 'common', se non c'è in 'dev' allora guardo in 'common'
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [dev : common]
 view.path = <path where locate templates>
 
-#db.adapter = <PDO_type>
-#db.config.host = <hostname>
-#db.config.username = <username>
-#db.config.password = <password>
-#db.config.dbname = <dbname>
+;db.adapter = <PDO_type>
+;db.config.host = <hostname>
+;db.config.username = <username>
+;db.config.password = <password>
+;db.config.dbname = <dbname>
 
-#logger.appender.standard.type = <Zend_Log_Writer_Stream | Zend_Log_Writer_Db>
-#logger.appender.standard.level = <DEBUG|WARN|ERROR|INFO> 
-#logger.appender.standard.stream = <nome file>
-#logger.appender.standard.formatter = Zend_Log_Formatter_Simple
-#logger.appender.standard.style = <style Es: "%timestamp% %priorityName% (%priority%): %message%" >
-#logger.appender.standard.tablename = Log # necessario se si usa il Db
+;logger.appender.standard.type = <Zend_Log_Writer_Stream | Zend_Log_Writer_Db>
+;logger.appender.standard.level = <DEBUG|WARN|ERROR|INFO> 
+;logger.appender.standard.stream = <nome file>
+;logger.appender.standard.formatter = Zend_Log_Formatter_Simple
+;logger.appender.standard.style = <style Es: "%timestamp% %priorityName% (%priority%): %message%" >
+;logger.appender.standard.tablename = Log ; necessario se si usa il Db
 
-#mail.server = <server.dominio.it>
-#mail.ssl = <tls>
-#mail.port = 25
-#mail.auth = login
-#mail.username = <username>
-#mail.password = <password>
+;mail.server = <server.dominio.it>
+;mail.ssl = <tls>
+;mail.port = 25
+;mail.auth = login
+;mail.username = <username>
+;mail.password = <password>
 
-## @see http://framework.zend.com/manual/en/zend.controller.router.html#zend.controller.router.add-config
+;; @see http://framework.zend.com/manual/en/zend.controller.router.html;zend.controller.router.add-config
 
-#routes.archive.route = "archive/:year/*"
-#routes.archive.defaults.controller = archive
-#routes.archive.defaults.action = show
-#routes.archive.defaults.year = 2000
-#routes.archive.reqs.year = "\d+"
+;routes.archive.route = "archive/:year/*"
+;routes.archive.defaults.controller = archive
+;routes.archive.defaults.action = show
+;routes.archive.defaults.year = 2000
+;routes.archive.reqs.year = "\d+"
 
-#routes.news.type = "Zend_Controller_Router_Route_Static"
-#routes.news.route = "news"
-#routes.news.defaults.controller = "news"
-#routes.news.defaults.action = "list"
+;routes.news.type = "Zend_Controller_Router_Route_Static"
+;routes.news.route = "news"
+;routes.news.defaults.controller = "news"
+;routes.news.defaults.action = "list"
 
-#routes.archive.type = "Zend_Controller_Router_Route_Regex"
-#routes.archive.route = "archive/(\d+)"
-#routes.archive.defaults.controller = "archive"
-#routes.archive.defaults.action = "show"
-#routes.archive.map.1 = "year"
-#; OR: routes.archive.map.year = 1
+;routes.archive.type = "Zend_Controller_Router_Route_Regex"
+;routes.archive.route = "archive/(\d+)"
+;routes.archive.defaults.controller = "archive"
+;routes.archive.defaults.action = "show"
+;routes.archive.map.1 = "year"
+;; OR: routes.archive.map.year = 1
 
 
-################################
-## Production Configuration
-################################
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Production Configuration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [prod : common]
 base_url = '/public'
 
