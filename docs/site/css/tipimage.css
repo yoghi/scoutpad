@@ -1,0 +1,90 @@
+/**
+ *	Tipmage - Base StyleSheet
+ *	version 1.0
+ *
+ *	Tipmage is a javascript class aimed at creating and managing tooltips
+ *	(or "notes") over images.
+ *	Tipmage makes it possible to mark rectangular portions of an image and
+ *	attach a description to each one of them. The description will be shown
+ *	as a tooltip when the mouse is over the right section of the image.
+ *	The class can work in two ways: in _normal_ mode it just shows the tooltips,
+ *	while in _edit_ mode it also allows the user to edit them.
+ *	Tipmage supports the use of special callback functions to perform operations
+ *	related to the editing of a tooltip (for example AJaX calls to access a database).
+ *	An external CSS stylesheet allows to customize the appearance of the user interface.
+ *
+ *	See: http://www.simbul.net/stuff/tipmage.php
+ *
+ *	Copyright (C) 2005 by
+ *	Alessandro Morandi
+ *	www.simbul.net
+ *
+ *	Feel free to redistribute under the GPL
+ *	http://www.gnu.org/copyleft/gpl.html
+ */
+
+/******** Normal mode declarations ********/
+
+/* Rectangles */
+.tmRect {
+	border: 1px solid white;
+	}
+.tmRectContrast {
+	border: 1px solid black;
+	}
+.tmRectSelected {
+	border: 1px solid red;
+	}
+.tmRectContrastSelected {
+	border: 1px solid blue;
+	}
+
+/* Tooltip (i.e. container for text) */
+.tmTooltip {
+	border:2px solid #0066FF;
+	background:white;
+	}
+.tmText {
+}
+
+/******** Edit mode declarations ********/
+
+/* Rectangle shown when editing */
+.tmRectMod {
+	border: 1px dashed red;
+	}
+.tmRectContrastMod {
+	border: 1px dashed blue;
+	}
+
+/* Corners (handlers) of the rectangle shown when editing */
+.tmCorner {
+	border:1px solid red;
+	background: white;
+	}
+
+/* Tooltip shown when editing and related elements */
+.tmTooltipMod {
+	padding:5px;
+	border:2px solid #0066FF;
+	background:blue;
+	}
+.tmForm {
+	margin:0;
+	}
+.tmTextArea {
+	width:100%;
+	height:100px;
+	}
+.tmButton {
+	font: 0.8em/0.8em Verdana,Arial,Helvetica,sans-serif;
+	border:2px solid #888;
+	background:#CCCCCC;
+	margin-right:5px;
+	margin-top:5px;
+	}
+
+
+
+
+
