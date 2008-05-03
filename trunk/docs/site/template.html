@@ -1,0 +1,296 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="language" content="en" />
+    <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"></link>
+    <!-- <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, projection"></link> -->
+    <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print"></link>
+    <link rel="stylesheet" href="css/link.css" type="text/css" media="screen, projection"></link>
+    <link type="text/css" rel="stylesheet" href="css/SyntaxHighlighter.css"></link>
+	<link type="text/css" rel="stylesheet" href="css/tipimage.css"></link>    
+    <link rel="stylesheet" href="css/site.css" type="text/css" media="screen, projection"></link>
+    <link rel="stylesheet" type="text/css" href="css/jquery.lightbox-0.5.css" media="screen"></link>
+    <!--[if IE]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+   
+	<script language="javascript" src="js/booklaylet.js"></script>
+	<script language="javascript" src="js/shCore.js"></script>
+    <script language="javascript" src="js/shBrushPhp.js"></script>
+    <script language="javascript" src="js/shBrushXml.js"></script>
+    <script language="javascript" src="js/shBrushCss.js"></script>
+    <script language="javascript" src="js/tipmage.js"></script>
+    <script language="javascript" src="js/jquery-1.2.3.min.js"></script>
+	<script type="text/javascript" src="js/jquery.lightbox-0.5.min.js"></script>
+    <script language="javascript">
+    	window.onload = function () {
+	    	dp.SyntaxHighlighter.ClipboardSwf = 'js/clipboard.swf';
+	    	dp.SyntaxHighlighter.HighlightAll('code');
+			
+			/*
+			var tipmage = new Tipmage('mainImage',true);
+			tipmage.startup();
+			tipmage.setTooltip(150,80,40,30,'I have been up here!<br>No, just kidding... ;)');
+			tipmage.setTooltip(200,185,50,20,'Where is Wally?');
+			*/
+			
+			<!-- Ativo jQuery lightBox plugin -->
+		    $(function() {
+		        $('#gallery_lightbox a').lightBox(); // Select only gallery div
+		        $('a.lightbox').lightBox(); // Select all links with lightbox class
+		    });
+			
+		}
+    </script>
+    
+	<title>Scoutpad</title>
+</head>
+
+<body>
+
+<div class="container">
+        <div class="span-24" id="header">
+        	<div id="topnav">
+                <a class="skip" title="skip link" href="#navigation">Skip to the navigation</a>
+                <span class="hideme">.</span>
+                <a class="skip" title="skip link" href="#content">Skip to the content</a>
+                <span class="hideme">.</span>
+                <span>
+                    <a href="#">Login</a>
+                    |
+                    <a href="#">Contact</a>
+				</span>
+            </div>
+            <h1>ScoutPad</h1>
+            <div class="description">A virtual whiteboard to coordinate and help scouts with the organization of specialization camps. </div>
+        </div>
+        <!-- colborder class per mettere una barra laterale -->
+        <div class="span-6 colborder" id="leftbar">
+        	<h5>WorkFlow</h5>
+            <ul>
+                <li>
+					<a href="doc/introduzione.html">Introduzione</a>
+                </li>
+                <li><a href="doc/visione.html">Visione</a></li>
+                <li><a href="doc/obiettivi.html">Obiettivi</a></li>
+                <li class="expanded">
+                	<a href="doc/requisiti.html">Requisiti</a>
+                    <ul>
+                    	<li><a class="noicon" href="doc/reqFunzionali.html">Req. Funzionali</a></li>
+                    	<li><a class="noicon" href="doc/reqNonFunzionali.html">Req. Non Funzionali</a></li>
+                    	<li><a class="noicon" href="doc/reqSicurezza.html">Req. di Sicurezza</a></li>
+                        <li class="expanded">
+                            <a class="noicon" href="doc/requisiti/casiuso.html">Casi e scenari d'uso</a>
+                            <ul>
+                                <li><a class="noicon" href="doc/requisiti/casiuso/sistema.html">Sistema</a></li>
+                                <li><a class="noicon" href="doc/requisiti/casiuso/sicurezza.html">Sicurezza</a></li>                                
+                            </ul>
+                        </li>
+                        <li><a class="noicon" href="doc/gloassario.html">Glossario</a></li>
+                    </ul>
+				</li>
+                <li class="expanded">
+                	<a class="noicon" href="doc/analisi.html">Analisi</a>
+                    <ul>
+                    	<li><a class="noicon" href="doc/analisi/descrizione.html">Desc. del problema</a></li>
+                        <li><a class="noicon" href="doc/legali.html">Aspetti Legali</a></li>
+                        <li class="expanded">
+                            <a class="noicon" href="doc/analisi/sicurezza.html">Sicurezza</a>
+                            <ul>
+                                <li><a class="noicon" href="doc/analisi/sicurezza/rischi.html">Rischi</a></li>
+                                <li><a class="noicon" href="doc/analisi/sicurezza/architettura.html">Architettura</a></li>
+                                <li><a class="noicon" href="doc/analisi/sicurezza/utenti.html">Utenti</a></li>
+                                <li><a class="noicon" href="doc/analisi/sicurezza/eventi.html">Eventi</a></li>                                
+                            </ul>
+                        </li>
+                        <li class="expanded">
+                            <a href="doc/analisi/architettura.html">Architettura Logica</a>
+                            <ul>
+                                <li><a class="noicon" href="doc/analisi/architettura/struttura.html">Struttura</a></li>
+                                <li><a class="noicon" href="doc/analisi/architettura/comportamento.html">Comportamento</a></li>
+                                <li><a class="noicon" href="doc/analisi/architettura/interazione.html">Interazione</a></li>                            
+                            </ul>
+                        </li>
+                    </ul>
+				</li>
+                <li><a class="noicon" href="doc/pianoLavoro.html">Piano di lavoro</a></li>
+                <li><a class="noicon" href="doc/collaudo.html">Piano di collaudo</a></li>                
+                <li class="expanded">
+                	<a class="noicon" href="doc/progetto.html">Progetto</a>
+                    <ul>
+                    	<li><a class="noicon" href="doc/progetto/scelte.html">Scelte</a></li>
+                    	<li><a class="noicon" href="doc/progetto/sicurezza.html">Sicurezza</a></li>
+                    	<li><a class="noicon" href="doc/progetto/pattern.html">Pattern individuali</a></li>
+						<li class="expanded">
+                        	<a class="noicon" href="doc/progetto/architettura.html">Architettura</a>
+                        	<ul>
+                                <li><a class="noicon" href="doc/progetto/architettura/struttura.html">Struttura</a></li>
+                                <li><a class="noicon" href="doc/progetto/architettura/comportamento.html">Comportamento</a></li>
+                                <li><a class="noicon" href="doc/progetto/architettura/interazione.html">Interazione</a></li>                            
+                            </ul>
+                        </li>
+                    </ul>
+				</li>   
+            </ul>
+            <h5>Codice</h5>
+            <ul>
+            	<li><a class="noicon" href="http://code.google.com/p/scoutpad/">Sorgenti</a></li>
+				<li><a class="noicon" href="doc/dipendenze.html">Dipendenze</a></li>
+                <li><a class="noicon" href="http://demo.scoutpad.net">Demo</a></li>
+            </ul>
+            <h5>Sviluppatori</h5>
+            <ul>
+            	<li><a class="noicon" href="doc/team.html">Team</a></li>
+            </ul>
+        </div>
+        
+        <div class="span-17 last" id="content">
+                <h1>Title</h1>
+                <h2>Sub-Title</h2>
+                <h3>Sub-Sub-Title</h3>
+                <h4>Sub-Sub-Sub-Title</h4>
+                <h5>Sub-Sub-Sub-Sub-Title</h5>
+                
+                <p>testo testo testo</p>
+                
+                <p>elenco puntato
+                	<ul>
+                    	<li>----</li>
+                    	<li>----</li>                        
+                    </ul>
+                </p>
+                 
+                <div class="span-5 box">
+                	<p>test box </p>
+                </div>
+                <div class="box last">
+                	<p>test box finale</p>
+                </div>                
+                <p>asd</p>              
+                <p>
+                
+                	<pre name="code" class="php">
+                        $t = 1;
+                        $n = $t + 5;
+                        if ( $n < 5 ) {
+                        	echo "no";
+                        } else {
+                        	echo "ok";
+                        }
+                    </pre>
+                    
+                    <pre name="code" class="php:nogutter">
+                    &lt;? 
+                        echo 'prova';
+                        echo "prova2";
+                        phpinfo();
+                    ?&gt;
+                    </pre>
+                
+                </p>
+                
+                <hr/>
+                
+                <p>                
+                   <form id="dummy" action="" method="post">
+
+                    <fieldset>
+                        <legend>Simple sample form</legend>
+            
+                        <p><label for="dummy0">Text input (title)</label><br>
+                          <input type="text" class="title" name="dummy0" id="dummy0" value="Field with class .title"></p>
+                    
+                      <p><label for="dummy1">Another field</label><br>
+                          <input type="text" class="text" id="dummy1" name="dummy1" value="Field with class .text"></p>
+            
+                      <p><label for="dummy2">Textarea</label><br>
+                        <textarea name="dummy2" id="dummy2" rows="5" cols="20"></textarea></p>
+            
+                        <p><input type="submit" value="Submit">
+                          <input type="reset" value="Reset"></p>
+            
+                    </fieldset>
+                  </form>
+                </p>
+                
+                <p>
+
+                <div class="error">
+                This is a &lt;div&gt; with the class <strong>.error</strong>. <a href="#">Link</a>.
+              </div>
+              <div class="notice">
+                This is a &lt;div&gt; with the class <strong>.notice</strong>. <a href="#">Link</a>.
+              </div>		
+              <div class="success">
+                This is a &lt;div&gt; with the class <strong>.success</strong>. <a href="#">Link</a>.
+              </div> 
+                
+                </p>
+                
+                
+               <p>
+					<a href="http://">test</a>
+                    <br/>
+                    <a class="noicon" href="http://code.google.com/p/scoutpad/">Sorgenti - noicon class</a>
+                    <br/>
+                    <a href="http://code.google.com/p/scoutpad/">Sorgenti</a>
+                    <br/>
+                    <a href="mailto:prova">maito</a>
+                    <br/>
+                    <a href="testo.pdf">pdf</a>
+                    <br/>
+                    <a href="testo.doc">doc</a>
+                    <br/>
+                    <a href="testo.xls">xls</a>
+                    <br/>
+                    <a href="testo.rss">rss</a>
+                    <br/>
+                    <a href="testo.rdf">rdf</a>
+					<br/>
+                    <a href="aim:0001230123">aim</a>
+                    <a onclick="showLet('http://www.google.com', '450')">test</a>
+               </p>
+               
+               <p>
+               		<!-- NOTA BENE LA NECESSITA NEI CSS DI SETTARE CHE LA CLASSE lightbox non ha FLOAT le immagini!!! -->
+					<a href="resources/images/image1.jpg" title="qui metto la descrizione" class="lightbox">
+						<img src="resources/thumbs/image1.jpg" width="72" height="72" alt="" />
+					</a>
+					
+				</p>	
+				
+				<p>	
+
+					<span id="gallery_lightbox">
+						<a href="resources/images/image1.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery').lightBox();">
+							<img src="resources/thumbs/image1.jpg" width="72" height="72" alt="" />
+						</a>
+						<a href="resources/images/image2.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+							<img src="resources/thumbs/image2.jpg" width="72" height="72" alt="" />
+						</a>
+						<a href="resources/images/image3.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+							<img src="resources/thumbs/image3.jpg" width="72" height="72" alt="" />
+						</a>
+						<a href="resources/images/image4.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+							<img src="resources/thumbs/image4.jpg" width="72" height="72" alt="" />
+						</a>
+						<a href="resources/images/image5.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+							<img src="resources/thumbs/image5.jpg" width="72" height="72" alt="" />
+						</a>
+					</span>
+				
+               </p>
+               
+               <p>
+               	<b>prova...</b>
+               </p>
+
+        </div>
+        <div class="span-24">
+                 <div id="footer">Scoutpad &copy; 2008 by Stefano Tamagnini ; license: </div>
+        </div>
+
+</div>
+
+
+</body>
+</html>
