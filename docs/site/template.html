@@ -10,7 +10,7 @@
     <link type="text/css" rel="stylesheet" href="css/SyntaxHighlighter.css"></link>
 	<link type="text/css" rel="stylesheet" href="css/tipimage.css"></link>    
     <link rel="stylesheet" href="css/site.css" type="text/css" media="screen, projection"></link>
-    <link rel="stylesheet" type="text/css" href="css/jquery.lightbox-0.5.css" media="screen"></link>
+    <link rel="stylesheet" type="text/css" href="css/shadowbox.css" media="screen"></link>
     <!--[if IE]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
    
 	<script language="javascript" src="js/booklaylet.js"></script>
@@ -20,7 +20,8 @@
     <script language="javascript" src="js/shBrushCss.js"></script>
     <script language="javascript" src="js/tipmage.js"></script>
     <script language="javascript" src="js/jquery-1.2.3.min.js"></script>
-	<script type="text/javascript" src="js/jquery.lightbox-0.5.min.js"></script>
+	<script language="javascript" src="js/adapter/shadowbox-jquery.js"></script>
+	<script language="javascript" src="js/shadowbox.js"></script>
     <script language="javascript">
     	window.onload = function () {
 	    	dp.SyntaxHighlighter.ClipboardSwf = 'js/clipboard.swf';
@@ -33,11 +34,21 @@
 			tipmage.setTooltip(200,185,50,20,'Where is Wally?');
 			*/
 			
-			<!-- Ativo jQuery lightBox plugin -->
-		    $(function() {
-		        $('#gallery_lightbox a').lightBox(); // Select only gallery div
-		        $('a.lightbox').lightBox(); // Select all links with lightbox class
-		    });
+			<!-- Ativo jQuery Shadowbox plugin -->
+			$(document).ready(function(){
+
+				var options = {
+					resizeLgImages:     true,
+					flvPlayer:			'js/flvplayer.flv',
+					displayNav:         true,
+					handleUnsupported:  'remove',
+					keysClose:          ['c', 27], // c or esc
+					autoplayMovies:     false
+				};
+	
+				Shadowbox.init(options);
+
+			});
 			
 		}
     </script>
@@ -190,42 +201,59 @@
                 </p>
                 
                 <hr/>
-                
-                <p>                
-                   <form id="dummy" action="" method="post">
 
-                    <fieldset>
-                        <legend>Simple sample form</legend>
-            
-                        <p><label for="dummy0">Text input (title)</label><br/>
-                          <input type="text" class="title" name="dummy0" id="dummy0" value="Field with class .title"/></p>
-                    
-                      <p><label for="dummy1">Another field</label><br/>
-                          <input type="text" class="text" id="dummy1" name="dummy1" value="Field with class .text"/></p>
-            
-                      <p><label for="dummy2">Textarea</label><br/>
-                        <textarea name="dummy2" id="dummy2" rows="5" cols="20"></textarea></p>
-            
-                        <p><input type="submit" value="Submit"/>
-                          <input type="reset" value="Reset"/></p>
-            
-                    </fieldset>
-                  </form>
-                </p>
+				<p>
+				
+				<form id="dummy" action="" method="post">
+				
+					<fieldset>
+					
+						<legend>Simple sample form</legend>
+					
+						<p>
+							<label for="dummy0">Text input (title)</label>
+							<br />
+							<input type="text" class="title" name="dummy0" id="dummy0" value="Field with class .title" />
+						</p>
+						
+						<p>
+							<label for="dummy1">Another field</label>
+							<br />
+							<input type="text" class="text" id="dummy1" name="dummy1" value="Field with class .text" />
+						</p>
+						
+						<p>
+							<label for="dummy2">Textarea</label>
+							<br />
+							<textarea name="dummy2" id="dummy2" rows="5" cols="20"></textarea>
+						</p>
+						
+						<p>
+							<input type="submit" value="Submit" /> 
+							<input type="reset" value="Reset" />
+						</p>
+					
+					</fieldset>
+				
+				</form>
+				
+				</p>
                 
                 <p>
 
-                <div class="error">
-                This is a &lt;div&gt; with the class <strong>.error</strong>. <a href="#">Link</a>.
-              </div>
-              <div class="notice">
-                This is a &lt;div&gt; with the class <strong>.notice</strong>. <a href="#">Link</a>.
-              </div>		
-              <div class="success">
-                This is a &lt;div&gt; with the class <strong>.success</strong>. <a href="#">Link</a>.
-              </div> 
+					<div class="error">
+						This is a &lt;div&gt; with the class <strong>.error</strong>. <a href="#">Link</a>.
+					</div>
+					
+					<div class="notice">
+						This is a &lt;div&gt; with the class <strong>.notice</strong>. <a href="#">Link</a>.
+					</div>
+							
+					<div class="success">
+						This is a &lt;div&gt; with the class <strong>.success</strong>. <a href="#">Link</a>.
+					</div> 
                 
-                </p>
+				</p>
                 
                 
                <p>
@@ -253,7 +281,7 @@
                
                <p>
                		<!-- NOTA BENE LA NECESSITA NEI CSS DI SETTARE CHE LA CLASSE lightbox non ha FLOAT le immagini!!! -->
-					<a href="resources/images/image1.jpg" title="qui metto la descrizione" class="lightbox">
+					<a href="resources/images/image1.jpg" title="Immagine 1" class="lightbox" rel="shadowbox;options={handleLgImages:'drag'}">
 						<img src="resources/thumbs/image1.jpg" width="72" height="72" alt="" />
 					</a>
 					
@@ -261,20 +289,20 @@
 				
 				<p>	
 
-					<span id="gallery_lightbox">
-						<a href="resources/images/image1.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery').lightBox();">
+					<span class="lightbox">
+						<a href="resources/images/image1.jpg" title="Image 1" rel="shadowbox[gallery];options={counterType:'skip',continuous:true,animSequence:'sync'}">
 							<img src="resources/thumbs/image1.jpg" width="72" height="72" alt="" />
 						</a>
-						<a href="resources/images/image2.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+						<a href="resources/images/image2.jpg" title="Image 2" rel="shadowbox[gallery];options={counterType:'skip',continuous:true,animSequence:'sync'}">
 							<img src="resources/thumbs/image2.jpg" width="72" height="72" alt="" />
 						</a>
-						<a href="resources/images/image3.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+						<a href="resources/images/image3.jpg" title="Image 3" rel="shadowbox[gallery];options={counterType:'skip',continuous:true,animSequence:'sync'}">
 							<img src="resources/thumbs/image3.jpg" width="72" height="72" alt="" />
 						</a>
-						<a href="resources/images/image4.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+						<a href="resources/images/image4.jpg" title="Image 4" rel="shadowbox[gallery];options={counterType:'skip',continuous:true,animSequence:'sync'}">
 							<img src="resources/thumbs/image4.jpg" width="72" height="72" alt="" />
 						</a>
-						<a href="resources/images/image5.jpg" title="Utilize a flexibilidade dos seletores da jQuery e crie um grupo de imagens como desejar. $('#gallery a').lightBox();">
+						<a href="resources/images/image5.jpg" title="Image 5" rel="shadowbox[gallery];options={counterType:'skip',continuous:true,animSequence:'sync'}">
 							<img src="resources/thumbs/image5.jpg" width="72" height="72" alt="" />
 						</a>
 					</span>
@@ -284,6 +312,24 @@
                <p>
                	<b>prova...</b>
                </p>
+
+				<p>
+					<a href="resources/movie/skip.swf" title="Girl Skipping" class="option" rel="shadowbox;width=400;height=300">Single SWF</a>
+				</p>
+		
+				<p>
+					<a class="option" href="resources/movie/alien.flv" title="Alien" rel="shadowbox;width=600;height=450">Flash Video</a>
+				</p>
+		
+				<p>
+					<a id="flash1" class="option" href="resources/movie/old_man.swf" title="Hollywood or Bust" rel="shadowbox[Mixed];width=600;height=450;options={counterType:'skip',continuous:true}">SWF Gallery</a>
+					<a id="flash2" class="hidden" href="resources/movie/skip.swf" title="Girl Skipping" rel="shadowbox[Mixed];width=400;height=300">swf</a>
+					<a id="flash3" class="hidden" href="resources/movie/caveman.swf" title="Caveman" rel="shadowbox[Mixed];width=520;height=390">swf</a>
+				</p>
+		
+				<p>
+					<a rel="shadowbox;width=292;height=218" href="resources/movie/kayak.mp4">movie</a>
+				</p>
 
         </div>
         <div class="span-24">
