@@ -34,8 +34,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     			switch ($options['modules']['source']) {
     				case 'directory':
     					
-    					if ( isset ( $options['modules']['directory'] ) ) $this->_directoryModule = $this->$options['modules']['directory'];
-    					else $this->_directoryModule = $this->_directoryModule;
+    					if ( isset( $options['modules']['directory'] ) ) $this->_directoryModule = $options['modules']['directory'];
     					
     					$this->_loadFromDirectory();
     					
@@ -77,8 +76,6 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
 			$this->addControllerDirectory(BASE_DIRECTORY.'/application/modules/'.$mod->path_name,$mod->name);
 		}
 		
-		if ( count($r) == 0 ) $this->_loadFromDirectory();
-		
 	}
 	
 	/**
@@ -94,7 +91,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
 		try{
             $dir = new DirectoryIterator($this->_directoryModule);
         }catch(Exception $e){
-            throw new Zend_Controller_Exception("Default modules directory not readable");
+            throw new Zend_Controller_Exception("Default modules directory not readable ");
         }
         
         foreach ($dir as $file) {
