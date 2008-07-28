@@ -157,10 +157,6 @@ a:focus,a:hover,a:active {
 	width: 1px;
 }
 
-.clearit{
-	clear: both;
-}
-
 .lightbox img {
 	float: none;
 }
