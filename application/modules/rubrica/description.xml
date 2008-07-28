@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<name>rubrica</name>
+	<site>
+		<url></url>
+		<title></title>
+	</site>
+	<description>rubrica</description>
+	<acl/>
+	<options/>
+	<revision>0.0.1</revision>
+	<update>
+		<frequency>-1</frequency>
+		<link></link>
+	</update>
+</module>

@@ -250,12 +250,10 @@ class Scoutpad {
 			
 			//echo '<a href="file://'.xdebug_get_profiler_filename().'">Profile</a>';
 			
-			var_dump($frontController->getDispatcher()->getControllerDirectory());
-			
-exit;
+			//var_dump($frontController->getDispatcher()->getControllerDirectory());
 				
 			$response = $frontController->dispatch($request);
-				
+			
 			if ($response->isException()) {
 				$e = $response->getException();
 				// handle exceptions ...

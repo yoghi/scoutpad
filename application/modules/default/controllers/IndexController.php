@@ -22,15 +22,16 @@
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
  */
-class IndexController extends Sigma_Controller_Action
+//class IndexController extends Sigma_Controller_Action
+class IndexController extends Zend_Controller_Action
 {	
 	
 	public function indexAction()
 	{
 
-		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
-		$this->view->actionTemplate = 'contents/index.tpl';	
-		$this->getResponse()->setBody( $this->view->render('site.tpl') );
+//		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+//		$this->view->actionTemplate = 'contents/index.tpl';	
+//		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 
 //		Zend_Loader::loadClass('Log','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
 //		
