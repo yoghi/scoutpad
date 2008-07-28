@@ -52,8 +52,11 @@ class Sigma_Controller_Action extends Zend_Controller_Action {
 		// NB: se chiamo il costruttore del padre, egli chiamera la procedura di INIT sua e di tutti i figli (nostri compresi)
 		parent::__construct($request,$response,$invokeArgs);
 		
-		/*Template Lite*/
+		
+/*Template Lite*/
 		$this->view = new Sigma_View_TemplateLite();
+		
+		
 
 		$auth_session = new Zend_Session_Namespace('Zend_Auth');
 		if ( !empty($auth_session->storage) ) {
@@ -62,10 +65,11 @@ class Sigma_Controller_Action extends Zend_Controller_Action {
 			$this->view->info_level = $this->identita['role'];
 		}
 		
+		// diventera un helper 
 		$this->view->base_url = '/'.$this->getRequest()->getModuleName().'/'.$this->getRequest()->getControllerName();
 		
 		//$this->view->before_page = $sigma_flow->before_page;
-		$this->view->before_page = '';
+		//$this->view->before_page = '';
 		
 	}
 
@@ -105,8 +109,6 @@ class Sigma_Controller_Action extends Zend_Controller_Action {
 		
 	}
 
-	
-	
 }
 
 ?>
