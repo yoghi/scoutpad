@@ -121,8 +121,8 @@ class Scoutpad {
 		 if (!defined('TEMPLATE_LITE_DIR')) {
 			define('TEMPLATE_LITE_DIR', BASE_DIRECTORY.'/library/Template_Lite' . DIRECTORY_SEPARATOR);
 			require(BASE_DIRECTORY.'/library/Template_Lite/class.template.php');
-			}
-			*/
+		}
+		*/
 
 
 	}
@@ -286,7 +286,6 @@ class Scoutpad {
 			echo '</pre>';
 		}
 	}
-
 
 	/**
 	 * Error Handler alternativo , non visualizza mai gli errori a schermo

@@ -1,7 +1,29 @@
 <?php
 
 
+/**
+ * Scoutpad
+ *
+ * LICENSE
+ *
+ * This source file is subject to the New-BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   /
+ * @package    Sigma_Controller
+ * @copyright  Copyright (c) 2007 Stefano Tamagnini
+ * @author	   Stefano Tamagnini
+ * @license    New BSD License
+ */
 
+
+/**
+ * @category	/
+ * @package 	Sigma_Controller
+ * @copyright	Copyright (c) 2007 Stefano Tamagnini
+ * @license		New BSD License
+ * @version		0.0.3 - 2008 luglio 29 - 15:00 - Stefano Tamagnini
+ */
 class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
 	
 	private $_directoryModule = '';
@@ -35,7 +57,6 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     				case 'directory':
     					
     					if ( isset( $options['modules']['directory'] ) ) $this->_directoryModule = $options['modules']['directory'];
-    					
     					$this->_loadFromDirectory();
     					
     					break;
@@ -44,7 +65,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     					if ( !Zend_Registry::isRegistered('database') ) throw new Zend_Controller_Dispatcher_Exception('Sigma_Controller_Dispatcher with db required avaible database');
     					if ( !isset($options['modules']['tablename']) ) throw new Zend_Log_Exception('Sigma_Controller_Dispatcher with db required tablename params in config.ini');
     					
-    					$db = Zend_Registry::get('database');
+    					//$db = Zend_Registry::get('database');
     					
     					$this->_loadFromDb();
     					
@@ -52,10 +73,8 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     				default:
     					break;
     			}
-    			
-    			
+
     		}
-    		
     		
     	}
     	
@@ -72,6 +91,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
 		
 		$modules = new Modules();
 		$r = $modules->fetchAllActive();
+		
 		foreach($r as $mod) {
 			$this->addControllerDirectory(BASE_DIRECTORY.'/application/modules/'.$mod->path_name,$mod->name);
 		}

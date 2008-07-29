@@ -23,11 +23,38 @@
  * @license		New BSD License
  */
 //class IndexController extends Sigma_Controller_Action
-class IndexController extends Zend_Controller_Action
+class Home_IndexController extends Zend_Controller_Action
 {	
+
 	
-	public function indexAction()
-	{
+/**
+	 * @todo Inserire un titolo comune a tutte le viste in modo da non doverlo reinserire tutte le volte
+	 */
+	public function indexAction(){		
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		$this->view->actionTemplate = 'contents/home.tpl';	
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+	}
+	
+	public function torrianaAction(){
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		$this->view->actionTemplate = 'contents/torriana.tpl';
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+	}
+	
+	public function faqAction(){
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		$this->view->actionTemplate = 'contents/faq.tpl';
+		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+	}
+
+	public function templateAction(){
+		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		$this->view->actionTemplate = 'contents/template.tpl';
+		$this->view->stylesheet = '<link rel="stylesheet" type="text/css" media="screen" href="/styles/single.css" />';
+		$this->getResponse()->setBody( $this->view->render('site.tpl') );
+	}
+}
 
 //		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
 //		$this->view->actionTemplate = 'contents/index.tpl';	
@@ -71,9 +98,5 @@ class IndexController extends Zend_Controller_Action
 //		
 //		echo 'Guest View Admin: ';
 //		echo $acl->isAllowed('guest', 'admin', 'index') ? "allowed" : "denied"; echo '<br/>';
-		
-	}
-	
-}
 
 ?>

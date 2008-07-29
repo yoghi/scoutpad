@@ -22,7 +22,7 @@
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
  */
-class ContactController extends Sigma_Controller_Action
+class Home_ContactController extends Sigma_Controller_Action
 {
 
 	public function indexAction()
