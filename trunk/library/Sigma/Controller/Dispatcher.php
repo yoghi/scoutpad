@@ -39,6 +39,9 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     {
     	
         parent::__construct($params);
+        
+        $this->setParam('prefixDefaultModule', true);
+        
         $this->_curModule = $this->getDefaultModule();
         $this->_directoryModule = BASE_DIRECTORY.'/application/modules/';
         

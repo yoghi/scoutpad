@@ -22,6 +22,13 @@ dispatcher.modules.source = directory
 ;dispatcher.modules.tablename = Modules
 ;dispatcher.modules.source.directory.admin =   /home/workspace/Scout/ScoutPad/application/modules/admin/controllers
 
+
+;; GESTIONE DELLA PAGINA DI ERRORE (Es. 404)
+;error.handler.module = home
+;error.handler.controller = error
+;error.handler.action =  error
+;error.show = true ;visualizzazione dello stack trace in caso di errore.
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Developer Configuration
 ;;  'dev' eredita da 'common', se non c'è in 'dev' allora guardo in 'common'

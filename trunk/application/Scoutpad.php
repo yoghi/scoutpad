@@ -80,6 +80,7 @@ class Scoutpad {
 			Zend_Loader::loadClass('Zend_Controller_Request_Http');
 			Zend_Loader::loadClass('Zend_Controller_Action');
 			Zend_Loader::loadClass('Zend_Controller_Dispatcher_Standard');
+			Zend_Loader::loadClass('Zend_Controller_Plugin_ErrorHandler');
 			Zend_Loader::loadClass('Zend_Config_Exception');	
 			
 			Zend_Loader::loadClass('Zend_Auth');
@@ -189,12 +190,29 @@ class Scoutpad {
 					$dispatcher = new $dispatcher_adapter();
 					
 					if ( ! $dispatcher instanceof Zend_Controller_Dispatcher_Interface ) throw new Zend_Controller_Dispatcher_Exception('Invalid dispatcher selectet');
-	
+					
+					$dispatcher->setDefaultModule($config->dispatcher->modules->default);
+					
 					$frontController->setDispatcher($dispatcher);
 				
 				}
-					
+				
 				$frontController->returnResponse(true);
+				
+				/**
+				 * Error Handler MVC
+				 */
+				$plugErrorHandler = new Zend_Controller_Plugin_ErrorHandler();
+				
+				if ( isset($config->error->handler) ){
+					
+					$plugErrorHandler->setErrorHandlerModule($config->error->handler->module);
+					$plugErrorHandler->setErrorHandlerController($config->error->handler->controller);
+					$plugErrorHandler->setErrorHandlerAction($config->error->handler->action);
+					
+				}
+				
+				$frontController->registerPlugin($plugErrorHandler);
 					
 				// BASE URL
 				if (  !is_null($config->base_url) ) $frontController->setBaseUrl($config->base_url);
@@ -255,26 +273,29 @@ class Scoutpad {
 			$response = $frontController->dispatch($request);
 			
 			if ($response->isException()) {
-				$e = $response->getException();
-				// handle exceptions ...
-				echo '<div style="font:12px/1.35em arial, helvetica, sans-serif;"><div style="margin:0 0 25px 0; border-bottom:1px solid #ccc;">';
-				echo '<h1>Errore:</h1><ul>';
-				echo 'Siamo spiacenti ma un errore interno ha portato all\'impossibilit&agrave; di completare la richiesta.';
-				echo '</div></div>';
-				foreach($e as $exceptions){
-					echo '<li>';
-					echo "<b>" . get_class($exceptions) . '</b><br/>';
-					echo $exceptions->getMessage().'<br/>';
-					echo $exceptions->getFile().', '.$exceptions->getLine().'<br/>';
-					echo '</li>';
-					echo '<pre>';
-					echo $exceptions->getTraceAsString();
-					echo '</pre>';
+
+				if ( isset($config->error->show) && $config->error->show ){
+				
+					$e = $response->getException();
+	
+					$response->outputBody();
+					
+					echo '<ul>';
+					foreach($e as $exceptions){
+						echo '<li>';
+						echo "<b>" . get_class($exceptions) . '</b><br/>';
+						echo $exceptions->getMessage().'<br/>';
+						echo $exceptions->getFile().', '.$exceptions->getLine().'<br/>';
+						echo '</li>';
+						echo '<pre>';
+						echo $exceptions->getTraceAsString();
+						echo '</pre>';
+					}
+					echo '</ul>';
+				
 				}
-				echo '</ul>';
 			} else {
-				$response->sendHeaders();
-				$response->outputBody();
+				$response->sendResponse();
 				//echo '<a href="/',$request->getFromPage(),'">',$request->getFromPage(),'</a>';
 			}
 
