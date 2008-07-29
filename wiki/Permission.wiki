@@ -27,3 +27,6 @@ or better
 $acl = new Sigma_Acl($user_id,$role_name,$module_name);
 $acl->hasPermission($controller_name,$power_to_test);
 }}}
+
+*NB: per ora è stato disabilitato per semplicità nello sviluppo delle varie componenti*
+_riga 210 file Sigma_Plugin_Auth.php_
