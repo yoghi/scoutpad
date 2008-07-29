@@ -31,9 +31,11 @@ class Home_IndexController extends Zend_Controller_Action
 	 * @todo Inserire un titolo comune a tutte le viste in modo da non doverlo reinserire tutte le volte
 	 */
 	public function indexAction(){		
-		$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
-		$this->view->actionTemplate = 'contents/home.tpl';	
-		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+		
+		//$this->view->title = "Campetti Specialit&agrave; Zona di Rimini v1.0";
+		//$this->view->actionTemplate = 'contents/home.tpl';	
+		//$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+		
 	}
 	
 	public function torrianaAction(){
