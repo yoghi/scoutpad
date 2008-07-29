@@ -7,6 +7,7 @@ auth.token = <generic token>
 auth.acl.cache = true
 
 logger.appender.audit.type = Zend_Log_Writer_Stream
+logger.appender.audit.mode = a+
 logger.appender.audit.level = AUDIT
 logger.appender.audit.stream = audit.xml
 logger.appender.audit.formatter = Zend_Log_Formatter_Xml
@@ -35,6 +36,7 @@ view.path = <path where locate templates>
 ;db.config.dbname = <dbname>
 
 ;logger.appender.standard.type = <Zend_Log_Writer_Stream | Zend_Log_Writer_Db>
+;logger.appender.audit.mode = <a+|a|w|w+> ; necessario solo nel caso dei file 
 ;logger.appender.standard.level = <DEBUG|WARN|ERROR|INFO> 
 ;logger.appender.standard.stream = <nome file>
 ;logger.appender.standard.formatter = Zend_Log_Formatter_Simple

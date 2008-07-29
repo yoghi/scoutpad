@@ -22,7 +22,7 @@
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
  */
-class LoginController extends Sigma_Controller_Action
+class Home_LoginController extends Sigma_Controller_Action
 {
 
 	function init()

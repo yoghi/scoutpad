@@ -22,7 +22,7 @@
  * @copyright	Copyright (c) 2007 Stefano Tamagnini
  * @license		New BSD License
  */
-class ImageController extends Sigma_Controller_Action
+class Home_ImageController extends Sigma_Controller_Action
 {
 	
 	protected $params = null;

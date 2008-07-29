@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module>
-	<name>default</name>
+	<name>home</name>
 	<site>
 		<url></url>
 		<title></title>
 	</site>
-	<description>default</description>
+	<description>home</description>
 	<acl/>
 	<options/>
 	<revision>0.0.1</revision>

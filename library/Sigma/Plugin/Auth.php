@@ -204,7 +204,9 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
        			$log->log('Eccezzione Generica'.$e->getMessage(),Zend_Log::ERR);
 			}
 
-			// can user see?
+			/**
+			 * can user see? 
+			*/
 			/*
 			if ( ! $acl->hasPermission($controller,'R') ) {
 				$module_name = $this->_noacl['module'];
