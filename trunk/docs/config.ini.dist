@@ -65,6 +65,7 @@ view.path = <path where locate templates>
 ;routes.archive.defaults.year = 2000
 ;routes.archive.reqs.year = "\d+"
 
+;; DA TESTARE LO STATIC ROUTING....
 ;routes.news.type = "Zend_Controller_Router_Route_Static"
 ;routes.news.route = "news"
 ;routes.news.defaults.controller = "news"
@@ -82,5 +83,5 @@ view.path = <path where locate templates>
 ;; Production Configuration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 [prod : common]
-base_url = '/public'
+url.base = '/public'
 

@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title><?php echo $this->escape($this->pageTitle); ?></title>
+    <!-- <link rel="stylesheet" href="main.css" type="text/css"> -->
+    <link type="text/css" rel="stylesheet" href="/css/blueprint/screen.css" media="screen, projection"/>
+    <link type="text/css" rel="stylesheet" href="/css/blueprint/print.css" media="print"/>
+    <link type="text/css" rel="stylesheet" href="/css/link.css" media="screen, projection"/>
+    <link type="text/css" rel="stylesheet" href="/css/site.css" media="screen, projection"/>
+    <!--[if IE]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+    <?php echo $this->headLink() ?>
+</head>
+<body>
+    <div class="container">
+    
+    	<div class="span-24" id="header">
+        	<div id="topnav">
+                <a class="skip" title="skip link" href="#navigation">Skip to the navigation</a>
+                <span class="hideme">.</span>
+                <a class="skip" title="skip link" href="#content">Skip to the content</a>
+                <span class="hideme">.</span>
+                <span>
+                	<a href="/">Home</a>
+					|
+                    <?php if (true) { ?>
+                    	<a href="/login/">Login</a>
+                    <? } else { ?>
+                    	<a href="/login/out">Logout</a>
+                    <?php } ?>
+				</span>
+            </div>
+            <h1>Campo in Linea '08</h1>
+            <div class="description">Campo competenza : Informatica e tecniche scout</div>
+        </div>
+        <!-- colborder class per mettere una barra laterale -->
+        <div class="span-6 colborder" id="leftbar">
+        	<h5>Strumenti</h5>
+        	<ul>
+        		<li><a href="/fol/">Foto Online</a></li>
+        		<li><a href="/aol/">Archivio Online</a></li>
+        	</ul>
+        </div>
+        
+        <div class="span-17 last" id="content">
+			<? echo $this->layout()->content;  ?>
+        </div>
+        <div class="span-24">
+                 <div id="footer">Scoutpad &copy; 2008 ; license new BSD: </div>
+        </div>
+    
+    </div>
+</body>
+</html>

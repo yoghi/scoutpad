@@ -23,7 +23,6 @@ date_default_timezone_set('Europe/Rome');
 
 ini_set('session.save_path',BASE_DIRECTORY.'/data/tmp');
 
-
 /**
  * @category	/
  * @package 	Scoutpad
@@ -60,12 +59,14 @@ class Scoutpad {
 	private function __construct(){
 
 		try {
+			
+			//Zend_Loader::registerAutoload();
 				
 			/**
 			 * Zend Class
 			 */
 			Zend_Loader::loadClass('Zend_Registry');
-			Zend_Loader::loadClass('Zend_View');
+			//Zend_Loader::loadClass('Zend_View');
 			Zend_Loader::loadClass('Zend_Config_Ini');
 			Zend_Loader::loadClass('Zend_Config_Xml');
 				
@@ -74,7 +75,9 @@ class Scoutpad {
 			Zend_Loader::loadClass('Zend_Db_Table_Rowset');
 				
 			Zend_Loader::loadClass('Zend_Log');
-				
+			
+			Zend_Loader::loadClass('Zend_Controller_Action_Helper_ViewRenderer');
+			
 			Zend_Loader::loadClass('Zend_Controller_Front');
 			Zend_Loader::loadClass('Zend_Controller_Router_Rewrite');
 			Zend_Loader::loadClass('Zend_Controller_Request_Http');
@@ -166,9 +169,88 @@ class Scoutpad {
 					Zend_Registry::set('database', $db);
 
 				}
+				
+				if ( file_exists(BASE_DIRECTORY.'/config/form.ini') ){
+					
+					$formsConfig = new Zend_Config_Ini(BASE_DIRECTORY.'/config/form.ini', 'forms');
+					Zend_Registry::set('formsConfig', $formsConfig);
+					
+				}
 					
 				$request = new Sigma_Controller_Request_Http(); //serve veramente?
+
+				/**
+				 * View setup
+				 */
+				if ( !is_null($config->view->adapter) ) {
 					
+					/**
+					 * View Renderer
+					 * Template Lite o Zend_View normale o altro...
+					 */
+					if ( !is_null($config->view->adapter) ){
+						
+						$view_engine_name = $config->view->adapter;
+
+						Zend_Loader::loadClass($view_engine_name);
+		
+						//$view_engine = new Sigma_View_TemplateLite();
+						$view_engine = new $view_engine_name();
+						
+					}
+
+					//il ViewRenderer aggiunge cmq. la path di default anche se questa non è settata
+					if ( !is_null($config->view->basePath) ){
+						$view_engine->setBasePath($config->view->basePath);
+					}
+					
+					/**
+					 * @var Zend_Controller_Action_Helper_ViewRenderer
+					 */
+					$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
+					$viewRenderer->setView($view_engine);
+					
+					if ( !is_null($config->view->basePath) ){
+						$view_engine->setBasePath($config->view->basePath);
+					}
+					
+					if ( !is_null($config->view->suffix) ){
+						$viewRenderer->setViewSuffix($config->view->suffix);
+					}
+					
+				}
+				
+				if ( !is_null($config->layout->layoutPath) ) { 
+					Zend_Loader::loadClass('Zend_Layout');
+					$layout = new Zend_Layout(null,true);
+					$layout->setLayoutPath($config->layout->layoutPath);
+					//Zend_View_Helper_Layout
+					//.. bug => layout() dentro il template cerca l'helper layout e ha problemi a caricarlo!!
+				}
+
+				
+				/**
+				 * Layout comune 
+				 */
+				/*$inflector = new Zend_Filter_Inflector(':script.:suffix');
+				$inflector->addRules(array(':script' => array('Word_CamelCaseToDash', 'StringToLower'),
+							 								  'suffix'  => $config->layout->suffix));
+				 
+				// Initialise Zend_Layout's MVC helpers
+				Zend_Layout::startMvc(array('layoutPath' => ROOT_DIR.$config->layout->layoutPath,
+											'view' => $view,
+											'contentKey' => $config->layout->contentKey,
+											'inflector' => $inflector));
+				*/
+				
+				/**
+				 * Sessione ...
+				 * attualmente c'è in Sigma_Action la gestione della sessione di autenticazione
+				 * si può cmq. pensare ad utilizzare 
+				 */
+				//$session = new Zend_Session_Namespace($config->session_name);
+				//Zend_Registry::set('session',$session);
+				
 				// setting controller
 				$frontController = Zend_Controller_Front::getInstance();
 					
@@ -301,7 +383,8 @@ class Scoutpad {
 
 		}
 		catch (Exception $e){
-			echo '<h1>Errore:</h1> '.$e->getMessage();
+			header('HTTP/1.1 505 Misconfig');
+			echo '<h1> - 505 - </h1> '.$e->getMessage();
 			echo '<pre>';
 			print_r($e->getTrace());
 			echo '</pre>';
