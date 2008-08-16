@@ -52,12 +52,6 @@ class Sigma_Controller_Action extends Zend_Controller_Action {
 		// NB: se chiamo il costruttore del padre, egli chiamera la procedura di INIT sua e di tutti i figli (nostri compresi)
 		parent::__construct($request,$response,$invokeArgs);
 		
-		
-/*Template Lite*/
-		$this->view = new Sigma_View_TemplateLite();
-		
-		
-
 		$auth_session = new Zend_Session_Namespace('Zend_Auth');
 		if ( !empty($auth_session->storage) ) {
 			$this->identita = $auth_session->storage;

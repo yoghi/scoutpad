@@ -28,6 +28,8 @@ class Home_ErrorController extends Zend_Controller_Action
 
 	public function errorAction()
 	{
+		$this->_helper->layout->disableLayout();
+		
 		$errors = $this->_getParam('error_handler');
 
 		// Clear previous content

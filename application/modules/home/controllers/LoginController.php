@@ -29,47 +29,71 @@ class Home_LoginController extends Sigma_Controller_Action
 	{
 
 		try {
-			Zend_Loader::loadClass('User','/home/workspace/Scout/ScoutPad/application/default/models/tables/');
+			Zend_Loader::loadClass('User','/home/workspace/Scout/ScoutPad/application/models/tables/');
+			Zend_Loader::loadClass('Zend_Form');
+			Zend_Loader::loadClass('Sigma_Form');
+			
 		}
 		catch (Zend_Exception $e) {
 			var_dump($e);
 		}
 
 	}
+	
+	public function preDispatch()
+    {
+    	
+    	$auth_module = Zend_Registry::get('auth_module');
+
+		if ( $auth_module->hasIdentity() ){
+			// $this->_redirect('/'); equivalente a :
+
+			if ( 'out' != $this->getRequest()->getActionName() ) {
+				$this->_helper->redirector('index','index');
+			}
+			
+		}
+    	
+    }
 
 	public function indexAction()
 	{
+
+		$this->view->title = "Alt - Autenticati!";
+
+		$this->view->HeadLink()->appendStylesheet('/styles/login.css');
 		
-
-		$this->view->title = "Autenticati";
-
-		$auth_module = Zend_Registry::get('auth_module');
-
-		if ( $auth_module->hasIdentity() ){
-			$this->_redirect('/');
-		}
-
-		$this->view->buttonText = 'Identifica';
-		$this->view->actionTemplate = 'forms/_loginForm.tpl';
-
-		$this->getResponse()->setBody( $this->view->render('site2c.tpl') );
+		$form = new Sigma_Form('login');
+		
+        $this->view->form = $form; 
 
 	}
 
 	public function outAction(){
 		$auth_module = Zend_Registry::get('auth_module');
 		$auth_module->clearIdentity();
-		$this->_redirect('/login/');
+		$this->_helper->redirector('login','index');
 	}
 
 	public function inAction(){
 
-		$this->view->title = "Login";
+		$request = $this->getRequest();
 
-		if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
+		//OLD: strtolower($_SERVER['REQUEST_METHOD']) == 'post' , meglio sfruttare il fatto di avere una richiesta HTTP
+		if ($request->isPost())
 		{
+			
+			// Get our form and validate it
+			$form = new Sigma_Form( 'login' );
 
-			$mail = trim($_POST['mail']);
+			if (!$form->isValid($request->getPost())) {
+	            // Invalid entries
+	            $this->view->form = $form;
+	            $form->populate($request->getPost());
+	            return $this->render('index'); //re-render the login form
+	        }
+
+			$mail = trim($_POST['username']);
 			$password = trim($_POST['password']);
 
 			if ($mail != '' && $password != '') {
@@ -91,7 +115,9 @@ class Home_LoginController extends Sigma_Controller_Action
 					$this->notify('/login/','errore','Autenticazione Fallita');
 		
 				} catch (Exception $e) {
+					
 					echo $e->getMessage();
+					
 				}
 			} else $this->notify('/login/','errore','Campi vuoti','/login/');
 		}
