@@ -61,7 +61,7 @@ class Home_LoginController extends Sigma_Controller_Action
 
 		$this->view->title = "Alt - Autenticati!";
 
-		$this->view->HeadLink()->appendStylesheet('/styles/login.css');
+		$this->view->HeadLink()->appendStylesheet('/css/login.css');
 		
 		$form = new Sigma_Form('login');
 		
@@ -72,22 +72,22 @@ class Home_LoginController extends Sigma_Controller_Action
 	public function outAction(){
 		$auth_module = Zend_Registry::get('auth_module');
 		$auth_module->clearIdentity();
-		$this->_helper->redirector('login','index');
+		// azione , controller , modulo 
+		$this->_helper->redirector('index','login','home');
 	}
 
 	public function inAction(){
 
 		$request = $this->getRequest();
 
-		//OLD: strtolower($_SERVER['REQUEST_METHOD']) == 'post' , meglio sfruttare il fatto di avere una richiesta HTTP
 		if ($request->isPost())
 		{
 			
 			// Get our form and validate it
 			$form = new Sigma_Form( 'login' );
 
+			// Invalid entries
 			if (!$form->isValid($request->getPost())) {
-	            // Invalid entries
 	            $this->view->form = $form;
 	            $form->populate($request->getPost());
 	            return $this->render('index'); //re-render the login form
@@ -99,8 +99,23 @@ class Home_LoginController extends Sigma_Controller_Action
 			if ($mail != '' && $password != '') {
 
 				$auth_module = Zend_Registry::get('auth_module');
+				
 				$database = Zend_Registry::get('database');
-				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array('field_password' => 'password','field_username' => 'mail','table' => 'User' ,'username' => $mail, 'password' => $password));
+				
+				$token = Zend_Registry::get('config')->auth->token;
+				
+				$field_password = Zend_Registry::get('config')->auth->field->password;
+				$field_username = Zend_Registry::get('config')->auth->field->username;
+				$tableAuth = Zend_Registry::get('config')->auth->table;
+				
+				$auth_module_adapter = new Sigma_Auth_Database_Adapter($database,array(
+					'field_password' => $field_password,
+					'field_username' => $field_username,
+					'table' => $tableAuth ,
+					'username' => $mail,
+					'password' => $password,
+					'salt' => $token
+				));
 
 				try {
 

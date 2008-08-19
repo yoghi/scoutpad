@@ -1,0 +1,23 @@
+<div class="{$notify_type}">
+	<b><? echo $this->title ?></b>
+	<ul>
+	<? foreach ($this->notify_text as $msg) {
+			echo '<li>'.$msg.'</li>';
+		}
+	?>
+	</ul>
+</div>
+<? 
+if (isset($this->notify_link2_text)) {
+?>
+	<h4>
+		<p>	
+			<a style="text-decoration:none;" href="<? echo $this->before_page ?> ">&ldquo; <? echo $this->notify_link_text ?>  &rdquo; </a>
+		</p>
+		<p style="font-size: 160%" >
+			<a style="text-decoration:none;" href="<? echo $this->next_page ?>">&ldquo; <? echo $notify_link2_text ?> &rdquo; </a> 
+		</p>
+	</h4>
+<? } else { ?>
+	<h4><a style="text-decoration:none;" href="<? echo $this->before_page ?>">&ldquo; <? echo $this->notify_link_text ?> &rdquo; </a></h4>
+<? } ?>

@@ -23,23 +23,20 @@
                 <span>
                 	<a href="/">Home</a>
 					|
-                    <?php if (true) { ?>
+                    <?php if (!isset($this->info_user)) { ?>
                     	<a href="/login/">Login</a>
                     <? } else { ?>
                     	<a href="/login/out">Logout</a>
                     <?php } ?>
 				</span>
             </div>
-            <h1>Campo in Linea '08</h1>
-            <div class="description">Campo competenza : Informatica e tecniche scout</div>
+            <h1>ScoutPad</h1>
+            <div class="description">Little help</div>
         </div>
         <!-- colborder class per mettere una barra laterale -->
         <div class="span-6 colborder" id="leftbar">
-        	<h5>Strumenti</h5>
-        	<ul>
-        		<li><a href="/fol/">Foto Online</a></li>
-        		<li><a href="/aol/">Archivio Online</a></li>
-        	</ul>
+        	<?= $this->action('menu', 'layout', 'home'); ?>
+        	<!-- $this->render('menu', 'layout', true);  -->
         </div>
         
         <div class="span-17 last" id="content">

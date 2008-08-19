@@ -1,6 +1,6 @@
 <?php
 
-class NotifyController extends Sigma_Controller_Action
+class Home_NotifyController extends Sigma_Controller_Action
 {	
 	
 	/**
@@ -72,21 +72,17 @@ class NotifyController extends Sigma_Controller_Action
 				echo $e->getMessage();
 			}
 			
-			$this->view->actionTemplate = 'contents/notify.tpl';
-			
 			
 		} else {
 			
 			$this->view->title = 'Errore';
 			$this->view->notify_type = 'warnMacro';
 			$this->view->before_page = '/home/';
-			$this->view->actionTemplate = 'contents/notify.tpl';
 			$this->view->notify_text = array('Generic problem');
 			$this->view->notify_link_text = 'Clicca qui per ritornare alla pagina di partenza';
 			
 		}
-		
-		$this->getResponse()->setBody( $this->view->render('site.tpl') );
+
 	}
 	
 	public function permissionAction(){
@@ -94,10 +90,8 @@ class NotifyController extends Sigma_Controller_Action
 		else $this->view->before_page = '/login/';
 		$this->view->title = 'Errore';
 		$this->view->notify_type = 'warnMacro';
-		$this->view->actionTemplate = 'contents/notify.tpl';
 		$this->view->notify_link_text = 'Clicca qui per ritornare alla pagina di partenza';
 		$this->view->notify_text = 'Non sei in possesso dei permessi necessari per accedere a questa risorsa';
-		$this->getResponse()->setBody( $this->view->render('site.tpl') );
 	}
 	
 }
