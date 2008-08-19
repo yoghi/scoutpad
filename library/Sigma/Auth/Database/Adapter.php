@@ -74,12 +74,11 @@ class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
 		
 		$this->_db = $database;
 		
-		$optionsRequired = array('field_username','field_password','table','username', 'password');
+		$optionsRequired = array('field_username','field_password','table','username', 'password','salt');
         
         foreach ($optionsRequired as $optionRequired) {
             if (!isset($options[$optionRequired]) || !is_string($options[$optionRequired])) {
-                require_once 'Zend/Auth/Database/Exception.php';
-                throw new Sigma_Auth_Database_Exception("Option '$optionRequired' is required to be a string");
+                throw new Zend_Exception("Option '$optionRequired' is required to be a string");
             }
         }
         
@@ -99,9 +98,7 @@ class Sigma_Auth_Database_Adapter implements Zend_Auth_Adapter_Interface {
         $tokenIdentity = array();
         $tokenMessage = array();
         
-        $token = Zend_Registry::get('config')->auth->token;
-        
-        $pwd_r2 = sha1($token.$this->_options['password']);
+        $pwd_r2 = sha1($this->_options['salt'].$this->_options['password']);
         
 		try {
         	$sql = 'select * from '.$this->_options['table'].' where '.$this->_options['field_username'].'=\''.$this->_options['username'].'\' and '.$this->_options['field_password'].'=\''.$pwd_r2.'\'';

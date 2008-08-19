@@ -302,8 +302,8 @@ class Scoutpad {
 				$log = new Sigma_Log($config->logger);
 				Zend_Registry::set('log',$log);
 				
-				//Zend_Loader::loadClass('Sigma_Flow_Storage_Database');
-				//Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Database() );
+				Zend_Loader::loadClass('Sigma_Flow_Storage_Database');
+				Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Database() );
 				
 				//Zend_Loader::loadClass('Sigma_Flow_Storage_Session');
 				//Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Session() );

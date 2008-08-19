@@ -23,7 +23,7 @@
  * @license		New BSD License
  */
 //class IndexController extends Sigma_Controller_Action
-class Home_IndexController extends Zend_Controller_Action
+class Home_IndexController extends Sigma_Controller_Action
 {	
 
 	

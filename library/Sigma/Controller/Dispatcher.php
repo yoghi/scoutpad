@@ -96,7 +96,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
 		$r = $modules->fetchAllActive();
 		
 		foreach($r as $mod) {
-			$this->addControllerDirectory(BASE_DIRECTORY.'/application/modules/'.$mod->path_name,$mod->name);
+			$this->addControllerDirectory(BASE_DIRECTORY.'/application/modules/'.$mod->path_name.DIRECTORY_SEPARATOR.'controllers',$mod->name);
 		}
 		
 	}
