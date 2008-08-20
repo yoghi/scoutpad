@@ -242,7 +242,7 @@ class Sigma_Acl_Manager {
 		
 		$module_list = new Modules();
 		
-		$where[] = 'nome = '.$module_list->getAdapter()->quote($module_name);
+		$where[] = 'name = '.$module_list->getAdapter()->quote($module_name);
 		
 		$r = $module_list->fetchAll($where)->toArray();
 		

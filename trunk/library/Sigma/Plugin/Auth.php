@@ -29,7 +29,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 		 * Valori da usare nel caso l'utente non sia autorizzato (guest) e non sia autenticato
 		 * @var array
 		 */
-		private $_noauth = array('module' => 'default',
+		private $_noauth = array('module' => 'home',
 								'controller' => 'login',
 								'action' => 'index');
 
@@ -37,7 +37,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 		 * Valori da usare nel caso l'utente autenticato non sia autorizzato
 		 * @var array
 		 */
-		private $_noacl = array('module' => 'default',
+		private $_noacl = array('module' => 'home',
 								'controller' => 'notify',
 								'action' => 'permission');
 
@@ -48,6 +48,14 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 		public function __construct(){
 			
 			try {
+				
+				Zend_Loader::loadClass('AclRole',BASE_DIRECTORY.'/application/models/tables/');
+				Zend_Loader::loadClass('AclUser',BASE_DIRECTORY.'/application/models/tables/');
+				Zend_Loader::loadClass('AclCache',BASE_DIRECTORY.'/application/models/tables/');
+				Zend_Loader::loadClass('Acl',BASE_DIRECTORY.'/application/models/tables/');
+				Zend_Loader::loadClass('Modules',BASE_DIRECTORY.'/application/models/tables/');
+				Zend_Loader::loadClass('Permission',BASE_DIRECTORY.'/application/models/tables/');
+				
 				Zend_Loader::loadClass('Zend_Acl');
 				Zend_Loader::loadClass('Zend_Acl_Role');
 				Zend_Loader::loadClass('Zend_Acl_Resource');
@@ -125,7 +133,7 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
 	       			$action = $this->_noacl['action'];
 	       			
 	       			// forzo come pagina precedente index in quanto dovrebbe poter sempre andare!
-	       			$flow_token = Sigma_Flow_Token::getInstance()->insert('/index/',array('type'=>'errore','text'=>'Problemi in cache; svuota i cookie e riprova, se il problema persiste contattaci direttamente','next'=>'/index/'));
+	       			$flow_token = Sigma_Flow_Token::getInstance()->insert('/index/',array('type'=>'errore','text'=> array('Problemi in cache; svuota i cookie e riprova, se il problema persiste contattaci direttamente'),'next'=>'/index/'));
 	       			$log->log('L\'utente '.$id.' ha problemi nella propria configurazione!! (rigenerale la cache dell\'utente dopo le modifiche) ',Zend_Log::ERR);
 	       			$action = 'index';
 	       			$request->setParam('id',$flow_token);
@@ -217,7 +225,6 @@ class Sigma_Plugin_Auth extends Zend_Controller_Plugin_Abstract {
        			$request->setParam('id',$flow_token);
 			}
 			*/
-			
 			
         	$request->setModuleName($module_name);
         	$request->setControllerName($controller);
