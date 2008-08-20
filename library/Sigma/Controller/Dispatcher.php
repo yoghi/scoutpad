@@ -28,6 +28,8 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
 	
 	private $_directoryModule = '';
 	
+	private $_tableModule = 'Modules';
+	
 	/**
      * Constructor: Set current module to default value
      *
@@ -70,6 +72,8 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
     					
     					//$db = Zend_Registry::get('database');
     					
+    					$this->_tableModule = $options['modules']['tablename'];
+    					
     					$this->_loadFromDb();
     					
     					break;
@@ -90,10 +94,13 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
 	
 	private function _loadFromDb(){ 
 		
-		Zend_Loader::loadClass('Modules',BASE_DIRECTORY.'/application/models/tables/');
 		
-		$modules = new Modules();
-		$r = $modules->fetchAllActive();
+		
+		Zend_Loader::loadClass($this->_tableModule,BASE_DIRECTORY.'/application/models/tables/');
+		
+		$modules = new $this->_tableModule();
+		
+		$r = $modules->fetchAllActive(); //in teoria qui devo fare tutta la select !!!
 		
 		foreach($r as $mod) {
 			$this->addControllerDirectory(BASE_DIRECTORY.'/application/modules/'.$mod->path_name.DIRECTORY_SEPARATOR.'controllers',$mod->name);
@@ -123,7 +130,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
                 continue;
             }
 
-            $module    = $file->getFilename();
+            $module = $file->getFilename();
 
             // Don't use SCCS directories as modules
             if (preg_match('/^[^a-z]/i', $module) || ('CVS' == $module)) {
@@ -143,9 +150,7 @@ class Sigma_Controller_Dispatcher extends Zend_Controller_Dispatcher_Standard {
         }
 		
 	}
-	
-	
-	
+		
 }
 
 
