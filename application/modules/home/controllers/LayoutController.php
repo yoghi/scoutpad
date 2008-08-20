@@ -32,12 +32,14 @@ class Home_LayoutController extends Sigma_Controller_Action {
 		$modules = new Modules();
 		$modules_array = $modules->fetchAllActive();
 		
+		$this->view->modules = array();
+		
 		foreach($modules_array as $module_row) {
 			//$this->addControllerDirectory(BASE_DIRECTORY.'/application/modules/'.$mod->path_name,$mod->name);
 			//$this->view->modules = array("modules_name" => "modules_link");
-			$this->view->modules = array($module_row->description => $module_row->name);
+			$this->view->modules[$module_row->description] = $module_row->name;
 		}
-		
+
 	}
 	
 }
