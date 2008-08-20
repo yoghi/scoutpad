@@ -66,7 +66,6 @@ class Scoutpad {
 			 * Zend Class
 			 */
 			Zend_Loader::loadClass('Zend_Registry');
-			//Zend_Loader::loadClass('Zend_View');
 			Zend_Loader::loadClass('Zend_Config_Ini');
 			Zend_Loader::loadClass('Zend_Config_Xml');
 				
@@ -101,9 +100,8 @@ class Scoutpad {
 			Zend_Loader::loadClass('Sigma_Controller_Dispatcher');
 			Zend_Loader::loadClass('Sigma_Controller_Request_Http');
 			Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
+			Zend_Loader::loadClass('Sigma_Plugin_Auth');
 			Zend_Loader::loadClass('Sigma_View_TemplateLite');
-				
-				
 				
 		} catch (Zend_Exception $e) {
 			var_dump($e->getTrace());
@@ -224,6 +222,7 @@ class Scoutpad {
 					Zend_Loader::loadClass('Zend_Layout');
 					$layout = new Zend_Layout(null,true);
 					$layout->setLayoutPath($config->layout->layoutPath);
+					$layout->setLayout('default');
 					//Zend_View_Helper_Layout
 					//.. bug => layout() dentro il template cerca l'helper layout e ha problemi a caricarlo!!
 				}
@@ -294,13 +293,18 @@ class Scoutpad {
 					
 				}
 				
+				/**
+				 * Plugin pre-esecuzione
+				 */
 				$frontController->registerPlugin($plugErrorHandler);
+				$frontController->registerPlugin(new Sigma_Plugin_Auth());
 					
-				// BASE URL
-				if (  !is_null($config->base_url) ) $frontController->setBaseUrl($config->base_url);
+				// BASE URL .. da sistemare
+				if (  !is_null($config->url->base) ) $frontController->setBaseUrl($config->url->base);
+				
 				
 				$log = new Sigma_Log($config->logger);
-				Zend_Registry::set('log',$log);
+				Zend_Registry::set('log',$log);			
 				
 				Zend_Loader::loadClass('Sigma_Flow_Storage_Database');
 				Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Database() );
@@ -309,6 +313,11 @@ class Scoutpad {
 				//Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Session() );
 				
 				Zend_Registry::set('auth_module', Zend_Auth::getInstance());
+				
+				
+				/**
+				 * CACHE SYSTEM
+				 */
 
 			} catch (Zend_Config_Exception $e) {
 				echo '<h1>Misconfiguration</h1>';
@@ -351,7 +360,7 @@ class Scoutpad {
 			//echo '<a href="file://'.xdebug_get_profiler_filename().'">Profile</a>';
 			
 			//var_dump($frontController->getDispatcher()->getControllerDirectory());
-				
+			
 			$response = $frontController->dispatch($request);
 			
 			if ($response->isException()) {
@@ -377,9 +386,16 @@ class Scoutpad {
 				
 				}
 			} else {
+				
+				/**
+				 * Static Page Generation
+				 */
+				
+				
 				$response->sendResponse();
 				//echo '<a href="/',$request->getFromPage(),'">',$request->getFromPage(),'</a>';
 			}
+			
 
 		}
 		catch (Exception $e){

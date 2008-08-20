@@ -7,7 +7,14 @@
 	</site>
 	<description>home</description>
 	<acl/>
-	<options/>
+	<options>
+		<layout>
+			<layoutpath/>
+			<contentKet>content</contentKet>
+			<template>layout</template>
+			<suffix>phtml</suffix>
+		</layout>
+	</options>
 	<revision>0.0.1</revision>
 	<update>
 		<frequency>-1</frequency>

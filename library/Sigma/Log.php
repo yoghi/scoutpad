@@ -34,6 +34,7 @@ class Sigma_Log extends Zend_Log {
 	 * @param Zend_Log_Writer_Abstract $writer dove scrivere i log [Null is valid] 
 	 */
 	public function __construct($config = null,Zend_Log_Writer_Abstract $writer = null){
+		
 		parent::__construct($writer);
 		
 		Zend_Loader::loadClass('Zend_Log_Exception');
@@ -49,6 +50,10 @@ class Sigma_Log extends Zend_Log {
         }
         
         //$logger->addPriority('AUDIT', 8);
+        
+//        Zend_Loader::loadClass('Zend_Log_Writer_Firebug');
+//        $writerF = new Zend_Log_Writer_Firebug();
+//        $this->addWriter($writerF);
         
 	}
 	
