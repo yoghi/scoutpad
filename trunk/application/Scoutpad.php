@@ -101,6 +101,7 @@ class Scoutpad {
 			Zend_Loader::loadClass('Sigma_Controller_Request_Http');
 			Zend_Loader::loadClass('Sigma_Auth_Database_Adapter');
 			Zend_Loader::loadClass('Sigma_Plugin_Auth');
+			Zend_Loader::loadClass('Sigma_Plugin_Descriptor');
 			Zend_Loader::loadClass('Sigma_View_TemplateLite');
 				
 		} catch (Zend_Exception $e) {
@@ -176,71 +177,9 @@ class Scoutpad {
 				}
 					
 				$request = new Sigma_Controller_Request_Http(); //serve veramente?
-
-				/**
-				 * View setup
-				 */
-				if ( !is_null($config->view->adapter) ) {
-					
-					/**
-					 * View Renderer
-					 * Template Lite o Zend_View normale o altro...
-					 */
-					if ( !is_null($config->view->adapter) ){
-						
-						$view_engine_name = $config->view->adapter;
-
-						Zend_Loader::loadClass($view_engine_name);
-		
-						//$view_engine = new Sigma_View_TemplateLite();
-						$view_engine = new $view_engine_name();
-						
-					}
-
-					//il ViewRenderer aggiunge cmq. la path di default anche se questa non è settata
-					if ( !is_null($config->view->basePath) ){
-						$view_engine->setBasePath($config->view->basePath);
-					}
-					
-					/**
-					 * @var Zend_Controller_Action_Helper_ViewRenderer
-					 */
-					$viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
-					$viewRenderer->setView($view_engine);
-					
-					if ( !is_null($config->view->basePath) ){
-						$view_engine->setBasePath($config->view->basePath);
-					}
-					
-					if ( !is_null($config->view->suffix) ){
-						$viewRenderer->setViewSuffix($config->view->suffix);
-					}
-					
-				}
 				
-				if ( !is_null($config->layout->layoutPath) ) { 
-					Zend_Loader::loadClass('Zend_Layout');
-					$layout = new Zend_Layout(null,true);
-					$layout->setLayoutPath($config->layout->layoutPath);
-					$layout->setLayout('default');
-					//Zend_View_Helper_Layout
-					//.. bug => layout() dentro il template cerca l'helper layout e ha problemi a caricarlo!!
-				}
-
-				
-				/**
-				 * Layout comune 
-				 */
-				/*$inflector = new Zend_Filter_Inflector(':script.:suffix');
-				$inflector->addRules(array(':script' => array('Word_CamelCaseToDash', 'StringToLower'),
-							 								  'suffix'  => $config->layout->suffix));
-				 
-				// Initialise Zend_Layout's MVC helpers
-				Zend_Layout::startMvc(array('layoutPath' => ROOT_DIR.$config->layout->layoutPath,
-											'view' => $view,
-											'contentKey' => $config->layout->contentKey,
-											'inflector' => $inflector));
-				*/
+				// BASE URL .. da sistemare
+				if (  !is_null($config->url->base) ) $frontController->setBaseUrl($config->url->base);
 				
 				/**
 				 * Sessione ...
@@ -284,28 +223,36 @@ class Scoutpad {
 				 * Error Handler MVC
 				 */
 				$plugErrorHandler = new Zend_Controller_Plugin_ErrorHandler();
-				
 				if ( isset($config->error->handler) ){
-					
 					$plugErrorHandler->setErrorHandlerModule($config->error->handler->module);
 					$plugErrorHandler->setErrorHandlerController($config->error->handler->controller);
 					$plugErrorHandler->setErrorHandlerAction($config->error->handler->action);
-					
 				}
 				
 				/**
 				 * Plugin pre-esecuzione
 				 */
-				$frontController->registerPlugin($plugErrorHandler);
-				$frontController->registerPlugin(new Sigma_Plugin_Auth());
-					
-				// BASE URL .. da sistemare
-				if (  !is_null($config->url->base) ) $frontController->setBaseUrl($config->url->base);
+				$frontController->registerPlugin($plugErrorHandler,1);
+				//$frontController->registerPlugin(new Sigma_Plugin_Auth(),2);
+				$frontController->registerPlugin(new Sigma_Plugin_Descriptor(),3);
 				
+				/**
+				 * CACHE SYSTEM (Plugin => pre e postDispatch)
+				 */
 				
+				/**
+				 * Static Page Generation (Plugin => postDispatch)
+				 */
+				
+				/**
+				 * Log
+				 */
 				$log = new Sigma_Log($config->logger);
 				Zend_Registry::set('log',$log);			
 				
+				/**
+				 * Flow 
+				 */
 				Zend_Loader::loadClass('Sigma_Flow_Storage_Database');
 				Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Database() );
 				
@@ -313,11 +260,6 @@ class Scoutpad {
 				//Sigma_Flow_Token::getInstance()->setStorage( new Sigma_Flow_Storage_Session() );
 				
 				Zend_Registry::set('auth_module', Zend_Auth::getInstance());
-				
-				
-				/**
-				 * CACHE SYSTEM
-				 */
 
 			} catch (Zend_Config_Exception $e) {
 				echo '<h1>Misconfiguration</h1>';
@@ -386,12 +328,6 @@ class Scoutpad {
 				
 				}
 			} else {
-				
-				/**
-				 * Static Page Generation
-				 */
-				
-				
 				$response->sendResponse();
 				//echo '<a href="/',$request->getFromPage(),'">',$request->getFromPage(),'</a>';
 			}

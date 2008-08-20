@@ -9,11 +9,14 @@
 	<acl/>
 	<options>
 		<layout>
-			<layoutpath/>
-			<contentKet>content</contentKet>
+			<contentKey>content</contentKey>
 			<template>layout</template>
-			<suffix>phtml</suffix>
 		</layout>
+		<view>
+			<adapter>Zend_View</adapter>
+			<basePath>/home/workspace/Scout/ScoutPad/application/modules/home/views/</basePath>
+			<suffix>phtml</suffix>
+		</view>
 	</options>
 	<revision>0.0.1</revision>
 	<update>
